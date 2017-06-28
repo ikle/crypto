@@ -104,11 +104,11 @@ static const u32 T[64] = {
 void md5_core_transform (void *state, void *block)
 {
 	u32 *hash = state, *W = block;
-//	size_t i;
+	size_t i;
 	u32 a, b, c, d;
 
-//	for (i = 0; i < MD5_WORD_COUNT; ++i)
-//		W[i] = le32toh (W[i]);		-- TODO: enable it!
+	for (i = 0; i < MD5_WORD_COUNT; ++i)
+		W[i] = read_le32 (W + i);
 
 	a = hash[0];
 	b = hash[1];
