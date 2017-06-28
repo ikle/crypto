@@ -9,8 +9,6 @@
  */
 
 #include <string.h>
-#include <arpa/inet.h>
-
 #include "sha1-core.h"
 
 static const u32 H0[SHA1_ORDER] = {
@@ -81,7 +79,7 @@ void sha1_core_transform (void *state, void *block)
 	u32 a, b, c, d, e;
 
 	for (i = 0; i < SHA1_WORD_COUNT; ++i)
-		W[i] = htonl (W[i]);
+		W[i] = read_be32 (W + i);
 
 	a = hash[0];
 	b = hash[1];
