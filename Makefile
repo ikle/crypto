@@ -15,6 +15,6 @@ install: $(TARGETS)
 	install -D -d $(DESTDIR)/$(PREFIX)/bin
 	install -s -m 0755 $^ $(DESTDIR)/$(PREFIX)/bin
 
-libcrypto.a: core.o md5-core.o
+libcrypto.a: core.o md5-core.o sha1-core.o
 	$(AR) rc $@ $^
 	$(RANLIB) $@
