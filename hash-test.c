@@ -5,6 +5,7 @@
 
 #include "md5-core.h"
 #include "sha1-core.h"
+#include "stribog-core.h"
 
 static int error (const char *message, int system)
 {
@@ -42,6 +43,8 @@ int main (int argc, char *argv[])
 		core = &md5_core;
 	else if (strcmp (argv[1], "sha1") == 0)
 		core = &sha1_core;
+	else if (strcmp (argv[1], "stribog") == 0)
+		core = &stribog_core;
 	else
 		return error ("unknown algorithm", 0);
 
