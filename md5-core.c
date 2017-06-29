@@ -8,17 +8,23 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <stdlib.h>
 #include <string.h>
+
+#include "core.h"
+#include "hash-core.h"
 #include "md5-core.h"
+
+#define MD5_WORD_SIZE	4
+#define MD5_WORD_COUNT	16
+#define MD5_ORDER	4
+
+#define MD5_BLOCK_SIZE	(MD5_WORD_SIZE * MD5_WORD_COUNT)
+#define MD5_HASH_SIZE	(MD5_WORD_SIZE * MD5_ORDER)
 
 static const u32 H0[MD5_ORDER] = {
 	0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476
 };
-
-void md5_core_init (void *state)
-{
-	memcpy (state, H0, sizeof (H0));
-}
 
 static u32 F (u32 x, u32 y, u32 z)
 {
@@ -101,36 +107,74 @@ static const u32 T[64] = {
 		STEP_GROUP(f, a, b, c, d, (i) + 12);	\
 	} while (0)
 
-void md5_core_transform (void *state, void *block)
+struct md5_state {
+	u32 hash[MD5_ORDER];
+	u64 count;
+};
+
+static void md5_core_init (void *state)
 {
-	u32 *hash = state, *W = block;
+	struct md5_state *o = state;
+
+	memcpy (o->hash, H0, sizeof (o->hash));
+	barrier_data (o->hash);
+	o->count = 0;
+}
+
+static void *md5_core_alloc (void)
+{
+	struct md5_state *o;
+
+	if ((o = malloc (sizeof (*o))) == NULL)
+		return NULL;
+
+	md5_core_init (o);
+	return o;
+}
+
+static void md5_core_transform (void *state, void *block)
+{
+	struct md5_state *o = state;
+	u32 *W = block;
 	size_t i;
 	u32 a, b, c, d;
 
 	for (i = 0; i < MD5_WORD_COUNT; ++i)
 		W[i] = read_le32 (W + i);
 
-	a = hash[0];
-	b = hash[1];
-	c = hash[2];
-	d = hash[3];
+	a = o->hash[0];
+	b = o->hash[1];
+	c = o->hash[2];
+	d = o->hash[3];
 
 	ROUND (F, a, b, c, d,  0);
 	ROUND (G, a, b, c, d, 16);
 	ROUND (H, a, b, c, d, 32);
 	ROUND (I, a, b, c, d, 48);
 
-	hash[0] += a;
-	hash[1] += b;
-	hash[2] += c;
-	hash[3] += d;
+	o->hash[0] += a;
+	o->hash[1] += b;
+	o->hash[2] += c;
+	o->hash[3] += d;
+
+	o->count += MD5_BLOCK_SIZE;
 }
 
-void md5_core_final (void *state, void *block, u64 count)
+static void md5_core_result (void *state, void *out)
 {
+	struct md5_state *o = state;
+	u32 *result = out;
+	size_t i;
+
+	for (i = 0; i < MD5_ORDER; ++i)
+		write_le32 (o->hash[i], result + i);
+}
+
+static void md5_core_final (void *state, void *block, size_t len, void *out)
+{
+	struct md5_state *o = state;
 	u8 *const head = block;
-	const size_t offset = count % MD5_BLOCK_SIZE;
-	u8 *const one = head + offset;
+	u8 *const one = head + len;
 	u8 *const end = head + MD5_BLOCK_SIZE;
 	u8 *const num = end - 8;
 
@@ -142,19 +186,22 @@ void md5_core_final (void *state, void *block, u64 count)
 	else {
 		memset (one + 1, 0, end - (one + 1));
 		md5_core_transform (state, block);
+		o->count -= MD5_BLOCK_SIZE;  /* do not count padding */
 
 		memset (head, 0, num - head);
 	}
 
-	write_le64 (count * 8, num);
+	write_le64 ((o->count + len) * 8, num);
 	md5_core_transform (state, block);
+	md5_core_result (state, out);
+	md5_core_init (state);
 }
 
-void md5_core_result (void *state, void *out)
-{
-	u32 *hash = state, *result = out;
-	size_t i;
+const struct hash_core md5_core = {
+	.block_size	= MD5_BLOCK_SIZE,
+	.hash_size	= MD5_HASH_SIZE,
 
-	for (i = 0; i < MD5_ORDER; ++i)
-		write_le32 (hash[i], result + i);
-}
+	.alloc		= md5_core_alloc,
+	.transform	= md5_core_transform,
+	.final		= md5_core_final,
+};

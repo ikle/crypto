@@ -8,17 +8,23 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <stdlib.h>
 #include <string.h>
+
+#include "core.h"
+#include "hash-core.h"
 #include "sha1-core.h"
+
+#define SHA1_WORD_SIZE	4
+#define SHA1_WORD_COUNT	16
+#define SHA1_ORDER	5
+
+#define SHA1_BLOCK_SIZE	(SHA1_WORD_SIZE * SHA1_WORD_COUNT)
+#define SHA1_HASH_SIZE	(SHA1_WORD_SIZE * SHA1_ORDER)
 
 static const u32 H0[SHA1_ORDER] = {
 	0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0
 };
-
-void sha1_core_init (void *state)
-{
-	memcpy (state, H0, sizeof (H0));
-}
 
 static u32 Ch (u32 x, u32 y, u32 z)
 {
@@ -72,38 +78,76 @@ static void mix_word (u32 *W, int i)
 		STEP_GROUP(f, K, a, b, c, d, e, (i) + 15);		\
 	} while (0)							\
 
-void sha1_core_transform (void *state, void *block)
+struct sha1_state {
+	u32 hash[SHA1_ORDER];
+	u64 count;
+};
+
+static void sha1_core_init (void *state)
 {
-	u32 *hash = state, *W = block;
+	struct sha1_state *o = state;
+
+	memcpy (o->hash, H0, sizeof (o->hash));
+	barrier_data (o->hash);
+	o->count = 0;
+}
+
+static void *sha1_core_alloc (void)
+{
+	struct sha1_state *o;
+
+	if ((o = malloc (sizeof (*o))) == NULL)
+		return NULL;
+
+	sha1_core_init (o);
+	return o;
+}
+
+static void sha1_core_transform (void *state, void *block)
+{
+	struct sha1_state *o = state;
+	u32 *W = block;
 	size_t i;
 	u32 a, b, c, d, e;
 
 	for (i = 0; i < SHA1_WORD_COUNT; ++i)
 		W[i] = read_be32 (W + i);
 
-	a = hash[0];
-	b = hash[1];
-	c = hash[2];
-	d = hash[3];
-	e = hash[4];
+	a = o->hash[0];
+	b = o->hash[1];
+	c = o->hash[2];
+	d = o->hash[3];
+	e = o->hash[4];
 
 	ROUND (Ch,     K[0], a, b, c, d, e,  0);
 	ROUND (Parity, K[1], a, b, c, d, e, 20);
 	ROUND (Maj,    K[2], a, b, c, d, e, 40);
 	ROUND (Parity, K[3], a, b, c, d, e, 60);
 
-	hash[0] += a;
-	hash[1] += b;
-	hash[2] += c;
-	hash[3] += d;
-	hash[4] += e;
+	o->hash[0] += a;
+	o->hash[1] += b;
+	o->hash[2] += c;
+	o->hash[3] += d;
+	o->hash[4] += e;
+
+	o->count += SHA1_BLOCK_SIZE;
 }
 
-void sha1_core_final (void *state, void *block, u64 count)
+static void sha1_core_result (void *state, void *out)
 {
+	struct sha1_state *o = state;
+	u32 *result = out;
+	size_t i;
+
+	for (i = 0; i < SHA1_ORDER; ++i)
+		write_be32 (o->hash[i], result + i);
+}
+
+static void sha1_core_final (void *state, void *block, size_t len, void *out)
+{
+	struct sha1_state *o = state;
 	u8 *const head = block;
-	const size_t offset = count % SHA1_BLOCK_SIZE;
-	u8 *const one = head + offset;
+	u8 *const one = head + len;
 	u8 *const end = head + SHA1_BLOCK_SIZE;
 	u8 *const num = end - 8;
 
@@ -115,19 +159,22 @@ void sha1_core_final (void *state, void *block, u64 count)
 	else {
 		memset (one + 1, 0, end - (one + 1));
 		sha1_core_transform (state, block);
+		o->count -= SHA1_BLOCK_SIZE;  /* do not count padding */
 
 		memset (head, 0, num - head);
 	}
 
-	write_be64 (count * 8, num);
+	write_be64 ((o->count + len) * 8, num);
 	sha1_core_transform (state, block);
+	sha1_core_result (state, out);
+	sha1_core_init (state);
 }
 
-void sha1_core_result (void *state, void *out)
-{
-	u32 *hash = state, *result = out;
-	size_t i;
+const struct hash_core sha1_core = {
+	.block_size	= SHA1_BLOCK_SIZE,
+	.hash_size	= SHA1_HASH_SIZE,
 
-	for (i = 0; i < SHA1_ORDER; ++i)
-		write_be32 (hash[i], result + i);
-}
+	.alloc		= sha1_core_alloc,
+	.transform	= sha1_core_transform,
+	.final		= sha1_core_final,
+};
