@@ -12,7 +12,6 @@
 #include <string.h>
 
 #include "core.h"
-#include "hash-core.h"
 #include "md5-core.h"
 
 #define MD5_WORD_SIZE	4

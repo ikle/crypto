@@ -12,7 +12,6 @@
 #include <string.h>
 
 #include "core.h"
-#include "hash-core.h"
 #include "sha1-core.h"
 
 #define SHA1_WORD_SIZE	4
