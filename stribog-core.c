@@ -106,8 +106,13 @@ static void LPS (const u512 *a, u512 *result)
 }
 #endif
 
-/* LPSX(a, b) = LPS(a ^ b) */
-static void LPSX (const u512 *a, const u512 *b, u512 *result)
+/*
+ * LPSX(a, b) = LPS(a ^ b)
+ *
+ * NOTE: Inline prevention slightly reduces execution time, but greatly
+ *       total code size -- it becomes twice less!
+ */
+static noinline void LPSX (const u512 *a, const u512 *b, u512 *result)
 {
 	u512 acc;
 

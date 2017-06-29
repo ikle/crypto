@@ -22,9 +22,15 @@ typedef uint64_t u64;
 	((char *) (ptr) - offsetof (type, member)))
 
 #ifdef __GNUC__
+
+#define noinline __attribute__((noinline))
 #define barrier_data(p)  __asm__ __volatile__ ("" :: "r"(p) : "memory")
+
 #else
+
+#define noinline
 #define barrier_data(p)
+
 #endif
 
 void explicit_bzero (void *data, size_t len);
