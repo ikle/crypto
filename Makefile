@@ -1,7 +1,7 @@
 AR ?= ar
 RANLIB ?= ranlib
 
-TARGETS = libcrypto.a
+TARGETS = libcrypto.a hash-test
 CFLAGS = -O6
 
 all: $(TARGETS)
@@ -18,3 +18,5 @@ install: $(TARGETS)
 libcrypto.a: core.o md5-core.o sha1-core.o hash-core.o
 	$(AR) rc $@ $^
 	$(RANLIB) $@
+
+hash-test: libcrypto.a
