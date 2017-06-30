@@ -19,6 +19,13 @@ static int error (const char *message, int system)
 	return 1;
 }
 
+static int usage (void)
+{
+	fprintf (stderr, "usage:\n\thash-test <algorithm> [data]\n");
+
+	return 1;
+}
+
 static void show (const unsigned char *data, size_t len)
 {
 	for (; len > 0; ++data, --len)
@@ -48,10 +55,8 @@ int main (int argc, char *argv[])
 	char buf[BUFSIZ];
 	size_t len;
 
-	if (argc < 2 || argc > 3) {
-		fprintf (stderr, "usage:\n\thash-test <algorithm> [data]\n");
-		return 1;
-	}
+	if (argc < 2 || argc > 3)
+		return usage ();
 
 	if ((core = find_core (argv[1])) == NULL)
 		return error ("unknown algorithm", 0);
