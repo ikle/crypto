@@ -184,14 +184,21 @@ static void *stribog_core_alloc (void)
 	return o;
 }
 
+static void load (const u512 *in, u512 *out)
+{
+	size_t i;
+
+	for (i = 0; i < STRIBOG_WORD_COUNT; ++i)
+		out->q[i] = read_le64 (in->q + i);
+}
+
 static void transform (void *state, void *block, const u512 *count)
 {
 	struct stribog_state *o = state;
 	u512 *W = block;
 	size_t i;
 
-	for (i = 0; i < STRIBOG_WORD_COUNT; ++i)
-		W->q[i] = read_le64 (W->q + i);
+	load (block, W);
 
 	g (&o->N, &o->h, block, &o->h);
 	add512 (&o->N, count, &o->N);  /* add data size in bits */

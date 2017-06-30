@@ -131,15 +131,21 @@ static void *md5_core_alloc (void)
 	return o;
 }
 
+static void load (const u32 *in, u32 *out)
+{
+	size_t i;
+
+	for (i = 0; i < MD5_WORD_COUNT; ++i)
+		out[i] = read_le32 (in + i);
+}
+
 static void md5_core_transform (void *state, void *block)
 {
 	struct md5_state *o = state;
 	u32 *W = block;
-	size_t i;
 	u32 a, b, c, d;
 
-	for (i = 0; i < MD5_WORD_COUNT; ++i)
-		W[i] = read_le32 (W + i);
+	load (block, W);
 
 	a = o->hash[0];
 	b = o->hash[1];

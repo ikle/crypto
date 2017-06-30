@@ -102,15 +102,21 @@ static void *sha1_core_alloc (void)
 	return o;
 }
 
+static void load (const u32 *in, u32 *out)
+{
+	size_t i;
+
+	for (i = 0; i < SHA1_WORD_COUNT; ++i)
+		out[i] = read_be32 (in + i);
+}
+
 static void sha1_core_transform (void *state, void *block)
 {
 	struct sha1_state *o = state;
 	u32 *W = block;
-	size_t i;
 	u32 a, b, c, d, e;
 
-	for (i = 0; i < SHA1_WORD_COUNT; ++i)
-		W[i] = read_be32 (W + i);
+	load (block, W);
 
 	a = o->hash[0];
 	b = o->hash[1];
