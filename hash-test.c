@@ -27,6 +27,20 @@ static void show (const unsigned char *data, size_t len)
 	printf ("\n");
 }
 
+static const struct hash_core *find_core (const char *name)
+{
+	if (strcmp (name, "md5") == 0)
+		return &md5_core;
+
+	if (strcmp (name, "sha1") == 0)
+		return &sha1_core;
+
+	if (strcmp (name, "stribog") == 0)
+		return &stribog_core;
+
+	return NULL;
+}
+
 int main (int argc, char *argv[])
 {
 	const struct hash_core *core;
@@ -39,13 +53,7 @@ int main (int argc, char *argv[])
 		return 1;
 	}
 
-	if (strcmp (argv[1], "md5") == 0)
-		core = &md5_core;
-	else if (strcmp (argv[1], "sha1") == 0)
-		core = &sha1_core;
-	else if (strcmp (argv[1], "stribog") == 0)
-		core = &stribog_core;
-	else
+	if ((core = find_core (argv[1])) == NULL)
 		return error ("unknown algorithm", 0);
 
 	if (sizeof (buf) < core->hash_size)
