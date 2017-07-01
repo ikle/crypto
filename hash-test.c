@@ -7,6 +7,8 @@
 #include "sha1-core.h"
 #include "stribog-core.h"
 
+#include "hmac-core.h"
+
 static int error (const char *message, int system)
 {
 	fprintf (stderr, "hash-test: ");
@@ -44,6 +46,9 @@ static const struct hash_core *find_core (const char *name)
 
 	if (strcmp (name, "stribog") == 0)
 		return &stribog_core;
+
+	if (strcmp (name, "hmac-md5") == 0)
+		return &hmac_core;
 
 	return NULL;
 }
