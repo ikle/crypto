@@ -72,15 +72,27 @@ static void test_speed (struct hash *h, const char *string, void *out)
 
 	times (&t0);
 
-	for (i = 0; i < COUNT; ++i) {
-		hash_update (h, string, len);
-		hash_final (h, out);
-	}
+	for (i = 0; i < COUNT; ++i)
+		hash_data (h, string, len, out);
 
 	times (&t1);
 	duration = ticks_to_secs ((double) t1.tms_utime - t0.tms_utime);
 
 	printf ("hash/s = %f\n", COUNT / duration);
+}
+
+static void hash_file (struct hash *h, FILE *f, void *out)
+{
+	char buf[BUFSIZ];
+	size_t avail, processed;
+
+	for (avail = 0; !feof (stdin);) {
+		avail += fread (buf + avail, 1, sizeof (buf) - avail, f);
+		avail -= (processed = hash_data (h, buf, avail, NULL));
+		memmove (buf, buf + processed, avail);
+	}
+
+	hash_data (h, buf, avail, out);
 }
 
 #define get_arg()	(argc < 2 ? NULL : (--argc, ++argv, argv[0]))
@@ -90,8 +102,7 @@ int main (int argc, char *argv[])
 	const char *arg;
 	const struct hash_core *core;
 	struct hash *h;
-	char buf[BUFSIZ];
-	size_t len;
+	char digest[128];
 
 	if ((arg = get_arg ()) == NULL)
 		return usage ();
@@ -99,7 +110,7 @@ int main (int argc, char *argv[])
 	if ((core = find_core (arg)) == NULL)
 		return error ("unknown algorithm", 0);
 
-	if (sizeof (buf) < core->hash_size)
+	if (sizeof (digest) < core->hash_size)
 		return error ("hash size too large", 0);
 
 	if ((h = hash_alloc (core)) == NULL)
@@ -109,20 +120,17 @@ int main (int argc, char *argv[])
 		if ((arg = get_arg ()) == NULL)
 			return usage ();
 
-		test_speed (h, arg, buf);
+		test_speed (h, arg, digest);
 	}
 	else {
 		if (arg != NULL)
-			hash_update (h, arg, strlen (arg));
+			hash_data (h, arg, strlen (arg), digest);
 		else
-			while ((len = fread (buf, 1, sizeof (buf), stdin)) > 0)
-				hash_update (h, buf, len);
-
-		hash_final (h, buf);
+			hash_file (h, stdin, digest);
 	}
 
 	hash_free (h);
 
-	show (buf, core->hash_size);
+	show (digest, core->hash_size);
 	return 0;
 }
