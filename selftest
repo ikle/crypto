@@ -1,0 +1,47 @@
+#!/usr/bin/expect -f
+
+proc expect_hash hash {
+	set status fail
+
+	while {true} {
+		expect {
+			"$hash" {
+				set status ok
+			}
+			eof {
+				if {$status == {ok}} {
+					puts "\[ passed ]"
+					break
+				}
+
+				puts "\[ failed ]"
+				exit 1
+			}
+			timeout {
+				puts "\[ timed out ]"
+				exit 1
+			}
+		}
+	}
+}
+
+spawn ./hash-test md5 abc
+expect_hash 900150983cd24fb0d6963f7d28e17f72
+
+spawn ./hash-test md5 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+expect_hash d174ab98d277d9f5a5611c2c9f419d9f
+
+spawn ./hash-test sha1 abc
+expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
+
+spawn ./hash-test sha1 abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+expect_hash 84983e441c3bd26ebaae4aa1f95129e5e54670f1
+
+spawn ./hash-test stribog 012345678901234567890123456789012345678901234567890123456789012
+expect_hash 1b54d01a4af5b9d5cc3d86d68d285462b19abc2475222f35c085122be4ba1ffa00ad30f8767b3a82384c6574f024c311e2a481332b08ef7f41797891c1646f48
+
+spawn ./hash-test stribog 012345678901234567890123456789012345678901234567890123456789012345
+expect_hash 7317b3902a014fbfcf2343f782da5133802730739b4b8c127f9901ef01a51a7c626e9383f4c45e751207f98da13c6ca966cd2939045770a2f2cf3d74274ce94b
+
+#spawn ./hash-test stribog < doc/stribog-test-2.bin
+#expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
