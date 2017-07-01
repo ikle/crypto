@@ -16,8 +16,8 @@ struct hash_core {
 
 	void *(*alloc) (void);
 	void (*free) (void *state);
-	void (*transform) (void *state, void *block);
-	void (*final) (void *state, void *block, size_t len, void *out);
+	void (*transform) (void *state, const void *block);
+	void (*final) (void *state, const void *in, size_t len, void *out);
 };
 
 struct hash *hash_alloc (const struct hash_core *core);

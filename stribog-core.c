@@ -192,7 +192,7 @@ static void load (const u512 *in, u512 *out)
 		out->q[i] = read_le64 (in->q + i);
 }
 
-static void transform (void *state, void *block, const u512 *count)
+static void transform (void *state, const void *block, const u512 *count)
 {
 	struct stribog_state *o = state;
 	u512 W;
@@ -205,7 +205,7 @@ static void transform (void *state, void *block, const u512 *count)
 	add512 (&o->Sum, &W, &o->Sum);
 }
 
-static void stribog_core_transform (void *state, void *block)
+static void stribog_core_transform (void *state, const void *block)
 {
 	static const u512 N512 = { 512 };
 
@@ -222,7 +222,7 @@ static void stribog_core_result (void *state, void *out)
 		write_le64 (o->h.q[i], result + i);
 }
 
-static void stribog_core_final (void *state, void *in, size_t len,
+static void stribog_core_final (void *state, const void *in, size_t len,
 				void *out)
 {
 	static const u512 N0;
