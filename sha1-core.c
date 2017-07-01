@@ -113,7 +113,7 @@ static void load (const u32 *in, u32 *out)
 static void transform (void *state, void *block, u64 count)
 {
 	struct sha1_state *o = state;
-	u32 *W = block;
+	u32 W[SHA1_WORD_COUNT];
 	u32 a, b, c, d, e;
 
 	load (block, W);
@@ -155,14 +155,16 @@ static void sha1_core_result (void *state, void *out)
 		write_be32 (o->hash[i], result + i);
 }
 
-static void sha1_core_final (void *state, void *block, size_t len, void *out)
+static void sha1_core_final (void *state, void *in, size_t len, void *out)
 {
 	struct sha1_state *o = state;
+	u8 block[SHA1_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;
-	u8 *const end = head + SHA1_BLOCK_SIZE;
+	u8 *const end = head + sizeof (block);
 	u8 *const num = end - 8;
 
+	memcpy (block, in, len);
 	*one = 0x80;
 
 	if (num > one) {
