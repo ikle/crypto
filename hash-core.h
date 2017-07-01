@@ -26,4 +26,15 @@ void hash_free (struct hash *h);
 int hash_update (struct hash *h, const void *in, size_t len);
 int hash_final (struct hash *h, void *out);
 
+/*
+ * 1. Process integer number of input blocks.
+ * 2. If out != NULL then process last partial block and write final hash
+ *    value to out.
+ *
+ * This function never stores input plain text data in context.
+ *
+ * Returns number of bytes processed.
+ */
+size_t hash_data (struct hash *h, const void *in, size_t len, void *out);
+
 #endif  /* CRYPTO_HASH_CORE_H */

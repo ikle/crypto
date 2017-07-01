@@ -74,3 +74,29 @@ int hash_final (struct hash *o, void *out)
 	barrier_data (o->block);
 	return 0;
 }
+
+/*
+ * 1. Process integer number of input blocks.
+ * 2. If out != NULL then process last partial block and write final hash
+ *    value to out.
+ *
+ * This function never stores input plain text data in context.
+ *
+ * Returns number of bytes processed.
+ */
+size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
+{
+	const size_t need = o->core->block_size;
+	const char *data = in;
+	size_t total;
+
+	for (total = 0; len >= need; data += need, len -= need, total += need)
+		o->core->transform (o->state, data);
+
+	if (out != NULL) {
+		o->core->final (o->state, data, len, out);
+		total += len;
+	}
+
+	return total;
+}
