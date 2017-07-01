@@ -195,14 +195,14 @@ static void load (const u512 *in, u512 *out)
 static void transform (void *state, void *block, const u512 *count)
 {
 	struct stribog_state *o = state;
-	u512 *W = block;
+	u512 W;
 	size_t i;
 
-	load (block, W);
+	load (block, &W);
 
-	g (&o->N, &o->h, block, &o->h);
+	g (&o->N, &o->h, &W, &o->h);
 	add512 (&o->N, count, &o->N);  /* add data size in bits */
-	add512 (&o->Sum, block, &o->Sum);
+	add512 (&o->Sum, &W, &o->Sum);
 }
 
 static void stribog_core_transform (void *state, void *block)
@@ -222,15 +222,18 @@ static void stribog_core_result (void *state, void *out)
 		write_le64 (o->h.q[i], result + i);
 }
 
-static void stribog_core_final (void *state, void *block, size_t len,
+static void stribog_core_final (void *state, void *in, size_t len,
 				void *out)
 {
 	static const u512 N0;
 	struct stribog_state *o = state;
+	u8 block[STRIBOG_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;
-	u8 *const end = head + STRIBOG_BLOCK_SIZE;
+	u8 *const end = head + sizeof (block);
 	u512 bits = {};
+
+	memcpy (block, in, len);
 
 	/* pad message */
 	*one = 1;
