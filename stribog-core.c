@@ -254,6 +254,7 @@ const struct hash_core stribog_core = {
 	.hash_size      = STRIBOG_HASH_SIZE,
 
 	.alloc          = stribog_core_alloc,
+	.free		= free,
 	.transform      = stribog_core_transform,
 	.final          = stribog_core_final,
 };

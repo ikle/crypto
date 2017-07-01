@@ -32,11 +32,7 @@ void hash_free (struct hash *o)
 	if (o == NULL)
 		return;
 
-	if (o->core->free != NULL)
-		o->core->free (o->state);
-	else
-		free (o->state);
-
+	o->core->free (o->state);
 	free (o);
 }
 

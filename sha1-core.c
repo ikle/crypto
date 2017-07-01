@@ -189,6 +189,7 @@ const struct hash_core sha1_core = {
 	.hash_size	= SHA1_HASH_SIZE,
 
 	.alloc		= sha1_core_alloc,
+	.free		= free,
 	.transform	= sha1_core_transform,
 	.final		= sha1_core_final,
 };

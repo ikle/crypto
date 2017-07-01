@@ -215,6 +215,7 @@ const struct hash_core md5_core = {
 	.hash_size	= MD5_HASH_SIZE,
 
 	.alloc		= md5_core_alloc,
+	.free		= free,
 	.transform	= md5_core_transform,
 	.final		= md5_core_final,
 };
