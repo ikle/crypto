@@ -142,7 +142,7 @@ static void load (const u32 *in, u32 *out)
 static void transform (void *state, void *block, u64 count)
 {
 	struct md5_state *o = state;
-	u32 *W = block;
+	u32 W[MD5_WORD_COUNT];
 	u32 a, b, c, d;
 
 	load (block, W);
@@ -182,14 +182,16 @@ static void md5_core_result (void *state, void *out)
 		write_le32 (o->hash[i], result + i);
 }
 
-static void md5_core_final (void *state, void *block, size_t len, void *out)
+static void md5_core_final (void *state, void *in, size_t len, void *out)
 {
 	struct md5_state *o = state;
+	u8 block[MD5_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;
-	u8 *const end = head + MD5_BLOCK_SIZE;
+	u8 *const end = head + sizeof (block);
 	u8 *const num = end - 8;
 
+	memcpy (block, in, len);
 	*one = 0x80;
 
 	if (num > one) {
