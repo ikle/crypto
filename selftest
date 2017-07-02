@@ -45,3 +45,6 @@ expect_hash 7317b3902a014fbfcf2343f782da5133802730739b4b8c127f9901ef01a51a7c626e
 
 #spawn ./hash-test stribog < doc/stribog-test-2.bin
 #expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
+
+spawn ./hash-test hmac-md5 ""
+expect_hash 74e6f7298a9c2d168935f58c001bad88
