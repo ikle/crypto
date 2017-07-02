@@ -47,11 +47,11 @@ void hash_free (struct hash *o)
  */
 size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
 {
-	const size_t need = o->core->block_size;
+	const size_t bs = o->core->block_size;
 	const char *data = in;
 	size_t tail;
 
-	for (tail = len; tail >= need; data += need, tail -= need)
+	for (tail = len; tail >= bs; data += bs, tail -= bs)
 		o->core->transform (o->state, data);
 
 	if (out == NULL)
