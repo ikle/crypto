@@ -45,18 +45,24 @@ void hash_free (struct hash *o)
  *
  * Returns number of bytes processed.
  */
-size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
+size_t hash_core_process (const struct hash_core *core, void *state,
+			  const void *in, size_t len, void *out)
 {
-	const size_t bs = o->core->block_size;
+	const size_t bs = core->block_size;
 	const char *data = in;
 	size_t tail;
 
 	for (tail = len; tail >= bs; data += bs, tail -= bs)
-		o->core->transform (o->state, data);
+		core->transform (state, data);
 
 	if (out == NULL)
 		return len - tail;
 
-	o->core->final (o->state, data, tail, out);
+	core->final (state, data, tail, out);
 	return len;
+}
+
+size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
+{
+	return hash_core_process (o->core, o->state, in, len, out);
 }

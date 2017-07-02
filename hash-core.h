@@ -32,6 +32,8 @@ void hash_free (struct hash *h);
  *
  * Returns number of bytes processed.
  */
+size_t hash_core_process (const struct hash_core *core, void *state,
+			  const void *in, size_t len, void *out);
 size_t hash_data (struct hash *h, const void *in, size_t len, void *out);
 
 #endif  /* CRYPTO_HASH_CORE_H */
