@@ -49,15 +49,14 @@ size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
 {
 	const size_t need = o->core->block_size;
 	const char *data = in;
-	size_t total;
+	size_t tail;
 
-	for (total = 0; len >= need; data += need, len -= need, total += need)
+	for (tail = len; tail >= need; data += need, tail -= need)
 		o->core->transform (o->state, data);
 
-	if (out != NULL) {
-		o->core->final (o->state, data, len, out);
-		total += len;
-	}
+	if (out == NULL)
+		return len - tail;
 
-	return total;
+	o->core->final (o->state, data, tail, out);
+	return len;
 }
