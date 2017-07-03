@@ -8,6 +8,7 @@
  */
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -112,7 +113,25 @@ static int hmac_core_get (const void *state, int type, ...)
 
 static int hmac_core_set (void *state, int type, ...)
 {
-	return -ENOSYS;
+	va_list ap;
+	int status;
+
+	va_start (ap, type);
+
+	switch (type) {
+	case CRYPTO_ALGO: {
+			const struct hash_core *core;
+
+			core = va_arg (ap, const struct hash_core *);
+			status = set_algo (state, core);
+			break;
+		}
+	default:
+		status = -ENOSYS;
+	}
+
+	va_end (ap);
+	return status;
 }
 
 static void hmac_core_free (void *state)
