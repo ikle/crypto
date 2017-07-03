@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -131,6 +132,21 @@ static void *md5_core_alloc (void)
 	return o;
 }
 
+static int md5_core_get (const void *state, int type, ...)
+{
+	switch (type) {
+	case CRYPTO_BLOCK_SIZE:	return MD5_BLOCK_SIZE;
+	case CRYPTO_HASH_SIZE:	return MD5_HASH_SIZE;
+	}
+
+	return -ENOSYS;
+}
+
+static int md5_core_set (void *state, int type, ...)
+{
+	return -ENOSYS;
+}
+
 static void load (const u32 *in, u32 *out)
 {
 	size_t i;
@@ -216,6 +232,10 @@ const struct hash_core md5_core = {
 
 	.alloc		= md5_core_alloc,
 	.free		= free,
+
+	.get		= md5_core_get,
+	.set		= md5_core_set,
+
 	.transform	= md5_core_transform,
 	.final		= md5_core_final,
 };
