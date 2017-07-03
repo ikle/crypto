@@ -107,7 +107,7 @@ int main (int argc, char *argv[])
 	const char *arg;
 	const struct hash_core *core;
 	struct hash *h;
-	char digest[128];
+	size_t hs;
 	FILE *f = stdin;
 
 	if ((arg = get_arg ()) == NULL)
@@ -116,11 +116,10 @@ int main (int argc, char *argv[])
 	if ((core = find_core (arg)) == NULL)
 		return error ("unknown algorithm", 0);
 
-	if (sizeof (digest) < core->hash_size)
-		return error ("hash size too large", 0);
-
 	if ((h = hash_alloc (core)) == NULL)
 		return error ("cannot initialize algorithm", 1);
+
+	char digest[hs = core->hash_size];
 
 	if ((arg = get_arg ()) != NULL && strcmp (arg, "-t") == 0) {
 		if (argv[1] != NULL)
@@ -133,14 +132,14 @@ int main (int argc, char *argv[])
 			return usage ();
 
 		hash_data (h, arg, strlen (arg), digest);
-		show (digest, core->hash_size);
+		show (digest, hs);
 	}
 	else {
 		if (arg != NULL && (f = fopen (arg, "rb")) == NULL)
 			return error ("cannot open file", 1);
 
 		hash_file (h, f, digest);
-		show (digest, core->hash_size);
+		show (digest, hs);
 	}
 
 	hash_free (h);
