@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -91,6 +92,24 @@ static void *hmac_core_alloc (void)
 #endif
 }
 
+static int hmac_core_get (const void *state, int type, ...)
+{
+	const struct state *o = state;
+
+	switch (type) {
+	case CRYPTO_BLOCK_SIZE:
+	case CRYPTO_HASH_SIZE:
+		return o->core->get (o->hi, type);
+	}
+
+	return -ENOSYS;
+}
+
+static int hmac_core_set (void *state, int type, ...)
+{
+	return -ENOSYS;
+}
+
 static void hmac_core_free (void *state)
 {
 	struct state *o = state;
@@ -129,6 +148,10 @@ const struct hash_core hmac_core = {
 
 	.alloc		= hmac_core_alloc,
 	.free		= hmac_core_free,
+
+	.get		= hmac_core_get,
+	.set		= hmac_core_set,
+
 	.transform	= hmac_core_transform,
 	.final		= hmac_core_final,
 };
