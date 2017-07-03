@@ -38,12 +38,12 @@ void hash_free (struct hash *o)
 
 size_t hash_get_block_size (const struct hash *h)
 {
-	return h->core->block_size;
+	return h->core->get (h->state, CRYPTO_BLOCK_SIZE);
 }
 
 size_t hash_get_hash_size (const struct hash *h)
 {
-	return h->core->hash_size;
+	return h->core->get (h->state, CRYPTO_HASH_SIZE);
 }
 
 /*
@@ -58,7 +58,7 @@ size_t hash_get_hash_size (const struct hash *h)
 size_t hash_core_process (const struct hash_core *core, void *state,
 			  const void *in, size_t len, void *out)
 {
-	const size_t bs = core->block_size;
+	const size_t bs = core->get (state, CRYPTO_BLOCK_SIZE);
 	const char *data = in;
 	size_t tail;
 
