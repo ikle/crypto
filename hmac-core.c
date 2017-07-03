@@ -126,6 +126,15 @@ static int hmac_core_set (void *state, int type, ...)
 			status = set_algo (state, core);
 			break;
 		}
+	case CRYPTO_KEY: {
+			const void *key;
+			size_t len;
+
+			key = va_arg (ap, const void *);
+			len = va_arg (ap, size_t);
+			status = set_key (state, key, len);
+			break;
+		}
 	default:
 		status = -ENOSYS;
 	}
