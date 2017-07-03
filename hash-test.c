@@ -23,7 +23,8 @@ static int error (const char *message, int system)
 
 static int usage (void)
 {
-	fprintf (stderr, "usage:\n\thash-test <algorithm> [-t | data]\n");
+	fprintf (stderr, "usage:\n\thash-test <algorithm> "
+				"(-t | -s <string> | [<file-name>])\n");
 
 	return 1;
 }
@@ -107,6 +108,7 @@ int main (int argc, char *argv[])
 	const struct hash_core *core;
 	struct hash *h;
 	char digest[128];
+	FILE *f = stdin;
 
 	if ((arg = get_arg ()) == NULL)
 		return usage ();
@@ -126,12 +128,18 @@ int main (int argc, char *argv[])
 
 		test_speed (h, digest);
 	}
-	else {
-		if (arg != NULL)
-			hash_data (h, arg, strlen (arg), digest);
-		else
-			hash_file (h, stdin, digest);
+	else if (arg != NULL && strcmp (arg, "-s") == 0) {
+		if ((arg = get_arg ()) == NULL)
+			return usage ();
 
+		hash_data (h, arg, strlen (arg), digest);
+		show (digest, core->hash_size);
+	}
+	else {
+		if (arg != NULL && (f = fopen (arg, "rb")) == NULL)
+			return error ("cannot open file", 1);
+
+		hash_file (h, f, digest);
 		show (digest, core->hash_size);
 	}
 
