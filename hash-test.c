@@ -39,19 +39,14 @@ static void show (const unsigned char *data, size_t len)
 
 static const struct hash_core *find_core (const char *name)
 {
-	if (strcmp (name, "md5") == 0)
-		return &md5_core;
+	const struct hash_core *core =
+		strcmp (name, "md5")      == 0 ? &md5_core :
+		strcmp (name, "sha1")     == 0 ? &sha1_core :
+		strcmp (name, "stribog")  == 0 ? &stribog_core :
+		strcmp (name, "hmac-md5") == 0 ? &hmac_core :
+		NULL;
 
-	if (strcmp (name, "sha1") == 0)
-		return &sha1_core;
-
-	if (strcmp (name, "stribog") == 0)
-		return &stribog_core;
-
-	if (strcmp (name, "hmac-md5") == 0)
-		return &hmac_core;
-
-	return NULL;
+	return core;
 }
 
 #include <sys/times.h>
