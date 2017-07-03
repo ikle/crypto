@@ -119,7 +119,7 @@ int main (int argc, char *argv[])
 	if ((h = hash_alloc (core)) == NULL)
 		return error ("cannot initialize algorithm", 1);
 
-	char digest[hs = core->hash_size];
+	char digest[hs = hash_get_hash_size (h)];
 
 	if ((arg = get_arg ()) != NULL && strcmp (arg, "-t") == 0) {
 		if (argv[1] != NULL)
