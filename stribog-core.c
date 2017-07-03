@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -184,6 +185,21 @@ static void *stribog_core_alloc (void)
 	return o;
 }
 
+static int stribog_core_get (const void *state, int type, ...)
+{
+	switch (type) {
+	case CRYPTO_BLOCK_SIZE:	return STRIBOG_BLOCK_SIZE;
+	case CRYPTO_HASH_SIZE:	return STRIBOG_HASH_SIZE;
+	}
+
+	return -ENOSYS;
+}
+
+static int stribog_core_set (void *state, int type, ...)
+{
+	return -ENOSYS;
+}
+
 static void load (const u512 *in, u512 *out)
 {
 	size_t i;
@@ -255,6 +271,10 @@ const struct hash_core stribog_core = {
 
 	.alloc		= stribog_core_alloc,
 	.free		= free,
+
+	.get		= stribog_core_get,
+	.set		= stribog_core_set,
+
 	.transform	= stribog_core_transform,
 	.final		= stribog_core_final,
 };
