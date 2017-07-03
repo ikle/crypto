@@ -23,7 +23,7 @@ static int error (const char *message, int system)
 
 static int usage (void)
 {
-	fprintf (stderr, "usage:\n\thash-test <algorithm> [-s | data]\n");
+	fprintf (stderr, "usage:\n\thash-test <algorithm> [-t | data]\n");
 
 	return 1;
 }
@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
 	if ((h = hash_alloc (core)) == NULL)
 		return error ("cannot initialize algorithm", 1);
 
-	if ((arg = get_arg ()) != NULL && strcmp (arg, "-s") == 0) {
+	if ((arg = get_arg ()) != NULL && strcmp (arg, "-t") == 0) {
 		if (argv[1] != NULL)
 			return usage ();
 
