@@ -14,7 +14,6 @@
 
 #include "core.h"
 #include "hash-core.h"
-#include "md5-core.h"
 
 struct state {
 	const struct hash_core *core;
@@ -82,20 +81,7 @@ static void *hmac_core_alloc (void)
 	o->core = NULL;
 	o->hi = NULL;
 	o->ho = NULL;
-
-#if 0
 	return o;
-#else
-	/* temporary MD5("", data) */
-	if (set_algo (o, &md5_core) == 0 && set_key (o, NULL, 0) == 0)
-		return o;
-
-	o->core->free (o->hi);
-	o->core->free (o->ho);
-	free (o);
-
-	return NULL;
-#endif
 }
 
 static int hmac_core_get (const void *state, int type, ...)
