@@ -46,13 +46,25 @@ static struct hash *find_algo (const char *name)
 		strcmp (name, "stribog")  == 0 ? &stribog_core :
 		strcmp (name, "hmac-md5") == 0 ? &hmac_core :
 		NULL;
+	struct hash *h;
 
 	if (core == NULL) {
 		errno = ENOENT;
 		return NULL;
 	}
 
-	return hash_alloc (core);
+	if ((h = hash_alloc (core)) == NULL)
+		return NULL;
+
+	if (core == &hmac_core &&
+	    ((errno = -hash_set_algo (h, &md5_core)) != 0 ||
+	     (errno = -hash_set_key  (h, NULL, 0))   != 0))
+		goto no_opts;
+
+	return h;
+no_opts:
+	hash_free (h);
+	return NULL;
 }
 
 #include <sys/times.h>
