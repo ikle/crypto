@@ -46,6 +46,16 @@ size_t hash_get_hash_size (const struct hash *h)
 	return h->core->get (h->state, CRYPTO_HASH_SIZE);
 }
 
+int hash_set_algo (struct hash *h, const struct hash_core *core)
+{
+	return h->core->set (h->state, CRYPTO_ALGO, core);
+}
+
+int hash_set_key  (struct hash *h, const void *key, size_t len)
+{
+	return h->core->set (h->state, CRYPTO_KEY, key, len);
+}
+
 /*
  * 1. Process integer number of input blocks.
  * 2. If out != NULL then process last partial block and write final hash

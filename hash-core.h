@@ -35,6 +35,9 @@ void hash_free (struct hash *h);
 size_t hash_get_block_size (const struct hash *h);
 size_t hash_get_hash_size  (const struct hash *h);
 
+int hash_set_algo (struct hash *h, const struct hash_core *core);
+int hash_set_key  (struct hash *h, const void *key, size_t len);
+
 /*
  * 1. Process integer number of input blocks.
  * 2. If out != NULL then process last partial block and write final hash
