@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include "core.h"
-#include "hash-core.h"
+#include "hmac-core.h"
 
 struct state {
 	const struct hash_core *core;
