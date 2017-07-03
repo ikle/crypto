@@ -25,6 +25,10 @@ struct crypto_core {
 	int (*get) (const void *state, int type, ...);
 	int (*set) (void *state, int type, ...);
 
+	/* encrypt/decrypt one block of data */
+	void (*encrypt) (void *state, const void *in, void *out);
+	void (*decrypt) (void *state, const void *in, void *out);
+
 	void (*transform) (void *state, const void *block);
 	void (*final) (void *state, const void *in, size_t len, void *out);
 };
