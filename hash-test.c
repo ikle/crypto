@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -37,7 +38,7 @@ static void show (const unsigned char *data, size_t len)
 	printf ("\n");
 }
 
-static const struct hash_core *find_core (const char *name)
+static struct hash *find_algo (const char *name)
 {
 	const struct hash_core *core =
 		strcmp (name, "md5")      == 0 ? &md5_core :
@@ -46,7 +47,12 @@ static const struct hash_core *find_core (const char *name)
 		strcmp (name, "hmac-md5") == 0 ? &hmac_core :
 		NULL;
 
-	return core;
+	if (core == NULL) {
+		errno = ENOENT;
+		return NULL;
+	}
+
+	return hash_alloc (core);
 }
 
 #include <sys/times.h>
@@ -100,7 +106,6 @@ static void hash_file (struct hash *h, FILE *f, void *out)
 int main (int argc, char *argv[])
 {
 	const char *arg;
-	const struct hash_core *core;
 	struct hash *h;
 	size_t hs;
 	FILE *f = stdin;
@@ -108,10 +113,7 @@ int main (int argc, char *argv[])
 	if ((arg = get_arg ()) == NULL)
 		return usage ();
 
-	if ((core = find_core (arg)) == NULL)
-		return error ("unknown algorithm", 0);
-
-	if ((h = hash_alloc (core)) == NULL)
+	if ((h = find_algo (arg)) == NULL)
 		return error ("cannot initialize algorithm", 1);
 
 	char digest[hs = hash_get_hash_size (h)];
