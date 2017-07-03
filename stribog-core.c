@@ -265,7 +265,7 @@ static void stribog_core_final (void *state, const void *in, size_t len,
 	stribog_core_init (state);
 }
 
-const struct hash_core stribog_core = {
+const struct crypto_core stribog_core = {
 	.alloc		= stribog_core_alloc,
 	.free		= free,
 

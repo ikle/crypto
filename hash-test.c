@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "hash-core.h"
+#include "crypto-core.h"
 
 #include "md5-core.h"
 #include "sha1-core.h"
@@ -40,7 +40,7 @@ static void show (const unsigned char *data, size_t len)
 
 static struct hash *find_algo (const char *name)
 {
-	const struct hash_core *core =
+	const struct crypto_core *core =
 		strcmp (name, "md5")      == 0 ? &md5_core :
 		strcmp (name, "sha1")     == 0 ? &sha1_core :
 		strcmp (name, "stribog")  == 0 ? &stribog_core :

@@ -1,5 +1,5 @@
 /*
- * Hash API Core
+ * Crypto API Core
  *
  * Copyright (c) 2017 Alexei A. Smekalkine
  *
@@ -18,7 +18,7 @@ enum crypto_type {
 	CRYPTO_KEY,
 };
 
-struct hash_core {
+struct crypto_core {
 	void *(*alloc) (void);
 	void (*free) (void *state);
 
@@ -29,13 +29,13 @@ struct hash_core {
 	void (*final) (void *state, const void *in, size_t len, void *out);
 };
 
-struct hash *hash_alloc (const struct hash_core *core);
+struct hash *hash_alloc (const struct crypto_core *core);
 void hash_free (struct hash *h);
 
 size_t hash_get_block_size (const struct hash *h);
 size_t hash_get_hash_size  (const struct hash *h);
 
-int hash_set_algo (struct hash *h, const struct hash_core *core);
+int hash_set_algo (struct hash *h, const struct crypto_core *core);
 int hash_set_key  (struct hash *h, const void *key, size_t len);
 
 /*
@@ -47,7 +47,7 @@ int hash_set_key  (struct hash *h, const void *key, size_t len);
  *
  * Returns number of bytes processed.
  */
-size_t hash_core_process (const struct hash_core *core, void *state,
+size_t hash_core_process (const struct crypto_core *core, void *state,
 			  const void *in, size_t len, void *out);
 size_t hash_data (struct hash *h, const void *in, size_t len, void *out);
 

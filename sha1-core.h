@@ -11,8 +11,8 @@
 #ifndef CRYPTO_SHA1_CORE_H
 #define CRYPTO_SHA1_CORE_H  1
 
-#include "hash-core.h"
+#include "crypto-core.h"
 
-extern const struct hash_core sha1_core;
+extern const struct crypto_core sha1_core;
 
 #endif  /* CRYPTO_SHA1_CORE_H */

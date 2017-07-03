@@ -226,7 +226,7 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 	md5_core_init (state);
 }
 
-const struct hash_core md5_core = {
+const struct crypto_core md5_core = {
 	.alloc		= md5_core_alloc,
 	.free		= free,
 

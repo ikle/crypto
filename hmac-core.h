@@ -10,8 +10,8 @@
 #ifndef CRYPTO_HMAC_CORE_H
 #define CRYPTO_HMAC_CORE_H  1
 
-#include "hash-core.h"
+#include "crypto-core.h"
 
-extern const struct hash_core hmac_core;
+extern const struct crypto_core hmac_core;
 
 #endif  /* CRYPTO_HMAC_CORE_H */

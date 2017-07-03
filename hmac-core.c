@@ -16,11 +16,11 @@
 #include "hmac-core.h"
 
 struct state {
-	const struct hash_core *core;
+	const struct crypto_core *core;
 	void *hi, *ho;
 };
 
-static int set_algo (struct state *o, const struct hash_core *core)
+static int set_algo (struct state *o, const struct crypto_core *core)
 {
 	if (o->core != NULL) {
 		o->core->free (o->hi); o->hi = NULL;
@@ -106,9 +106,9 @@ static int hmac_core_set (void *state, int type, ...)
 
 	switch (type) {
 	case CRYPTO_ALGO: {
-			const struct hash_core *core;
+			const struct crypto_core *core;
 
-			core = va_arg (ap, const struct hash_core *);
+			core = va_arg (ap, const struct crypto_core *);
 			status = set_algo (state, core);
 			break;
 		}
@@ -158,7 +158,7 @@ static void hmac_core_final (void *state, const void *in, size_t len,
 	o->core->final (o->ho, out, hs, out);
 }
 
-const struct hash_core hmac_core = {
+const struct crypto_core hmac_core = {
 	.alloc		= hmac_core_alloc,
 	.free		= hmac_core_free,
 

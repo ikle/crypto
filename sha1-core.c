@@ -200,7 +200,7 @@ static void sha1_core_final (void *state, const void *in, size_t len,
 	sha1_core_init (state);
 }
 
-const struct hash_core sha1_core = {
+const struct crypto_core sha1_core = {
 	.alloc		= sha1_core_alloc,
 	.free		= free,
 

@@ -11,8 +11,8 @@
 #ifndef CRYPTO_MD5_CORE_H
 #define CRYPTO_MD5_CORE_H  1
 
-#include "hash-core.h"
+#include "crypto-core.h"
 
-extern const struct hash_core md5_core;
+extern const struct crypto_core md5_core;
 
 #endif  /* CRYPTO_MD5_CORE_H */
