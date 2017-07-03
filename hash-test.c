@@ -23,7 +23,7 @@ static int error (const char *message, int system)
 
 static int usage (void)
 {
-	fprintf (stderr, "usage:\n\thash-test <algorithm> [[-s] data]\n");
+	fprintf (stderr, "usage:\n\thash-test <algorithm> [-s | data]\n");
 
 	return 1;
 }
@@ -68,9 +68,8 @@ static double ticks_to_secs (double ticks)
 	return ticks / count;
 }
 
-static void test_speed (struct hash *h, const char *string, void *out)
+static void test_speed (struct hash *h, void *out)
 {
-	const size_t len = strlen (string);
 	struct tms t0, t1;
 	int i;
 	double duration;
@@ -78,7 +77,7 @@ static void test_speed (struct hash *h, const char *string, void *out)
 	times (&t0);
 
 	for (i = 0; i < COUNT; ++i)
-		hash_data (h, string, len, out);
+		hash_data (h, NULL, 0, out);
 
 	times (&t1);
 	duration = ticks_to_secs ((double) t1.tms_utime - t0.tms_utime);
@@ -121,12 +120,8 @@ int main (int argc, char *argv[])
 	if ((h = hash_alloc (core)) == NULL)
 		return error ("cannot initialize algorithm", 1);
 
-	if ((arg = get_arg ()) != NULL && strcmp (arg, "-s") == 0) {
-		if ((arg = get_arg ()) == NULL)
-			return usage ();
-
-		test_speed (h, arg, digest);
-	}
+	if ((arg = get_arg ()) != NULL && strcmp (arg, "-s") == 0)
+		test_speed (h, digest);
 	else {
 		if (arg != NULL)
 			hash_data (h, arg, strlen (arg), digest);
