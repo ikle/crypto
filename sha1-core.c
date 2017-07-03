@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -102,6 +103,21 @@ static void *sha1_core_alloc (void)
 	return o;
 }
 
+static int sha1_core_get (const void *state, int type, ...)
+{
+	switch (type) {
+	case CRYPTO_BLOCK_SIZE:	return SHA1_BLOCK_SIZE;
+	case CRYPTO_HASH_SIZE:	return SHA1_HASH_SIZE;
+	}
+
+	return -ENOSYS;
+}
+
+static int sha1_core_set (void *state, int type, ...)
+{
+	return -ENOSYS;
+}
+
 static void load (const u32 *in, u32 *out)
 {
 	size_t i;
@@ -190,6 +206,10 @@ const struct hash_core sha1_core = {
 
 	.alloc		= sha1_core_alloc,
 	.free		= free,
+
+	.get		= sha1_core_get,
+	.set		= sha1_core_set,
+
 	.transform	= sha1_core_transform,
 	.final		= sha1_core_final,
 };
