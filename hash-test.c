@@ -132,10 +132,10 @@ int main (int argc, char *argv[])
 			hash_data (h, arg, strlen (arg), digest);
 		else
 			hash_file (h, stdin, digest);
+
+		show (digest, core->hash_size);
 	}
 
 	hash_free (h);
-
-	show (digest, core->hash_size);
 	return 0;
 }
