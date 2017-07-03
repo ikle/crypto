@@ -28,25 +28,25 @@ static int set_algo (struct state *o, const struct hash_core *core)
 	}
 
 	if (core == NULL)
-		return 0;  /* EINVAL */
+		return -EINVAL;
 
 	o->core = core;
-	return 1;
+	return 0;
 }
 
 static int set_key (struct state *o, const void *key, size_t len)
 {
 	if ((o->core->free (o->hi), o->hi = o->core->alloc ()) == NULL)
-		return 0;  /* PTRERR (o->hi) */
+		return -errno;  /* PTR_ERR (o->hi) */
 
 	if ((o->core->free (o->ho), o->ho = o->core->alloc ()) == NULL)
-		return 0;  /* PTRERR (o->ho) */
+		return -errno;  /* PTR_ERR (o->ho) */
 
 	const size_t bs = o->core->get (o->hi, CRYPTO_BLOCK_SIZE);
 	const size_t hs = o->core->get (o->hi, CRYPTO_HASH_SIZE);
 
 	if (hs > bs)
-		return 0;  /* EINVAL */
+		return -EINVAL;
 
 	u8 block[bs];
 	size_t i;
@@ -68,7 +68,7 @@ static int set_key (struct state *o, const void *key, size_t len)
 
 	o->core->transform (o->hi, block);
 
-	return 1;
+	return 0;
 }
 
 static void *hmac_core_alloc (void)
@@ -86,7 +86,7 @@ static void *hmac_core_alloc (void)
 	return o;
 #else
 	/* temporary MD5("", data) */
-	if (set_algo (o, &md5_core) && set_key (o, NULL, 0))
+	if (set_algo (o, &md5_core) == 0 && set_key (o, NULL, 0) == 0)
 		return o;
 
 	o->core->free (o->hi);
