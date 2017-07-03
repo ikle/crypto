@@ -27,7 +27,7 @@ static int set_algo (struct state *o, const struct hash_core *core)
 		o->core->free (o->ho); o->ho = NULL;
 	}
 
-	if (core == NULL || core->hash_size > core->block_size)
+	if (core == NULL)
 		return 0;  /* EINVAL */
 
 	o->core = core;
@@ -36,15 +36,20 @@ static int set_algo (struct state *o, const struct hash_core *core)
 
 static int set_key (struct state *o, const void *key, size_t len)
 {
-	const size_t bs = o->core->block_size;
-	u8 block[bs];
-	size_t i;
-
 	if ((o->core->free (o->hi), o->hi = o->core->alloc ()) == NULL)
 		return 0;  /* PTRERR (o->hi) */
 
 	if ((o->core->free (o->ho), o->ho = o->core->alloc ()) == NULL)
 		return 0;  /* PTRERR (o->ho) */
+
+	const size_t bs = o->core->get (o->hi, CRYPTO_BLOCK_SIZE);
+	const size_t hs = o->core->get (o->hi, CRYPTO_HASH_SIZE);
+
+	if (hs > bs)
+		return 0;  /* EINVAL */
+
+	u8 block[bs];
+	size_t i;
 
 	memset (block, 0, bs);
 
@@ -133,9 +138,10 @@ static void hmac_core_final (void *state, const void *in, size_t len,
 			     void *out)
 {
 	struct state *o = state;
+	const size_t hs = o->core->get (o->hi, CRYPTO_HASH_SIZE);
 
 	o->core->final (o->hi, in, len, out);
-	o->core->final (o->ho, out, o->core->hash_size, out);
+	o->core->final (o->ho, out, hs, out);
 }
 
 /* MD5-only temporary */
