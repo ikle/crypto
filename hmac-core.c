@@ -144,14 +144,7 @@ static void hmac_core_final (void *state, const void *in, size_t len,
 	o->core->final (o->ho, out, hs, out);
 }
 
-/* MD5-only temporary */
-#define MD5_BLOCK_SIZE	64
-#define MD5_HASH_SIZE	16
-
 const struct hash_core hmac_core = {
-	.block_size	= MD5_BLOCK_SIZE,
-	.hash_size	= MD5_HASH_SIZE,
-
 	.alloc		= hmac_core_alloc,
 	.free		= hmac_core_free,
 

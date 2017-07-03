@@ -227,9 +227,6 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 }
 
 const struct hash_core md5_core = {
-	.block_size	= MD5_BLOCK_SIZE,
-	.hash_size	= MD5_HASH_SIZE,
-
 	.alloc		= md5_core_alloc,
 	.free		= free,
 

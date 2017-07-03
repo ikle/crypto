@@ -201,9 +201,6 @@ static void sha1_core_final (void *state, const void *in, size_t len,
 }
 
 const struct hash_core sha1_core = {
-	.block_size	= SHA1_BLOCK_SIZE,
-	.hash_size	= SHA1_HASH_SIZE,
-
 	.alloc		= sha1_core_alloc,
 	.free		= free,
 

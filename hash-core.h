@@ -19,8 +19,6 @@ enum crypto_type {
 };
 
 struct hash_core {
-	size_t block_size, hash_size;
-
 	void *(*alloc) (void);
 	void (*free) (void *state);
 
