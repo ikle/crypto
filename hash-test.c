@@ -90,7 +90,7 @@ static void hash_file (struct hash *h, FILE *f, void *out)
 	char buf[BUFSIZ];
 	size_t avail, processed;
 
-	for (avail = 0; !feof (stdin);) {
+	for (avail = 0; !feof (f);) {
 		avail += fread (buf + avail, 1, sizeof (buf) - avail, f);
 		avail -= (processed = hash_data (h, buf, avail, NULL));
 		memmove (buf, buf + processed, avail);
