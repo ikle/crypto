@@ -36,6 +36,16 @@ void hash_free (struct hash *o)
 	free (o);
 }
 
+size_t hash_get_block_size (const struct hash *h)
+{
+	return h->core->block_size;
+}
+
+size_t hash_get_hash_size (const struct hash *h)
+{
+	return h->core->hash_size;
+}
+
 /*
  * 1. Process integer number of input blocks.
  * 2. If out != NULL then process last partial block and write final hash

@@ -11,17 +11,31 @@
 
 #include <stddef.h>
 
+enum crypto_type {
+	CRYPTO_BLOCK_SIZE,
+	CRYPTO_HASH_SIZE,
+	CRYPTO_ALGO,
+	CRYPTO_KEY,
+};
+
 struct hash_core {
 	size_t block_size, hash_size;
 
 	void *(*alloc) (void);
 	void (*free) (void *state);
+
+	int (*get) (const void *state, int type, ...);
+	int (*set) (void *state, int type, ...);
+
 	void (*transform) (void *state, const void *block);
 	void (*final) (void *state, const void *in, size_t len, void *out);
 };
 
 struct hash *hash_alloc (const struct hash_core *core);
 void hash_free (struct hash *h);
+
+size_t hash_get_block_size (const struct hash *h);
+size_t hash_get_hash_size  (const struct hash *h);
 
 /*
  * 1. Process integer number of input blocks.
