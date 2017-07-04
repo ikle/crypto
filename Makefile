@@ -19,7 +19,7 @@ test: hash-test cipher-test
 	expect selftest
 
 libcrypto.a: core.o md5-core.o sha1-core.o hash-core.o stribog-core.o hmac-core.o
-libcrypto.a: kuznechik-core.o
+libcrypto.a: kuznechik-core.o magma-core.o
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
