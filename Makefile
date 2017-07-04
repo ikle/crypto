@@ -1,7 +1,7 @@
 AR ?= ar
 RANLIB ?= ranlib
 
-TARGETS = libcrypto.a hash-test
+TARGETS = libcrypto.a hash-test cipher-test
 CFLAGS = -O6
 
 all: $(TARGETS)
@@ -24,3 +24,4 @@ libcrypto.a: kuznechik-core.o
 	$(RANLIB) $@
 
 hash-test: libcrypto.a
+cipher-test: libcrypto.a
