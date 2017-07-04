@@ -1,10 +1,9 @@
 /*
- * NIST FIPS-180-4: Secure Hash Standard (SHS)
+ * Secure Hash Standard Algorithm
  *
- * SHA1 Core
+ * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Copyright (c) 2017 Alexei A. Smekalkine
- *
+ * Standards: FIPS-180-4
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
