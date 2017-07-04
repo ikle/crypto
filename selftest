@@ -46,14 +46,20 @@ expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035f
 spawn ./hash-test hmac-md5 -s ""
 expect_hash 74e6f7298a9c2d168935f58c001bad88
 
+# R 34.12-2015 A.1, R 34.13-2015 A.1.1
 spawn ./cipher-test kuznechik 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef encode 1122334455667700ffeeddccbbaa9988
 expect_hash 7f679d90bebc24305a468d42b9d4edcd
 
 spawn ./cipher-test kuznechik 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef decode 7f679d90bebc24305a468d42b9d4edcd
 expect_hash 1122334455667700ffeeddccbbaa9988
 
+# R 34.12-2015 A.2
 spawn ./cipher-test magma ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encode fedcba9876543210
 expect_hash 4ee901e5c2d8ca3d
 
 spawn ./cipher-test magma ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff decode 4ee901e5c2d8ca3d
 expect_hash fedcba9876543210
+
+# R 34.13-2015 A.2.1
+spawn ./cipher-test magma ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encode 92def06b3c130a59
+expect_hash 2b073f0494f372a0
