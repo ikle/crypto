@@ -51,3 +51,9 @@ expect_hash 7f679d90bebc24305a468d42b9d4edcd
 
 spawn ./cipher-test kuznechik 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef decode 7f679d90bebc24305a468d42b9d4edcd
 expect_hash 1122334455667700ffeeddccbbaa9988
+
+spawn ./cipher-test magma ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encode fedcba9876543210
+expect_hash 4ee901e5c2d8ca3d
+
+spawn ./cipher-test magma ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff decode 4ee901e5c2d8ca3d
+expect_hash fedcba9876543210
