@@ -5,6 +5,7 @@
 #include "crypto-core.h"
 
 #include "kuznechik-core.h"
+#include "magma-core.h"
 
 static int error (const char *message, int system)
 {
@@ -59,6 +60,7 @@ static const struct crypto_core *find_core (const char *name)
 {
 	const struct crypto_core *core =
 		strcmp (name, "kuznechik") == 0 ? &kuznechik_core :
+		strcmp (name, "magma")     == 0 ? &magma_core :
 		NULL;
 
 	return core;
