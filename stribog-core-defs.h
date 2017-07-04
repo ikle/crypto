@@ -1,10 +1,9 @@
 /*
- * GOST R 34.11-2012
+ * Stribog Hash Algorithm
  *
- * Stribog Core
+ * Copyright (c) 2013-2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Copyright (c) 2013-2017 Alexei A. Smekalkine
- *
+ * Standards: GOST R 34.11-2012
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
