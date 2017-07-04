@@ -1,7 +1,7 @@
 /*
  * HMAC: The Keyed-Hash Message Authentication Code
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine
+ * Copyright (c) 2011-2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 2104, FIPS 198-1
  * SPDX-License-Identifier: BSD-2-Clause
