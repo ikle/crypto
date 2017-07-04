@@ -37,9 +37,12 @@ expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
 spawn ./hash-test sha1 -s abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
 expect_hash 84983e441c3bd26ebaae4aa1f95129e5e54670f1
 
+# R 34.11-2012 A.1
 spawn ./hash-test stribog -s 012345678901234567890123456789012345678901234567890123456789012
 expect_hash 1b54d01a4af5b9d5cc3d86d68d285462b19abc2475222f35c085122be4ba1ffa00ad30f8767b3a82384c6574f024c311e2a481332b08ef7f41797891c1646f48
 
+# R 34.11-2012 A.2
+# M = LE (CP-1251 ("Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы"))
 spawn ./hash-test stribog doc/stribog-test-2.bin
 expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
 
