@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Standards: FIPS-180-4
+ * Standard: FIPS-180-4
  * SPDX-License-Identifier: BSD-2-Clause
  */
 

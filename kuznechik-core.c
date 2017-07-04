@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2016-2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Standards: GOST R 34.12-2015
+ * Standard: GOST R 34.12-2015
  * SPDX-License-Identifier: BSD-2-Clause
  */
 

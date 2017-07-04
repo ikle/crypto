@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
- * Standards: RFC 1321
+ * Standard: RFC 1321
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
