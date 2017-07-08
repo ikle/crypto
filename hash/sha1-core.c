@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core.h"
-#include "sha1-core.h"
+#include <core.h>
+#include <hash/sha1.h>
 
 #define SHA1_WORD_SIZE	4
 #define SHA1_WORD_COUNT	16

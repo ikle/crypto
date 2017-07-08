@@ -10,7 +10,8 @@
 #include <errno.h>
 #include <string.h>
 
-#include "kuznechik-core.h"
+#include <cipher/kuznechik.h>
+
 #include "kuznechik-defs.h"
 
 struct state {

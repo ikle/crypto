@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core.h"
-#include "stribog-core.h"
+#include <hash/stribog.h>
+
 #include "stribog-core-defs.h"
 
 /* use pseudo words to optimize endian conversions */

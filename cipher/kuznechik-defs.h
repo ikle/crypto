@@ -10,7 +10,7 @@
 #ifndef CRYPTO_KUZNECHIK_DEFS_H
 #define CRYPTO_KUZNECHIK_DEFS_H  1
 
-#include "core.h"
+#include <core.h>
 
 #ifdef __SSE__
 #include <xmmintrin.h>

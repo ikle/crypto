@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core.h"
-#include "hmac-core.h"
+#include <core.h>
+#include <mac/hmac.h>
 
 struct state {
 	const struct crypto_core *core;

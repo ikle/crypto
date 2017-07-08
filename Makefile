@@ -2,8 +2,7 @@ AR ?= ar
 RANLIB ?= ranlib
 
 TARGETS = libcrypto.a hash-test cipher-test
-CFLAGS  = -O6
-CFLAGS += -I"$(CURDIR)" -I"$(CURDIR)"/hash -I"$(CURDIR)"/cipher -I"$(CURDIR)"/mac
+CFLAGS = -O6 -I"$(CURDIR)"/include
 
 all: $(TARGETS)
 

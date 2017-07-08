@@ -11,8 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core.h"
-#include "md5-core.h"
+#include <core.h>
+#include <hash/md5.h>
 
 #define MD5_WORD_SIZE	4
 #define MD5_WORD_COUNT	16

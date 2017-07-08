@@ -4,8 +4,8 @@
 
 #include "crypto-core.h"
 
-#include "kuznechik-core.h"
-#include "magma-core.h"
+#include <cipher/kuznechik.h>
+#include <cipher/magma.h>
 
 static int error (const char *message, int system)
 {

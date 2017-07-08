@@ -11,7 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "magma-core.h"
+#include <cipher/magma.h>
+
 #include "magma-defs.h"
 
 struct state {

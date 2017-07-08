@@ -10,7 +10,7 @@
 #ifndef CRYPTO_STRIBOG_DEFS_H
 #define CRYPTO_STRIBOG_DEFS_H  1
 
-#include "core.h"
+#include <core.h>
 
 typedef struct {
 	union {

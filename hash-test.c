@@ -4,11 +4,11 @@
 
 #include "crypto-core.h"
 
-#include "md5-core.h"
-#include "sha1-core.h"
-#include "stribog-core.h"
+#include <hash/md5.h>
+#include <hash/sha1.h>
+#include <hash/stribog.h>
 
-#include "hmac-core.h"
+#include <mac/hmac.h>
 
 static int error (const char *message, int system)
 {
