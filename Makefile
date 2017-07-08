@@ -3,12 +3,12 @@ RANLIB ?= ranlib
 
 TARGETS = libcrypto.a hash-test cipher-test
 CFLAGS  = -O6
-CFLAGS += -I"$(CURDIR)" -I"$(CURDIR)"/hash
+CFLAGS += -I"$(CURDIR)" -I"$(CURDIR)"/hash -I"$(CURDIR)"/cipher
 
 all: $(TARGETS)
 
 clean:
-	rm -f *.o hash/*.o $(TARGETS)
+	rm -f *.o hash/*.o cipher/*.o $(TARGETS)
 
 PREFIX ?= /usr/local
 
@@ -21,7 +21,7 @@ test: hash-test cipher-test
 
 libcrypto.a: core.o hash-core.o hmac-core.o
 libcrypto.a: hash/md5-core.o hash/sha1-core.o hash/stribog-core.o
-libcrypto.a: kuznechik-core.o magma-core.o
+libcrypto.a: cipher/kuznechik-core.o cipher/magma-core.o
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
