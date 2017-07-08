@@ -72,7 +72,7 @@ size_t hash_core_process (const struct crypto_core *core, void *state,
 	const char *data = in;
 	size_t tail;
 
-	for (tail = len; tail >= bs; data += bs, tail -= bs)
+	for (tail = len; tail > bs; data += bs, tail -= bs)
 		core->transform (state, data);
 
 	if (out == NULL)

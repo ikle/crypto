@@ -248,6 +248,11 @@ static void stribog_core_final (void *state, const void *in, size_t len,
 	u8 *const end = head + sizeof (block);
 	u512 bits = {};
 
+	if (len == STRIBOG_BLOCK_SIZE) {
+		stribog_core_transform (state, in);
+		len = 0;
+	}
+
 	memcpy (block, in, len);
 
 	/* pad message */

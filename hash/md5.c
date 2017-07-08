@@ -206,6 +206,11 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 	u8 *const end = head + sizeof (block);
 	u8 *const num = end - 8;
 
+	if (len == MD5_BLOCK_SIZE) {
+		transform (state, in, MD5_BLOCK_SIZE);
+		len = 0;
+	}
+
 	memcpy (block, in, len);
 	*one = 0x80;
 
