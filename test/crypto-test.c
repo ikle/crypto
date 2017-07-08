@@ -73,7 +73,10 @@ static void set_key (const struct crypto_core *core, void *o, char *key)
 {
 	size_t ks;
 
-	if ((ks = hex2blob (key)) == 0 ||
+	errno = 0;
+	ks = hex2blob (key);
+
+	if ((ks == 0 && errno != 0) ||
 	    (errno = -core->set (o, CRYPTO_KEY, key, ks)) != 0)
 		error ("set key", 1);
 }
