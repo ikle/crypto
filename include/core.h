@@ -33,8 +33,6 @@ typedef uint64_t u64;
 
 #endif
 
-void explicit_bzero (void *data, size_t len);
-
 #include <stdarg.h>
 
 static void va_put_size (va_list ap, size_t size)

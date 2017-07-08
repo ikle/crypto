@@ -24,7 +24,7 @@ install: $(TARGETS)
 test: $(TESTS)
 	(cd $@ && expect selftest)
 
-libcrypto.a: core.o hash-core.o $(OBJECTS)
+libcrypto.a: hash-core.o $(OBJECTS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
