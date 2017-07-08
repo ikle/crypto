@@ -66,6 +66,11 @@ static int set_algo (struct state *o, const struct crypto_core *algo)
 
 	const size_t bs = algo->get (o->cipher, CRYPTO_BLOCK_SIZE);
 
+	if (bs < 8) {
+		error = -EINVAL;  /* we wont support too weak ciphers */
+		goto no_bs;
+	}
+
 	if ((o->iv = calloc (1, bs)) == NULL) {
 		error = -errno;  /* PTR_ERR (o->iv) */
 		goto no_iv;
@@ -74,6 +79,7 @@ static int set_algo (struct state *o, const struct crypto_core *algo)
 	o->algo = algo;
 	return 0;
 no_iv:
+no_bs:
 	algo->free (o->cipher);
 no_cipher:
 	return error;
