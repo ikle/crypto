@@ -9,7 +9,7 @@
 
 static int error (const char *message, int system)
 {
-	fprintf (stderr, "hash-test: ");
+	fprintf (stderr, "cipher-test: ");
 
 	if (system)
 		perror (message);
