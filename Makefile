@@ -5,7 +5,7 @@ TARGETS = libcrypto.a
 CFLAGS = -O6 -I"$(CURDIR)"/include
 
 OBJECTS = $(patsubst %.c,%.o, $(wildcard hash/*.c cipher/*.c mac/*.c))
-TESTS = hash-test cipher-test
+TESTS = $(patsubst %.c,%, $(wildcard test/*.c))
 
 all: $(TARGETS)
 
@@ -21,7 +21,7 @@ install: $(TARGETS)
 	install -s -m 0755 $^ $(DESTDIR)/$(PREFIX)/bin
 
 test: $(TESTS)
-	expect selftest
+	(cd $@ && expect selftest)
 
 libcrypto.a: core.o hash-core.o $(OBJECTS)
 	$(AR) rc $@ $^
