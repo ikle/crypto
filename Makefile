@@ -4,10 +4,12 @@ RANLIB ?= ranlib
 TARGETS = libcrypto.a hash-test cipher-test
 CFLAGS = -O6 -I"$(CURDIR)"/include
 
+OBJECTS = $(patsubst %.c,%.o, $(wildcard hash/*.c cipher/*.c mac/*.c))
+
 all: $(TARGETS)
 
 clean:
-	rm -f *.o hash/*.o cipher/*.o mac/*.o $(TARGETS)
+	rm -f *.o $(OBJECTS) $(TARGETS)
 
 PREFIX ?= /usr/local
 
@@ -18,10 +20,7 @@ install: $(TARGETS)
 test: hash-test cipher-test
 	expect selftest
 
-libcrypto.a: core.o hash-core.o
-libcrypto.a: hash/md5-core.o hash/sha1-core.o hash/stribog-core.o
-libcrypto.a: cipher/kuznechik-core.o cipher/magma-core.o
-libcrypto.a: mac/hmac-core.o
+libcrypto.a: core.o hash-core.o $(OBJECTS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
