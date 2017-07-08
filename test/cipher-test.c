@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <crypto-core.h>
@@ -7,7 +8,7 @@
 #include <cipher/kuznechik.h>
 #include <cipher/magma.h>
 
-static int error (const char *message, int system)
+static void error (const char *message, int system)
 {
 	fprintf (stderr, "cipher-test: ");
 
@@ -16,7 +17,7 @@ static int error (const char *message, int system)
 	else
 		fprintf (stderr, "%s\n", message);
 
-	return 1;
+	exit (1);
 }
 
 static void show (const unsigned char *data, size_t len)
@@ -48,12 +49,12 @@ static size_t hex2blob (char *s)
 	return i;
 }
 
-static int usage (void)
+static void usage (void)
 {
 	fprintf (stderr, "usage:\n\tcipher-test <algorithm> <key> "
 				"(encode | decode) <block>\n");
 
-	return 1;
+	exit (1);
 }
 
 static const struct crypto_core *find_core (const char *name)
@@ -74,30 +75,30 @@ int main (int argc, char *argv[])
 	size_t ks, bs;  /* input key and block sizes */
 
 	if (argc != 5)
-		return usage ();
+		usage ();
 
 	if ((core = find_core (argv[1])) == NULL)
-		return error ("cannot find cipher", 0);
+		error ("cannot find cipher", 0);
 
 	if ((o = core->alloc ()) == NULL)
-		return error ("cannot initialize algorithm", 1);
+		error ("cannot initialize algorithm", 1);
 
 	if ((ks = hex2blob (key = argv[2])) == 0 ||
 	    (errno = -core->set (o, CRYPTO_KEY, key, ks)) != 0)
-		return error ("key", 1);
+		error ("key", 1);
 
 	if ((bs = hex2blob (block = argv[4])) == 0)
-		return error ("block", 1);
+		error ("block", 1);
 
 	if (core->get (o, CRYPTO_BLOCK_SIZE) != bs)
-		return error ("wrong block length", 0);
+		error ("wrong block length", 0);
 
 	if (strcmp (op = argv[3], "encode") == 0)
 		core->encrypt (o, block, block);
 	else if (strcmp (op, "decode") == 0)
 		core->decrypt (o, block, block);
 	else
-		return error ("wrong operation", 0);
+		error ("wrong operation", 0);
 
 	show (block, bs);
 	core->free (o);
