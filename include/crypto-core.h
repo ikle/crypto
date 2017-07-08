@@ -16,6 +16,7 @@ enum crypto_type {
 	CRYPTO_HASH_SIZE,
 	CRYPTO_ALGO,
 	CRYPTO_KEY,
+	CRYPTO_IV,
 };
 
 struct crypto_core {
