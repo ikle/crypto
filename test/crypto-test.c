@@ -5,8 +5,15 @@
 
 #include <crypto-core.h>
 
+#include <hash/md5.h>
+#include <hash/sha1.h>
+#include <hash/stribog.h>
+
 #include <cipher/kuznechik.h>
 #include <cipher/magma.h>
+
+#include <mac/hmac.h>
+#include <mac/cmac.h>
 
 static void error (const char *message, int system)
 {
@@ -62,11 +69,28 @@ static void usage (void)
 static const struct crypto_core *find_core (const char *name)
 {
 	const struct crypto_core *core =
+		strcmp (name, "md5")       == 0 ? &md5_core :
+		strcmp (name, "sha1")      == 0 ? &sha1_core :
+		strcmp (name, "stribog")   == 0 ? &stribog_core :
 		strcmp (name, "kuznechik") == 0 ? &kuznechik_core :
 		strcmp (name, "magma")     == 0 ? &magma_core :
+		strcmp (name, "hmac")      == 0 ? &hmac_core :
+		strcmp (name, "cmac")      == 0 ? &cmac_core :
 		NULL;
 
 	return core;
+}
+
+static void set_algo (const struct crypto_core *core, void *o,
+		      const char *name)
+{
+	const struct crypto_core *algo;
+
+	if ((algo = find_core (name)) == NULL)
+		error ("unknown algorithm", 0);
+
+	if ((errno = -core->set (o, CRYPTO_ALGO, algo)) != 0)
+		error ("set algo", 1);
 }
 
 static void set_key (const struct crypto_core *core, void *o, char *key)
@@ -92,6 +116,18 @@ static void *get_block (const struct crypto_core *core, void *o, void *arg)
 		error ("wrong block size", 0);
 
 	return arg;
+}
+
+static void hash (const struct crypto_core *core, void *o, char *data)
+{
+	const size_t hs = core->get (o, CRYPTO_HASH_SIZE);
+	char hash[hs];
+
+	if (data == NULL)
+		error ("data required", 0);
+
+	hash_core_process (core, o, data, strlen (data), hash);
+	show (hash, hs);
 }
 
 static void encrypt (const struct crypto_core *core, void *o, char *block)
@@ -128,9 +164,21 @@ int main (int argc, char *argv[])
 		error ("cannot initialize algorithm", 1);
 
 	for (argv += 2; (op = argv[0]) != NULL; ++argv) {
+		if (strcmp (op, "algo") == 0) {
+			++argv;
+			set_algo (core, o, argv[0]);
+			continue;
+		}
+
 		if (strcmp (op, "key") == 0) {
 			++argv;
 			set_key (core, o, argv[0]);
+			continue;
+		}
+
+		if (strcmp (op, "hash") == 0) {
+			++argv;
+			hash (core, o, argv[0]);
 			continue;
 		}
 
