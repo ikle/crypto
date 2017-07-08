@@ -49,6 +49,18 @@ expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035f
 spawn ./crypto-test hmac algo md5 key "" hash ""
 expect_hash 74e6f7298a9c2d168935f58c001bad88
 
+# RFC 2104 Sample Code, Test Vector #1
+spawn ./crypto-test hmac algo md5 key 0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b hash "Hi There"
+expect_hash 9294727a3638bb1c13f48ef8158bfc9d
+
+# RFC 2104 Sample Code, Test Vector #2, key = "Jefe"
+spawn ./crypto-test hmac algo md5 key 4a656665 hash "what do ya want for nothing?"
+expect_hash 750c783e6ab0b503eaa86e310a5db738
+
+# RFC 2104 Sample Code, Test Vector #3
+spawn ./crypto-test hmac algo md5 key AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA hash-blob DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+expect_hash 56be34521d144c88dbb8c733f0e8b3f6
+
 # R 34.12-2015 A.1, R 34.13-2015 A.1.1
 spawn ./crypto-test kuznechik key 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef encrypt 1122334455667700ffeeddccbbaa9988
 expect_hash 7f679d90bebc24305a468d42b9d4edcd
