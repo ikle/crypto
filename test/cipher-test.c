@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "crypto-core.h"
+#include <crypto-core.h>
 
 #include <cipher/kuznechik.h>
 #include <cipher/magma.h>
