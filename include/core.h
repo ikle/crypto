@@ -74,6 +74,16 @@ static u64 read_le64 (const void *from)
 	       (e << 32) | (f << 40) | (g << 48) | (h << 56);
 }
 
+static u64 read_be64 (const void *from)
+{
+	const u8 *in = from;
+	const u64 a = in[0], b = in[1], c = in[2], d = in[3],
+		  e = in[4], f = in[5], g = in[6], h = in[7];
+
+	return         h | (g <<  8) | (f << 16) | (e << 24) |
+	       (d << 32) | (c << 40) | (b << 48) | (a << 56);
+}
+
 static void write_le32 (u32 x, void *to)
 {
 	u8 *out = to;

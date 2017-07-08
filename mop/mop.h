@@ -16,7 +16,7 @@
 struct state {
 	const struct crypto_core *algo;
 	void *cipher;
-	void *iv;
+	u8 *iv;
 };
 
 void *mop_alloc (void);
