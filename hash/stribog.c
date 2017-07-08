@@ -13,7 +13,7 @@
 
 #include <hash/stribog.h>
 
-#include "stribog-core-defs.h"
+#include "stribog-defs.h"
 
 /* use pseudo words to optimize endian conversions */
 #define STRIBOG_WORD_SIZE	8
