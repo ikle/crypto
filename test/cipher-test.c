@@ -52,7 +52,7 @@ static size_t hex2blob (char *s)
 static void usage (void)
 {
 	fprintf (stderr, "usage:\n\tcipher-test <algorithm> <key> "
-				"(encode | decode) <block>\n");
+				"(encrypt | decrypt) <block>\n");
 
 	exit (1);
 }
@@ -124,9 +124,9 @@ int main (int argc, char *argv[])
 
 	set_key (core, o, argv[2]);
 
-	if (strcmp (op = argv[3], "encode") == 0)
+	if (strcmp (op = argv[3], "encrypt") == 0)
 		encrypt (core, o, argv[4]);
-	else if (strcmp (op, "decode") == 0)
+	else if (strcmp (op, "decrypt") == 0)
 		decrypt (core, o, argv[4]);
 	else
 		error ("wrong operation", 0);
