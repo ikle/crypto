@@ -67,12 +67,51 @@ static const struct crypto_core *find_core (const char *name)
 	return core;
 }
 
+static void set_key (const struct crypto_core *core, void *o, char *key)
+{
+	size_t ks;
+
+	if ((ks = hex2blob (key)) == 0 ||
+	    (errno = -core->set (o, CRYPTO_KEY, key, ks)) != 0)
+		error ("set key", 1);
+}
+
+static void *get_block (const struct crypto_core *core, void *o, void *arg)
+{
+	const size_t bs = core->get (o, CRYPTO_BLOCK_SIZE);
+
+	if (arg == NULL)
+		error ("block required", 0);
+
+	if (hex2blob (arg) != bs)
+		error ("wrong block size", 0);
+
+	return arg;
+}
+
+static void encrypt (const struct crypto_core *core, void *o, char *block)
+{
+	const size_t bs = core->get (o, CRYPTO_BLOCK_SIZE);
+
+	block = get_block (core, o, block);
+	core->encrypt (o, block, block);
+	show (block, bs);
+}
+
+static void decrypt (const struct crypto_core *core, void *o, char *block)
+{
+	const size_t bs = core->get (o, CRYPTO_BLOCK_SIZE);
+
+	block = get_block (core, o, block);
+	core->decrypt (o, block, block);
+	show (block, bs);
+}
+
 int main (int argc, char *argv[])
 {
 	const struct crypto_core *core;
 	void *o;
-	void *key, *op, *block;
-	size_t ks, bs;  /* input key and block sizes */
+	void *op;
 
 	if (argc != 5)
 		usage ();
@@ -83,24 +122,15 @@ int main (int argc, char *argv[])
 	if ((o = core->alloc ()) == NULL)
 		error ("cannot initialize algorithm", 1);
 
-	if ((ks = hex2blob (key = argv[2])) == 0 ||
-	    (errno = -core->set (o, CRYPTO_KEY, key, ks)) != 0)
-		error ("key", 1);
-
-	if ((bs = hex2blob (block = argv[4])) == 0)
-		error ("block", 1);
-
-	if (core->get (o, CRYPTO_BLOCK_SIZE) != bs)
-		error ("wrong block length", 0);
+	set_key (core, o, argv[2]);
 
 	if (strcmp (op = argv[3], "encode") == 0)
-		core->encrypt (o, block, block);
+		encrypt (core, o, argv[4]);
 	else if (strcmp (op, "decode") == 0)
-		core->decrypt (o, block, block);
+		decrypt (core, o, argv[4]);
 	else
 		error ("wrong operation", 0);
 
-	show (block, bs);
 	core->free (o);
 	return 0;
 }
