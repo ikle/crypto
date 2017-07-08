@@ -9,6 +9,8 @@ TESTS = hash-test cipher-test
 
 all: $(TARGETS)
 
+.PHONY: clean install test
+
 clean:
 	rm -f *.o $(OBJECTS) $(TESTS) $(TARGETS)
 
