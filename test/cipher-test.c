@@ -51,8 +51,10 @@ static size_t hex2blob (char *s)
 
 static void usage (void)
 {
-	fprintf (stderr, "usage:\n\tcipher-test <algorithm> key <key> "
-				"(encrypt | decrypt) <block>\n");
+	fprintf (stderr, "usage:\n\tcipher-test <algorithm> ["
+				"key <key> | "
+				"(encrypt | decrypt) <block> "
+				"] ...\n");
 
 	exit (1);
 }
@@ -113,7 +115,7 @@ int main (int argc, char *argv[])
 	void *o;
 	void *op;
 
-	if (argc != 6)
+	if (argc < 2)
 		usage ();
 
 	if ((core = find_core (argv[1])) == NULL)
@@ -122,17 +124,27 @@ int main (int argc, char *argv[])
 	if ((o = core->alloc ()) == NULL)
 		error ("cannot initialize algorithm", 1);
 
-	if (strcmp (op = argv[2], "key") == 0) {
-		++argv;
-		set_key (core, o, argv[2]);
-	}
+	for (argv += 2; (op = argv[0]) != NULL; ++argv) {
+		if (strcmp (op, "key") == 0) {
+			++argv;
+			set_key (core, o, argv[0]);
+			continue;
+		}
 
-	if (strcmp (op = argv[3], "encrypt") == 0)
-		encrypt (core, o, argv[4]);
-	else if (strcmp (op, "decrypt") == 0)
-		decrypt (core, o, argv[4]);
-	else
+		if (strcmp (op, "encrypt") == 0) {
+			++argv;
+			encrypt (core, o, argv[0]);
+			continue;
+		}
+
+		if (strcmp (op, "decrypt") == 0) {
+			++argv;
+			decrypt (core, o, argv[0]);
+			continue;
+		}
+
 		error ("wrong operation", 0);
+	}
 
 	core->free (o);
 	return 0;
