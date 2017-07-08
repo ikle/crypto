@@ -51,7 +51,7 @@ static size_t hex2blob (char *s)
 
 static void usage (void)
 {
-	fprintf (stderr, "usage:\n\tcipher-test <algorithm> <key> "
+	fprintf (stderr, "usage:\n\tcipher-test <algorithm> key <key> "
 				"(encrypt | decrypt) <block>\n");
 
 	exit (1);
@@ -113,7 +113,7 @@ int main (int argc, char *argv[])
 	void *o;
 	void *op;
 
-	if (argc != 5)
+	if (argc != 6)
 		usage ();
 
 	if ((core = find_core (argv[1])) == NULL)
@@ -122,7 +122,10 @@ int main (int argc, char *argv[])
 	if ((o = core->alloc ()) == NULL)
 		error ("cannot initialize algorithm", 1);
 
-	set_key (core, o, argv[2]);
+	if (strcmp (op = argv[2], "key") == 0) {
+		++argv;
+		set_key (core, o, argv[2]);
+	}
 
 	if (strcmp (op = argv[3], "encrypt") == 0)
 		encrypt (core, o, argv[4]);
