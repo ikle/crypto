@@ -4,15 +4,9 @@
 #include <crypto/types.h>
 
 #ifdef __GNUC__
-
-#define noinline __attribute__((noinline))
 #define barrier_data(p)  __asm__ __volatile__ ("" :: "r"(p) : "memory")
-
 #else
-
-#define noinline
 #define barrier_data(p)
-
 #endif
 
 /* allows 0 <= count < 32 */
