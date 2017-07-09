@@ -1,14 +1,8 @@
 #ifndef CRYPTO_CORE_H
 #define CRYPTO_CORE_H  1
 
-
-#include <stddef.h>
-#include <stdint.h>
+#include <crypto/types.h>
 #include <errno.h>
-
-typedef uint8_t	 u8;
-typedef uint32_t u32;
-typedef uint64_t u64;
 
 /*
  * container_of (ptr, type, member) -- case a member of a structure out to
