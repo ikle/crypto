@@ -101,6 +101,9 @@ int mop_get (const void *state, int type, ...)
 {
 	const struct state *o = state;
 
+	if (type == CRYPTO_HASH_SIZE)
+		type = CRYPTO_BLOCK_SIZE;
+
 	return o->algo->get (o->cipher, type);
 }
 
