@@ -25,12 +25,4 @@ void mop_free (void *state);
 int mop_get (const void *state, int type, ...);
 int mop_set (void *state, int type, ...);
 
-static void xor_block (const u8 *a, const u8 *b, u8 *out, size_t count)
-{
-	size_t i;
-
-	for (i = 0; i < count; ++i)
-		out[i] = a[i] ^ b[i];
-}
-
 #endif  /* CRYPTO_MOP_CORE_H */

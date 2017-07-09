@@ -8,6 +8,7 @@
  */
 
 #include <string.h>
+#include <crypto/utils.h>
 #include <mac/cmac.h>
 
 #include "../mop/mop.h"

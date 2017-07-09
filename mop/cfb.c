@@ -8,6 +8,7 @@
  */
 
 #include <string.h>
+#include <crypto/utils.h>
 #include <mop/cfb.h>
 
 #include "mop.h"
