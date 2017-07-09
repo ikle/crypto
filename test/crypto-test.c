@@ -118,6 +118,20 @@ static void *get_block (const struct crypto_core *core, void *o, void *arg)
 	return arg;
 }
 
+static void hash_blob (const struct crypto_core *core, void *o, char *data)
+{
+	const size_t hs = core->get (o, CRYPTO_HASH_SIZE);
+	char hash[hs];
+	size_t len;
+
+	if (data == NULL)
+		error ("data required", 0);
+
+	len = hex2blob (data);
+	hash_core_process (core, o, data, len, hash);
+	show (hash, hs);
+}
+
 static void hash (const struct crypto_core *core, void *o, char *data)
 {
 	const size_t hs = core->get (o, CRYPTO_HASH_SIZE);
@@ -179,6 +193,12 @@ int main (int argc, char *argv[])
 		if (strcmp (op, "hash") == 0) {
 			++argv;
 			hash (core, o, argv[0]);
+			continue;
+		}
+
+		if (strcmp (op, "hash-blob") == 0) {
+			++argv;
+			hash_blob (core, o, argv[0]);
 			continue;
 		}
 
