@@ -162,6 +162,14 @@ static void decrypt (const struct crypto_core *core, void *o, char *block)
 	show (block, bs);
 }
 
+#define test_cmd(name, fn)  {			\
+		if (strcmp (op, name) == 0) {	\
+			++argv;			\
+			fn (core, o, argv[0]);	\
+			continue;		\
+		}				\
+	}
+
 int main (int argc, char *argv[])
 {
 	const struct crypto_core *core;
@@ -178,41 +186,12 @@ int main (int argc, char *argv[])
 		error ("cannot initialize algorithm", 1);
 
 	for (argv += 2; (op = argv[0]) != NULL; ++argv) {
-		if (strcmp (op, "algo") == 0) {
-			++argv;
-			set_algo (core, o, argv[0]);
-			continue;
-		}
-
-		if (strcmp (op, "key") == 0) {
-			++argv;
-			set_key (core, o, argv[0]);
-			continue;
-		}
-
-		if (strcmp (op, "hash") == 0) {
-			++argv;
-			hash (core, o, argv[0]);
-			continue;
-		}
-
-		if (strcmp (op, "hash-blob") == 0) {
-			++argv;
-			hash_blob (core, o, argv[0]);
-			continue;
-		}
-
-		if (strcmp (op, "encrypt") == 0) {
-			++argv;
-			encrypt (core, o, argv[0]);
-			continue;
-		}
-
-		if (strcmp (op, "decrypt") == 0) {
-			++argv;
-			decrypt (core, o, argv[0]);
-			continue;
-		}
+		test_cmd ("algo",	set_algo)
+		test_cmd ("key",	set_key)
+		test_cmd ("hash",	hash)
+		test_cmd ("hash-blob",	hash_blob)
+		test_cmd ("encrypt",	encrypt)
+		test_cmd ("decrypt",	decrypt)
 
 		error ("wrong operation", 0);
 	}
