@@ -45,8 +45,8 @@ int hash_set_key  (struct hash *h, const void *key, size_t len);
 
 /*
  * 1. Process integer number of input blocks.
- * 2. If out != NULL then process last partial block and write final hash
- *    value to out.
+ * 2. If out != NULL then process last possiby partial block and write
+ *    final hash value to out.
  *
  * This function never stores input plain text data in context.
  *
