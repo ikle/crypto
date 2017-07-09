@@ -8,6 +8,7 @@
  */
 
 #include <errno.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include <cipher/kuznechik.h>
