@@ -11,7 +11,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <core.h>
+#include <crypto/types.h>
+#include <crypto/endian.h>
+#include <crypto/utils.h>
+
 #include <hash/sha1.h>
 
 #define SHA1_WORD_SIZE	4

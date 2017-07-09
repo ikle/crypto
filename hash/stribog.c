@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/endian.h>
+#include <crypto/utils.h>
+
 #include <hash/stribog.h>
 
 #include "stribog-defs.h"

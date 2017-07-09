@@ -10,7 +10,7 @@
 #ifndef CRYPTO_MOP_CORE_H
 #define CRYPTO_MOP_CORE_H  1
 
-#include <core.h>
+#include <crypto/types.h>
 #include <crypto-core.h>
 
 struct state {

@@ -10,7 +10,7 @@
 #ifndef CRYPTO_MAGMA_DEFS_H
 #define CRYPTO_MAGMA_DEFS_H  1
 
-#include <core.h>
+#include <crypto/types.h>
 
 struct pi {
 	u8 pi[8][16];

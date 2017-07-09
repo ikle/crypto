@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <core.h>
+#include <crypto/types.h>
 #include <mac/hmac.h>
 
 struct state {

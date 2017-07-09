@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/utils.h>
+
 #include "mop.h"
 
 void *mop_alloc (void)

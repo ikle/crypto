@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/endian.h>
+#include <crypto/utils.h>
+
 #include <cipher/magma.h>
 
 #include "magma-defs.h"

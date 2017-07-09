@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "core.h"
 #include "crypto-core.h"
 
 struct hash {
