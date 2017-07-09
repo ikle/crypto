@@ -3,7 +3,6 @@
 
 #include <crypto/types.h>
 #include <crypto/endian.h>
-#include <errno.h>
 
 /*
  * container_of (ptr, type, member) -- case a member of a structure out to
@@ -27,15 +26,6 @@
 #define barrier_data(p)
 
 #endif
-
-#include <stdarg.h>
-
-static void va_put_size (va_list ap, size_t size)
-{
-	size_t *p = va_arg (ap, size_t *);
-
-	*p = size;
-}
 
 /* allows 0 <= count < 32 */
 static u32 rol32 (u32 x, unsigned count)
