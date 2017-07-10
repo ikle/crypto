@@ -20,7 +20,6 @@ struct state {
 	const struct crypto_core *core;
 	void *hash;
 	u8 *pad;
-	void *hi, *ho;
 };
 
 static void hmac_core_fini (struct state *o)
@@ -35,9 +34,6 @@ static void hmac_core_fini (struct state *o)
 
 	o->core->free (o->hash);
 	free (o->pad);
-
-	o->core->free (o->hi);
-	o->core->free (o->ho);
 
 	o->core = NULL;
 }
@@ -72,34 +68,32 @@ no_hash:
 	return -errno;
 }
 
+static void init_hash (struct state *o, size_t bs)
+{
+	size_t i;
+
+	for (i = 0; i < bs; ++i)
+		o->pad[i] ^= (0x5c ^ 0x36);
+
+	o->core->transform (o->hash, o->pad);
+}
+
 static int set_key (struct state *o, const void *key, size_t len)
 {
-	if ((o->core->free (o->hi), o->hi = o->core->alloc ()) == NULL)
-		return -errno;  /* PTR_ERR (o->hi) */
-
-	if ((o->core->free (o->ho), o->ho = o->core->alloc ()) == NULL)
-		return -errno;  /* PTR_ERR (o->ho) */
-
-	const size_t bs = o->core->get (o->hi, CRYPTO_BLOCK_SIZE);
+	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
 	size_t i;
 
 	memset (o->pad, 0, bs);
 
 	if (len > bs)
-		hash_core_process (o->core, o->ho, key, len, o->pad);
+		hash_core_process (o->core, o->hash, key, len, o->pad);
 	else
 		memcpy (o->pad, key, len);
 
 	for (i = 0; i < bs; ++i)
 		o->pad[i] ^= 0x5c;
 
-	o->core->transform (o->ho, o->pad);
-
-	for (i = 0; i < bs; ++i)
-		o->pad[i] ^= (0x5c ^ 0x36);
-
-	o->core->transform (o->hi, o->pad);
-
+	init_hash (o, bs);
 	return 0;
 }
 
@@ -111,8 +105,6 @@ static void *hmac_core_alloc (void)
 		return NULL;
 
 	o->core = NULL;
-	o->hi = NULL;
-	o->ho = NULL;
 	return o;
 }
 
@@ -123,7 +115,7 @@ static int hmac_core_get (const void *state, int type, ...)
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_HASH_SIZE:
-		return o->core->get (o->hi, type);
+		return o->core->get (o->hash, type);
 	}
 
 	return -ENOSYS;
@@ -171,17 +163,20 @@ static void hmac_core_transform (void *state, const void *block)
 {
 	struct state *o = state;
 
-	o->core->transform (o->hi, block);
+	o->core->transform (o->hash, block);
 }
 
 static void hmac_core_final (void *state, const void *in, size_t len,
 			     void *out)
 {
 	struct state *o = state;
-	const size_t hs = o->core->get (o->hi, CRYPTO_HASH_SIZE);
+	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t hs = o->core->get (o->hash, CRYPTO_HASH_SIZE);
 
-	o->core->final (o->hi, in, len, out);
-	o->core->final (o->ho, out, hs, out);
+	o->core->final (o->hash, in, len, out);
+	init_hash (o, bs);
+	o->core->final (o->hash, out, hs, out);
+	init_hash (o, bs);
 }
 
 const struct crypto_core hmac_core = {
