@@ -20,12 +20,20 @@ struct state {
 	void *hi, *ho;
 };
 
+static void hmac_core_fini (struct state *o)
+{
+	if (o->core == NULL)
+		return;
+
+	o->core->free (o->hi);
+	o->core->free (o->ho);
+
+	o->core = NULL;
+}
+
 static int set_algo (struct state *o, const struct crypto_core *core)
 {
-	if (o->core != NULL) {
-		o->core->free (o->hi); o->hi = NULL;
-		o->core->free (o->ho); o->ho = NULL;
-	}
+	hmac_core_fini (o);
 
 	if (core == NULL)
 		return -EINVAL;
@@ -131,13 +139,7 @@ static int hmac_core_set (void *state, int type, ...)
 
 static void hmac_core_free (void *state)
 {
-	struct state *o = state;
-
-	if (o->core != NULL) {
-		o->core->free (o->hi);
-		o->core->free (o->ho);
-	}
-
+	hmac_core_fini (state);
 	free (state);
 }
 
