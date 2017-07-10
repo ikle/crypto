@@ -9,19 +9,18 @@
  *
  * Returns number of bytes processed.
  */
-size_t hash_core_process (const struct crypto_core *core, void *state,
-			  const void *in, size_t len, void *out)
+size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
 {
-	const size_t bs = core->get (state, CRYPTO_BLOCK_SIZE);
+	const size_t bs = hash_get_block_size (o);
 	const char *data = in;
 	size_t tail;
 
 	for (tail = len; tail > bs; data += bs, tail -= bs)
-		core->transform (state, data);
+		o->core->transform (o, data);
 
 	if (out == NULL)
 		return len - tail;
 
-	core->final (state, data, tail, out);
+	o->core->final (o, data, tail, out);
 	return len;
 }

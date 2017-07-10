@@ -35,18 +35,6 @@ struct crypto_core {
 };
 
 /*
- * 1. Process integer number of input blocks.
- * 2. If out != NULL then process last possiby partial block and write
- *    final hash value to out.
- *
- * This function never stores input plain text data in context.
- *
- * Returns number of bytes processed.
- */
-size_t hash_core_process (const struct crypto_core *core, void *state,
-			  const void *in, size_t len, void *out);
-
-/*
  * High-Level Hash API
  */
 struct hash {
@@ -93,9 +81,15 @@ static int hash_set_key (struct hash *o, const void *key, size_t len)
 	return o->core->set (o, CRYPTO_KEY, key, len);
 }
 
-static size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
-{
-	return hash_core_process (o->core, o, in, len, out);
-}
+/*
+ * 1. Process integer number of input blocks.
+ * 2. If out != NULL then process last possiby partial block and write
+ *    final hash value to out.
+ *
+ * This function never stores input plain text data in context.
+ *
+ * Returns number of bytes processed.
+ */
+size_t hash_data (struct hash *o, const void *in, size_t len, void *out);
 
 #endif  /* CRYPTO_HASH_CORE_H */
