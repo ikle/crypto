@@ -49,15 +49,53 @@ size_t hash_core_process (const struct crypto_core *core, void *state,
 /*
  * High-Level Hash API
  */
-struct hash *hash_alloc (const struct crypto_core *core);
-void hash_free (struct hash *h);
+struct hash {
+	const struct crypto_core *core;
+	/* core-specific state follows */
+};
 
-size_t hash_get_block_size (const struct hash *h);
-size_t hash_get_hash_size  (const struct hash *h);
+static struct hash *hash_alloc (const struct crypto_core *core)
+{
+	struct hash *o;
 
-int hash_set_algo (struct hash *h, const struct crypto_core *core);
-int hash_set_key  (struct hash *h, const void *key, size_t len);
+	if ((o = core->alloc ()) == NULL)
+		return NULL;
 
-size_t hash_data (struct hash *h, const void *in, size_t len, void *out);
+	o->core = core;
+	return o;
+}
+
+static void hash_free (struct hash *o)
+{
+	if (o == NULL)
+		return;
+
+	o->core->free (o);
+}
+
+static size_t hash_get_block_size (const struct hash *o)
+{
+	return o->core->get (o, CRYPTO_BLOCK_SIZE);
+}
+
+static size_t hash_get_hash_size (const struct hash *o)
+{
+	return o->core->get (o, CRYPTO_HASH_SIZE);
+}
+
+static int hash_set_algo (struct hash *o, const struct crypto_core *core)
+{
+	return o->core->set (o, CRYPTO_ALGO, core);
+}
+
+static int hash_set_key (struct hash *o, const void *key, size_t len)
+{
+	return o->core->set (o, CRYPTO_KEY, key, len);
+}
+
+static size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
+{
+	return hash_core_process (o->core, o, in, len, out);
+}
 
 #endif  /* CRYPTO_HASH_CORE_H */
