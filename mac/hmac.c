@@ -13,10 +13,13 @@
 #include <string.h>
 
 #include <crypto/types.h>
+#include <crypto/utils.h>
 #include <mac/hmac.h>
 
 struct state {
 	const struct crypto_core *core;
+	void *hash;
+	u8 *pad;
 	void *hi, *ho;
 };
 
@@ -24,6 +27,14 @@ static void hmac_core_fini (struct state *o)
 {
 	if (o->core == NULL)
 		return;
+
+	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
+
+	memset (o->pad, 0, bs);
+	barrier_data (o->pad);
+
+	o->core->free (o->hash);
+	free (o->pad);
 
 	o->core->free (o->hi);
 	o->core->free (o->ho);
@@ -38,8 +49,27 @@ static int set_algo (struct state *o, const struct crypto_core *core)
 	if (core == NULL)
 		return -EINVAL;
 
+	if ((o->hash = core->alloc ()) == NULL)
+		goto no_hash;
+
+	const size_t bs = core->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t hs = core->get (o->hash, CRYPTO_HASH_SIZE);
+
+	if (hs > bs) {
+		errno = EINVAL;
+		goto wrong_hash;
+	}
+
+	if ((o->pad = malloc (bs)) == NULL)
+		goto no_pad;
+
 	o->core = core;
 	return 0;
+no_pad:
+wrong_hash:
+	core->free (o->hash);
+no_hash:
+	return -errno;
 }
 
 static int set_key (struct state *o, const void *key, size_t len)
@@ -51,30 +81,24 @@ static int set_key (struct state *o, const void *key, size_t len)
 		return -errno;  /* PTR_ERR (o->ho) */
 
 	const size_t bs = o->core->get (o->hi, CRYPTO_BLOCK_SIZE);
-	const size_t hs = o->core->get (o->hi, CRYPTO_HASH_SIZE);
-
-	if (hs > bs)
-		return -EINVAL;
-
-	u8 block[bs];
 	size_t i;
 
-	memset (block, 0, bs);
+	memset (o->pad, 0, bs);
 
 	if (len > bs)
-		hash_core_process (o->core, o->ho, key, len, block);
+		hash_core_process (o->core, o->ho, key, len, o->pad);
 	else
-		memcpy (block, key, len);
+		memcpy (o->pad, key, len);
 
 	for (i = 0; i < bs; ++i)
-		block[i] ^= 0x5c;
+		o->pad[i] ^= 0x5c;
 
-	o->core->transform (o->ho, block);
+	o->core->transform (o->ho, o->pad);
 
 	for (i = 0; i < bs; ++i)
-		block[i] ^= (0x5c ^ 0x36);
+		o->pad[i] ^= (0x5c ^ 0x36);
 
-	o->core->transform (o->hi, block);
+	o->core->transform (o->hi, o->pad);
 
 	return 0;
 }
