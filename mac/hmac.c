@@ -17,39 +17,39 @@
 #include <mac/hmac.h>
 
 struct state {
-	const struct crypto_core *core;
+	const struct crypto_core *algo;
 	void *hash;
 	u8 *pad;
 };
 
 static void hmac_core_fini (struct state *o)
 {
-	if (o->core == NULL)
+	if (o->algo == NULL)
 		return;
 
-	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t bs = o->algo->get (o->hash, CRYPTO_BLOCK_SIZE);
 
 	memset (o->pad, 0, bs);
 	barrier_data (o->pad);
 
-	o->core->free (o->hash);
+	o->algo->free (o->hash);
 	free (o->pad);
 
-	o->core = NULL;
+	o->algo = NULL;
 }
 
-static int set_algo (struct state *o, const struct crypto_core *core)
+static int set_algo (struct state *o, const struct crypto_core *algo)
 {
 	hmac_core_fini (o);
 
-	if (core == NULL)
+	if (algo == NULL)
 		return -EINVAL;
 
-	if ((o->hash = core->alloc ()) == NULL)
+	if ((o->hash = algo->alloc ()) == NULL)
 		goto no_hash;
 
-	const size_t bs = core->get (o->hash, CRYPTO_BLOCK_SIZE);
-	const size_t hs = core->get (o->hash, CRYPTO_HASH_SIZE);
+	const size_t bs = algo->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t hs = algo->get (o->hash, CRYPTO_HASH_SIZE);
 
 	if (hs > bs) {
 		errno = EINVAL;
@@ -59,11 +59,11 @@ static int set_algo (struct state *o, const struct crypto_core *core)
 	if ((o->pad = malloc (bs)) == NULL)
 		goto no_pad;
 
-	o->core = core;
+	o->algo = algo;
 	return 0;
 no_pad:
 wrong_hash:
-	core->free (o->hash);
+	algo->free (o->hash);
 no_hash:
 	return -errno;
 }
@@ -75,18 +75,18 @@ static void init_hash (struct state *o, size_t bs)
 	for (i = 0; i < bs; ++i)
 		o->pad[i] ^= (0x5c ^ 0x36);
 
-	o->core->transform (o->hash, o->pad);
+	o->algo->transform (o->hash, o->pad);
 }
 
 static int set_key (struct state *o, const void *key, size_t len)
 {
-	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t bs = o->algo->get (o->hash, CRYPTO_BLOCK_SIZE);
 	size_t i;
 
 	memset (o->pad, 0, bs);
 
 	if (len > bs)
-		hash_core_process (o->core, o->hash, key, len, o->pad);
+		hash_core_process (o->algo, o->hash, key, len, o->pad);
 	else
 		memcpy (o->pad, key, len);
 
@@ -104,7 +104,7 @@ static void *hmac_core_alloc (void)
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
-	o->core = NULL;
+	o->algo = NULL;
 	return o;
 }
 
@@ -115,7 +115,7 @@ static int hmac_core_get (const void *state, int type, ...)
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_HASH_SIZE:
-		return o->core->get (o->hash, type);
+		return o->algo->get (o->hash, type);
 	}
 
 	return -ENOSYS;
@@ -130,10 +130,10 @@ static int hmac_core_set (void *state, int type, ...)
 
 	switch (type) {
 	case CRYPTO_ALGO: {
-			const struct crypto_core *core;
+			const struct crypto_core *algo;
 
-			core = va_arg (ap, const struct crypto_core *);
-			status = set_algo (state, core);
+			algo = va_arg (ap, const struct crypto_core *);
+			status = set_algo (state, algo);
 			break;
 		}
 	case CRYPTO_KEY: {
@@ -163,19 +163,19 @@ static void hmac_core_transform (void *state, const void *block)
 {
 	struct state *o = state;
 
-	o->core->transform (o->hash, block);
+	o->algo->transform (o->hash, block);
 }
 
 static void hmac_core_final (void *state, const void *in, size_t len,
 			     void *out)
 {
 	struct state *o = state;
-	const size_t bs = o->core->get (o->hash, CRYPTO_BLOCK_SIZE);
-	const size_t hs = o->core->get (o->hash, CRYPTO_HASH_SIZE);
+	const size_t bs = o->algo->get (o->hash, CRYPTO_BLOCK_SIZE);
+	const size_t hs = o->algo->get (o->hash, CRYPTO_HASH_SIZE);
 
-	o->core->final (o->hash, in, len, out);
+	o->algo->final (o->hash, in, len, out);
 	init_hash (o, bs);
-	o->core->final (o->hash, out, hs, out);
+	o->algo->final (o->hash, out, hs, out);
 	init_hash (o, bs);
 }
 
