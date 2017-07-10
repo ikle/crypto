@@ -162,6 +162,7 @@ static void add512 (const u512 *a, const u512 *b, u512 *result)
 }
 
 struct stribog_state {
+	const struct crypto_core *core;
 	u512 h, N, Sum;
 };
 

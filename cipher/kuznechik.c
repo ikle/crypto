@@ -16,6 +16,7 @@
 #include "kuznechik-defs.h"
 
 struct state {
+	const struct crypto_core *core;
 	u128 k[10];	/* round keys */
 	u128 kd[10];	/* decryption keys */
 };

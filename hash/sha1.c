@@ -81,6 +81,7 @@ static void mix_word (u32 *W, int i)
 	} while (0)							\
 
 struct sha1_state {
+	const struct crypto_core *core;
 	u32 hash[SHA1_ORDER];
 	u64 count;
 };

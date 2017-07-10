@@ -17,6 +17,7 @@
 #include <mac/hmac.h>
 
 struct state {
+	const struct crypto_core *core;
 	const struct crypto_core *algo;
 	void *hash;
 	u8 *pad;

@@ -14,6 +14,7 @@
 #include <crypto-core.h>
 
 struct state {
+	const struct crypto_core *core;
 	const struct crypto_core *algo;
 	void *cipher;
 	u8 *iv;

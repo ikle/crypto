@@ -110,6 +110,7 @@ static const u32 T[64] = {
 	} while (0)
 
 struct md5_state {
+	const struct crypto_core *core;
 	u32 hash[MD5_ORDER];
 	u64 count;
 };
