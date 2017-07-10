@@ -109,7 +109,7 @@ static const u32 T[64] = {
 		STEP_GROUP(f, a, b, c, d, (i) + 12);	\
 	} while (0)
 
-struct md5_state {
+struct state {
 	const struct crypto_core *core;
 	u32 hash[MD5_ORDER];
 	u64 count;
@@ -117,7 +117,7 @@ struct md5_state {
 
 static void md5_core_init (void *state)
 {
-	struct md5_state *o = state;
+	struct state *o = state;
 
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
@@ -126,7 +126,7 @@ static void md5_core_init (void *state)
 
 static void *md5_core_alloc (void)
 {
-	struct md5_state *o;
+	struct state *o;
 
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
@@ -160,7 +160,7 @@ static void load (const u32 *in, u32 *out)
 
 static void transform (void *state, const void *block, u64 count)
 {
-	struct md5_state *o = state;
+	struct state *o = state;
 	u32 W[MD5_WORD_COUNT];
 	u32 a, b, c, d;
 
@@ -186,14 +186,12 @@ static void transform (void *state, const void *block, u64 count)
 
 static void md5_core_transform (void *state, const void *block)
 {
-	struct md5_state *o = state;
-
 	transform (state, block, MD5_BLOCK_SIZE);
 }
 
 static void md5_core_result (void *state, void *out)
 {
-	struct md5_state *o = state;
+	struct state *o = state;
 	u32 *result = out;
 	size_t i;
 
@@ -203,7 +201,7 @@ static void md5_core_result (void *state, void *out)
 
 static void md5_core_final (void *state, const void *in, size_t len, void *out)
 {
-	struct md5_state *o = state;
+	struct state *o = state;
 	u8 block[MD5_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;

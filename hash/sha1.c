@@ -80,7 +80,7 @@ static void mix_word (u32 *W, int i)
 		STEP_GROUP(f, K, a, b, c, d, e, (i) + 15);		\
 	} while (0)							\
 
-struct sha1_state {
+struct state {
 	const struct crypto_core *core;
 	u32 hash[SHA1_ORDER];
 	u64 count;
@@ -88,7 +88,7 @@ struct sha1_state {
 
 static void sha1_core_init (void *state)
 {
-	struct sha1_state *o = state;
+	struct state *o = state;
 
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
@@ -97,7 +97,7 @@ static void sha1_core_init (void *state)
 
 static void *sha1_core_alloc (void)
 {
-	struct sha1_state *o;
+	struct state *o;
 
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
@@ -131,7 +131,7 @@ static void load (const u32 *in, u32 *out)
 
 static void transform (void *state, const void *block, u64 count)
 {
-	struct sha1_state *o = state;
+	struct state *o = state;
 	u32 W[SHA1_WORD_COUNT];
 	u32 a, b, c, d, e;
 
@@ -159,14 +159,12 @@ static void transform (void *state, const void *block, u64 count)
 
 static void sha1_core_transform (void *state, const void *block)
 {
-	struct sha1_state *o = state;
-
 	transform (state, block, SHA1_BLOCK_SIZE);
 }
 
 static void sha1_core_result (void *state, void *out)
 {
-	struct sha1_state *o = state;
+	struct state *o = state;
 	u32 *result = out;
 	size_t i;
 
@@ -177,7 +175,7 @@ static void sha1_core_result (void *state, void *out)
 static void sha1_core_final (void *state, const void *in, size_t len,
 			     void *out)
 {
-	struct sha1_state *o = state;
+	struct state *o = state;
 	u8 block[SHA1_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;

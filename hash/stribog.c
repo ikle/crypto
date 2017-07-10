@@ -161,14 +161,14 @@ static void add512 (const u512 *a, const u512 *b, u512 *result)
 	}
 }
 
-struct stribog_state {
+struct state {
 	const struct crypto_core *core;
 	u512 h, N, Sum;
 };
 
 static void stribog_core_init (void *state)
 {
-	struct stribog_state *o = state;
+	struct state *o = state;
 
 	/* IV for stribog-512, fill with 0x01 x 64 for stribog-256 */
 	memset (&o->h, 0, sizeof (o->h));	barrier_data (&o->h);
@@ -179,7 +179,7 @@ static void stribog_core_init (void *state)
 
 static void *stribog_core_alloc (void)
 {
-	struct stribog_state *o;
+	struct state *o;
 
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
@@ -213,7 +213,7 @@ static void load (const u512 *in, u512 *out)
 
 static void transform (void *state, const void *block, const u512 *count)
 {
-	struct stribog_state *o = state;
+	struct state *o = state;
 	u512 W;
 	size_t i;
 
@@ -233,7 +233,7 @@ static void stribog_core_transform (void *state, const void *block)
 
 static void stribog_core_result (void *state, void *out)
 {
-	struct stribog_state *o = state;
+	struct state *o = state;
 	u64 *result = out;
 	size_t i;
 
@@ -245,7 +245,7 @@ static void stribog_core_final (void *state, const void *in, size_t len,
 				void *out)
 {
 	static const u512 N0;
-	struct stribog_state *o = state;
+	struct state *o = state;
 	u8 block[STRIBOG_BLOCK_SIZE];
 	u8 *const head = block;
 	u8 *const one = head + len;
