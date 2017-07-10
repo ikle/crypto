@@ -4,7 +4,7 @@ RANLIB ?= ranlib
 TARGETS = libcrypto.a
 CFLAGS = -O6 -I"$(CURDIR)"/include
 
-SOURCES = hash/*.c cipher/*.c mac/*.c mop/*.c
+SOURCES = hash/*.c cipher/*.c mac/*.c mop/*.c misc/*.c
 OBJECTS = $(patsubst %.c,%.o, $(wildcard $(SOURCES)))
 TESTS = $(patsubst %.c,%, $(wildcard test/*.c))
 
