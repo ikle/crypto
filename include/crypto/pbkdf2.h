@@ -4,6 +4,8 @@
  * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 2898 (PKCS #5 v2.0), RFC 8018 (PKCS #5 v2.1)
+ * Standard: GOST R 50.1.111-2016
+ *
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
