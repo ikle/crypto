@@ -14,6 +14,8 @@
 
 #include <crypto/types.h>
 #include <crypto/utils.h>
+
+#include <crypto/hash.h>
 #include <mac/hmac.h>
 
 struct state {

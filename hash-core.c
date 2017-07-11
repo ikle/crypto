@@ -1,4 +1,4 @@
-#include <crypto-core.h>
+#include <crypto/hash.h>
 
 /*
  * 1. Process integer number of input blocks.

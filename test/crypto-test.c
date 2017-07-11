@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <crypto-core.h>
+#include <crypto/hash.h>
 
 #include <hash/md5.h>
 #include <hash/sha1.h>

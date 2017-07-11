@@ -10,9 +10,12 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <crypto/types.h>
 #include <crypto/endian.h>
 #include <crypto/utils.h>
+
+#include <crypto/hash.h>
 #include <crypto/pbkdf2.h>
 
 struct pbkdf2 {
