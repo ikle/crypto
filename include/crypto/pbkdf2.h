@@ -12,7 +12,7 @@
 
 #include <crypto-core.h>
 
-struct pbkdf2 *pbkdf2_alloc (const struct crypto_core *prf_core, void *prf,
+struct pbkdf2 *pbkdf2_alloc (struct hash *prf,
 			     const void *key,  size_t key_len,
 			     const void *salt, size_t salt_len,
 			     unsigned count);

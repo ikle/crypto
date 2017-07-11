@@ -16,8 +16,7 @@
 #include <crypto/pbkdf2.h>
 
 struct pbkdf2 {
-	const struct crypto_core *algo;	/* PRF core  */
-	void *prf;			/* PRF state */
+	struct hash *prf;
 	const u8 *salt;
 	size_t len;			/* salt length */
 	unsigned count;
@@ -26,28 +25,28 @@ struct pbkdf2 {
 static void F (struct pbkdf2 *o, unsigned count, size_t index, void *out)
 {
 	size_t eaten, left;
-	const size_t bs = o->algo->get (o->prf, CRYPTO_BLOCK_SIZE);
+	const size_t bs = hash_get_block_size (o->prf);
 	u8 buf[bs + 4];
 
-	eaten = hash_core_process (o->algo, o->prf, o->salt, o->len, NULL);
+	eaten = hash_data (o->prf, o->salt, o->len, NULL);
 	left = o->len - eaten;
 
 	memcpy (buf, o->salt + eaten, left);
 	write_be32 (index, buf + left);
 
-	const size_t hs = o->algo->get (o->prf, CRYPTO_HASH_SIZE);
+	const size_t hs = hash_get_hash_size (o->prf);
 	u8 hash[hs];
 
-	hash_core_process (o->algo, o->prf, buf, left + 4, hash);
+	hash_data (o->prf, buf, left + 4, hash);
 	memcpy (out, hash, hs);
 
 	for (; count > 1; --count) {
-		hash_core_process (o->algo, o->prf, hash, hs, hash);
+		hash_data (o->prf, hash, hs, hash);
 		xor_block (out, hash, out, hs);
 	}
 }
 
-struct pbkdf2 *pbkdf2_alloc (const struct crypto_core *prf_algo, void *prf,
+struct pbkdf2 *pbkdf2_alloc (struct hash *prf,
 			     const void *key,  size_t key_len,
 			     const void *salt, size_t salt_len,
 			     unsigned count)
@@ -57,10 +56,9 @@ struct pbkdf2 *pbkdf2_alloc (const struct crypto_core *prf_algo, void *prf,
 	if ((o = malloc (sizeof (*o))) == NULL)
 		goto no_object;
 
-	if ((errno = -prf_algo->set (prf, CRYPTO_KEY, key, key_len)) != 0)
+	if ((errno = -hash_set_key (prf, key, key_len)) != 0)
 		goto no_key;
 
-	o->algo  = prf_algo;
 	o->prf   = prf,
 	o->salt  = salt;
 	o->len   = salt_len;
@@ -81,7 +79,7 @@ void pbkdf2 (struct pbkdf2 *o, void *out, size_t len)
 {
 	u8 *p;
 	size_t i;
-	const size_t hs = o->algo->get (o->prf, CRYPTO_HASH_SIZE);
+	const size_t hs = hash_get_hash_size (o->prf);
 	u8 hash[hs];
 
 	for (p = out, i = 1; len > hs; p += hs, len -= hs, ++i)
