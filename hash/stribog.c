@@ -247,15 +247,16 @@ static void stribog_core_final (void *state, const void *in, size_t len,
 	static const u512 N0;
 	struct state *o = state;
 	u8 block[STRIBOG_BLOCK_SIZE];
-	u8 *const head = block;
-	u8 *const one = head + len;
-	u8 *const end = head + sizeof (block);
 	u512 bits = {};
 
 	if (len == STRIBOG_BLOCK_SIZE) {
 		stribog_core_transform (state, in);
 		len = 0;
 	}
+
+	u8 *const head = block;
+	u8 *const one = head + len;
+	u8 *const end = head + sizeof (block);
 
 	memcpy (block, in, len);
 

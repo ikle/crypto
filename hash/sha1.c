@@ -178,14 +178,15 @@ static void sha1_core_final (void *state, const void *in, size_t len,
 	struct state *o = state;
 	u8 block[SHA1_BLOCK_SIZE];
 	u8 *const head = block;
-	u8 *const one = head + len;
-	u8 *const end = head + sizeof (block);
-	u8 *const num = end - 8;
 
 	if (len == SHA1_BLOCK_SIZE) {
 		transform (state, in, SHA1_BLOCK_SIZE);
 		len = 0;
 	}
+
+	u8 *const one = head + len;
+	u8 *const end = head + sizeof (block);
+	u8 *const num = end - 8;
 
 	memcpy (block, in, len);
 	*one = 0x80;

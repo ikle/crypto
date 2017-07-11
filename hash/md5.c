@@ -204,14 +204,15 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 	struct state *o = state;
 	u8 block[MD5_BLOCK_SIZE];
 	u8 *const head = block;
-	u8 *const one = head + len;
-	u8 *const end = head + sizeof (block);
-	u8 *const num = end - 8;
 
 	if (len == MD5_BLOCK_SIZE) {
 		transform (state, in, MD5_BLOCK_SIZE);
 		len = 0;
 	}
+
+	u8 *const one = head + len;
+	u8 *const end = head + sizeof (block);
+	u8 *const num = end - 8;
 
 	memcpy (block, in, len);
 	*one = 0x80;
