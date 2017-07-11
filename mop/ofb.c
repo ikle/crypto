@@ -15,9 +15,9 @@
 static void ofb_crypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = o->algo->get (o->cipher, CRYPTO_BLOCK_SIZE);
+	const size_t bs = cipher_get_block_size (o->cipher);
 
-	o->algo->encrypt (o->cipher, o->iv, o->iv);
+	cipher_encrypt_block (o->cipher, o->iv, o->iv);
 
 	xor_block (in, o->iv, out, bs);
 }

@@ -23,21 +23,21 @@ void *mop_alloc (void)
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
-	o->algo = NULL;
+	o->cipher = NULL;
 	return o;
 }
 
 static void reset (struct state *o)
 {
-	if (o->algo == NULL)
+	if (o->cipher == NULL)
 		return;
 
-	const size_t bs = o->algo->get (o->cipher, CRYPTO_BLOCK_SIZE);
+	const size_t bs = cipher_get_block_size (o->cipher);
 
 	memset (o->iv, 0, bs);
 	barrier_data (o->iv);
 
-	o->algo->free (o->cipher);
+	cipher_free (o->cipher);
 	free (o->iv);
 }
 
@@ -61,12 +61,12 @@ static int set_algo (struct state *o, const struct crypto_core *algo)
 
 	reset (o);
 
-	if ((o->cipher = algo->alloc ()) == NULL) {
+	if ((o->cipher = cipher_alloc (algo)) == NULL) {
 		error = -errno;  /* PTR_ERR (o->cipher) */
 		goto no_cipher;
 	}
 
-	const size_t bs = algo->get (o->cipher, CRYPTO_BLOCK_SIZE);
+	const size_t bs = cipher_get_block_size (o->cipher);
 
 	if (bs < 8) {
 		error = -EINVAL;  /* we wont support too weak ciphers */
@@ -78,23 +78,18 @@ static int set_algo (struct state *o, const struct crypto_core *algo)
 		goto no_iv;
 	}
 
-	o->algo = algo;
 	return 0;
 no_iv:
 no_bs:
-	algo->free (o->cipher);
+	cipher_free (o->cipher);
+	o->cipher = NULL;
 no_cipher:
 	return error;
 }
 
-static int set_key (struct state *o, const void *key, size_t len)
-{
-	return o->algo->set (o->cipher, CRYPTO_KEY, key, len);
-}
-
 static int set_iv (struct state *o, const void *iv)
 {
-	const size_t bs = o->algo->get (o->cipher, CRYPTO_BLOCK_SIZE);
+	const size_t bs = cipher_get_block_size (o->cipher);
 
 	memcpy (o->iv, iv, bs);
 }
@@ -106,11 +101,12 @@ int mop_get (const void *state, int type, ...)
 	if (type == CRYPTO_HASH_SIZE)
 		type = CRYPTO_BLOCK_SIZE;
 
-	return o->algo->get (o->cipher, type);
+	return o->cipher->core->get (o->cipher, type);
 }
 
 int mop_set (void *state, int type, ...)
 {
+	const struct state *o = state;
 	va_list ap;
 	int status;
 
@@ -128,7 +124,7 @@ int mop_set (void *state, int type, ...)
 		const void *key = va_arg (ap, const void *);
 		size_t len = va_arg (ap, size_t);
 
-		status = set_key (state, key, len);
+		status = cipher_set_key (o->cipher, key, len);
 		break;
 	}
 	case CRYPTO_IV: {

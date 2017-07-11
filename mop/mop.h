@@ -11,12 +11,11 @@
 #define CRYPTO_MOP_CORE_H  1
 
 #include <crypto/types.h>
-#include <crypto-core.h>
+#include <crypto/cipher.h>
 
 struct state {
 	const struct crypto_core *core;
-	const struct crypto_core *algo;
-	void *cipher;
+	struct cipher *cipher;
 	u8 *iv;
 };
 
