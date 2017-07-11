@@ -10,14 +10,9 @@
 #ifndef CRYPTO_PBKDF2_H
 #define CRYPTO_PBKDF2_H  1
 
-#include <crypto-core.h>
+#include <crypto/hash.h>
 
-struct pbkdf2 *pbkdf2_alloc (struct hash *prf,
-			     const void *key,  size_t key_len,
-			     const void *salt, size_t salt_len,
-			     unsigned count);
-void pbkdf2_free (struct pbkdf2 *o);
-
-void pbkdf2 (struct pbkdf2 *o, void *out, size_t len);
+int pbkdf2 (struct hash *prf, const void *salt, size_t salt_len,
+	    unsigned count, void *out, size_t len);
 
 #endif  /* CRYPTO_PBKDF2_H */

@@ -32,7 +32,6 @@ static void show (const unsigned char *data, size_t len)
 int main (int argc, char *argv[])
 {
 	struct hash *prf;
-	struct pbkdf2 *o;
 
 	if (argc != 5)
 		error ("usage:\n\tpbkdf2-test <password> <salt> <count>"
@@ -47,18 +46,15 @@ int main (int argc, char *argv[])
 	const char *key  = argv[1];
 	const char *salt = argv[2];
 	const unsigned count = atoi (argv[3]);
-
-	if ((o = pbkdf2_alloc (prf, key, strlen (key),
-			       salt, strlen (salt), count)) == NULL)
-		error ("cannot allocate PBKDF2 context", 1);
-
 	const unsigned len = atoi (argv[4]);
 	char buf[len];
 
-	pbkdf2 (o, buf, len);
+	if ((errno = -hash_set_key (prf, key, strlen (key))) != 0)
+		error ("cannot set up key", 1);
+
+	pbkdf2 (prf, salt, strlen (salt), count, buf, len);
 	show (buf, len);
 
 	hash_free (prf);
-	pbkdf2_free (o);
 	return 0;
 }
