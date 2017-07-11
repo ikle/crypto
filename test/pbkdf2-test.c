@@ -7,7 +7,7 @@
 #include <mac/hmac.h>
 
 #include <crypto/hash.h>
-#include <crypto/pbkdf2.h>
+#include <crypto/kdf/pbkdf2.h>
 
 static void error (const char *message, int system)
 {
