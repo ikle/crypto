@@ -1,7 +1,7 @@
 /*
  * Crypto Hash API
  *
- * Copyright (c) 2017 Alexei A. Smekalkine
+ * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
