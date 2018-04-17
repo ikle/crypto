@@ -186,7 +186,7 @@ int main (int argc, char *argv[])
 		usage ();
 
 	if ((core = find_core (argv[1])) == NULL)
-		error ("cannot find cipher", 0);
+		error ("cannot find core algorithm", 0);
 
 	if ((o = core->alloc ()) == NULL)
 		error ("cannot initialize algorithm", 1);
