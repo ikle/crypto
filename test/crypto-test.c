@@ -59,7 +59,7 @@ static size_t hex2blob (char *s)
 
 static void usage (void)
 {
-	fprintf (stderr, "usage:\n\tcipher-testi <algorithm> ["
+	fprintf (stderr, "usage:\n\tcipher-test <algorithm> ["
 				"algo <algo> | key <key> |\n\t\t"
 				"hash <string> | hash-blob <blob> |\n\t\t"
 				"(encrypt | decrypt) <block> "
