@@ -40,7 +40,7 @@ static void table_init (struct state *o, const struct pi *b)
 	}
 }
 
-static int set_key (struct state *o, const u8 *key, size_t len)
+static int set_key (struct state *o, int le, const u8 *key, size_t len)
 {
 	size_t i;
 
@@ -48,7 +48,7 @@ static int set_key (struct state *o, const u8 *key, size_t len)
 		return -EINVAL;
 
 	for (i = 0; i < 8; ++i, key += 4)
-		o->k[i] = read_be32 (key);
+		o->k[i] = (le ? read_le32 : read_be32) (key);
 
 	table_init (o, &sb_magma);
 	return 0;
@@ -73,38 +73,82 @@ static u32 f (struct state *o, u32 x)
 	b ^= f (o, a + o->k[3]); a ^= f (o, b + o->k[2]); \
 	b ^= f (o, a + o->k[1]); a ^= f (o, b + o->k[0]);
 
-static void encrypt (void *state, const void *in, void *out)
+static void encrypt (void *state, int le, const void *in, void *out)
 {
 	struct state *o = state;
 	u32 a, b;
 
-	a = read_be32 (in + 4);
-	b = read_be32 (in);
+	if (le) {
+		a = read_le32 (in);
+		b = read_le32 (in + 4);
+	}
+	else {
+		a = read_be32 (in + 4);
+		b = read_be32 (in);
+	}
 
 	direct_rounds  (o, a, b);
 	direct_rounds  (o, a, b);
 	direct_rounds  (o, a, b);
 	reverse_rounds (o, a, b);
 
-	write_be32 (a, out);
-	write_be32 (b, out + 4);
+	if (le) {
+		write_le32 (a, out + 4);
+		write_le32 (b, out);
+	}
+	else {
+		write_be32 (a, out);
+		write_be32 (b, out + 4);
+	}
 }
 
-static void decrypt (void *state, const void *in, void *out)
+static void decrypt (void *state, int le, const void *in, void *out)
 {
 	struct state *o = state;
 	u32 a, b;
 
-	a = read_be32 (in + 4);
-	b = read_be32 (in);
+	if (le) {
+		a = read_le32 (in);
+		b = read_le32 (in + 4);
+	}
+	else {
+		a = read_be32 (in + 4);
+		b = read_be32 (in);
+	}
 
 	direct_rounds  (o, a, b);
 	reverse_rounds (o, a, b);
 	reverse_rounds (o, a, b);
 	reverse_rounds (o, a, b);
 
-	write_be32 (a, out);
-	write_be32 (b, out + 4);
+	if (le) {
+		write_le32 (a, out + 4);
+		write_le32 (b, out);
+	}
+	else {
+		write_be32 (a, out);
+		write_be32 (b, out + 4);
+	}
+}
+
+static void encrypt_le (void *state, const void *in, void *out)
+{
+	encrypt (state, 1, in, out);
+}
+
+static void decrypt_le (void *state, const void *in, void *out)
+{
+	decrypt (state, 1, in, out);
+}
+
+static void encrypt_be (void *state, const void *in, void *out)
+{
+	encrypt (state, 0, in, out);
+}
+
+static void decrypt_be (void *state, const void *in, void *out)
+{
+	decrypt (state, 0, in, out);
 }
 
 static void *alloc (void)
@@ -126,12 +170,9 @@ static int get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int set (void *state, int type, ...)
+static int set_va (void *state, int le, int type, va_list ap)
 {
-	va_list ap;
 	int status;
-
-	va_start (ap, type);
 
 	switch (type) {
 	case CRYPTO_KEY: {
@@ -140,24 +181,57 @@ static int set (void *state, int type, ...)
 
 			key = va_arg (ap, const void *);
 			len = va_arg (ap, size_t);
-			status = set_key (state, key, len);
-			break;
+			return set_key (state, le, key, len);
 		}
-	default:
-		status = -ENOSYS;
 	}
+
+	return -ENOSYS;
+}
+
+static int set_le (void *state, int type, ...)
+{
+	va_list ap;
+	int status;
+
+	va_start (ap, type);
+
+	status = set_va (state, 1, type, ap);
 
 	va_end (ap);
 	return status;
 }
+
+static int set_be (void *state, int type, ...)
+{
+	va_list ap;
+	int status;
+
+	va_start (ap, type);
+
+	status = set_va (state, 0, type, ap);
+
+	va_end (ap);
+	return status;
+}
+
+const struct crypto_core gost89_core = {
+	.alloc		= alloc,
+	.free		= free,
+
+	.get		= get,
+	.set 		= set_le,
+
+	.encrypt	= encrypt_le,
+	.decrypt	= decrypt_le,
+};
 
 const struct crypto_core magma_core = {
 	.alloc		= alloc,
 	.free		= free,
 
 	.get		= get,
-	.set 		= set,
+	.set 		= set_be,
 
-	.encrypt	= encrypt,
-	.decrypt	= decrypt,
+	.encrypt	= encrypt_be,
+	.decrypt	= decrypt_be,
 };

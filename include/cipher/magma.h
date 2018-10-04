@@ -12,6 +12,7 @@
 
 #include <crypto-core.h>
 
+extern const struct crypto_core gost89_core;
 extern const struct crypto_core magma_core;
 
 #endif  /* CRYPTO_MAGMA_CORE_H */
