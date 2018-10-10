@@ -49,10 +49,11 @@ int main (int argc, char *argv[])
 	const unsigned len = atoi (argv[4]);
 	char buf[len];
 
-	if ((errno = -hash_set_key (prf, key, strlen (key))) != 0)
-		error ("cannot set up key", 1);
+	errno = -pbkdf2 (prf, key, strlen (key), salt, strlen (salt),
+			 count, buf, len);
+	if (errno != 0)
+		error ("cannot derive key", 1);
 
-	pbkdf2 (prf, salt, strlen (salt), count, buf, len);
 	show (buf, len);
 
 	hash_free (prf);

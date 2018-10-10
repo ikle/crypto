@@ -42,13 +42,18 @@ static void F (struct hash *prf, const u8 *salt, size_t salt_len,
 	}
 }
 
-int pbkdf2 (struct hash *prf, const void *salt, size_t salt_len,
+int pbkdf2 (struct hash *prf, const void *key, size_t key_len,
+	    const void *salt, size_t salt_len,
 	    unsigned count, void *out, size_t len)
 {
+	int status;
 	u8 *p;
 	size_t i;
 	const size_t hs = hash_get_hash_size (prf);
 	u8 hash[hs];
+
+	if ((status = hash_set_key (prf, key, strlen (key))) != 0)
+		return status;
 
 	for (p = out, i = 1; len > hs; p += hs, len -= hs, ++i)
 		F (prf, salt, salt_len, count, i, p);

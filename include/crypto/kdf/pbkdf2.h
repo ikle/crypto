@@ -14,7 +14,8 @@
 
 #include <crypto/hash.h>
 
-int pbkdf2 (struct hash *prf, const void *salt, size_t salt_len,
+int pbkdf2 (struct hash *prf, const void *key, size_t key_len,
+	    const void *salt, size_t salt_len,
 	    unsigned count, void *out, size_t len);
 
 #endif  /* CRYPTO_PBKDF2_H */
