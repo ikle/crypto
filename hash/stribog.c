@@ -217,7 +217,6 @@ static void transform (void *state, const void *block, const u512 *count)
 {
 	struct state *o = state;
 	u512 W;
-	size_t i;
 
 	load (block, &W);
 
