@@ -31,10 +31,12 @@ static int usage (void)
 	return 1;
 }
 
-static void show (const unsigned char *data, size_t len)
+static void show (const void *data, size_t len)
 {
-	for (; len > 0; ++data, --len)
-		printf ("%02x", *data);
+	const unsigned char *p = data;
+
+	for (; len > 0; ++p, --len)
+		printf ("%02x", *p);
 
 	printf ("\n");
 }
