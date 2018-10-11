@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 #include <crypto/hash.h>
 
 #include <hash/md5.h>

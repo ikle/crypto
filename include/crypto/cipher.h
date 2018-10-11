@@ -9,7 +9,7 @@
 #ifndef CRYPTO_CIPHER_H
 #define CRYPTO_CIPHER_H  1
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 
 struct cipher {
 	const struct crypto_core *core;

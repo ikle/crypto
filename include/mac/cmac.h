@@ -10,7 +10,7 @@
 #ifndef CRYPTO_CMAC_CORE_H
 #define CRYPTO_CMAC_CORE_H  1
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 
 extern const struct crypto_core cmac_core;
 

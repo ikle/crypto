@@ -10,7 +10,7 @@
 #define CRYPTO_KDF_H  1
 
 #include <errno.h>
-#include <crypto-core.h>
+#include <crypto/core.h>
 #include <crypto/hash.h>
 
 /* old API */

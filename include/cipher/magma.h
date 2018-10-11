@@ -10,7 +10,7 @@
 #ifndef CRYPTO_MAGMA_CORE_H
 #define CRYPTO_MAGMA_CORE_H  1
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 
 extern const struct crypto_core gost89_core;
 extern const struct crypto_core magma_core;

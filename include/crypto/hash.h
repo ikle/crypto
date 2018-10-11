@@ -9,7 +9,7 @@
 #ifndef CRYPTO_HASH_H
 #define CRYPTO_HASH_H  1
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 
 struct hash {
 	const struct crypto_core *core;

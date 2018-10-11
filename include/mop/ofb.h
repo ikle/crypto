@@ -10,7 +10,7 @@
 #ifndef CRYPTO_OFB_CORE_H
 #define CRYPTO_OFB_CORE_H  1
 
-#include <crypto-core.h>
+#include <crypto/core.h>
 
 extern const struct crypto_core ofb_core;
 
