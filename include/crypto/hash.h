@@ -13,6 +13,8 @@
 
 struct hash {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	/* core-specific state follows */
 };
 
@@ -23,15 +25,20 @@ static struct hash *hash_alloc (const struct crypto_core *core)
 	if ((o = core->alloc ()) == NULL)
 		return NULL;
 
-	o->core = core;
+	o->core  = core;
+	o->block = NULL;
+	o->avail = 0;
 	return o;
 }
+
+#include <stdlib.h>
 
 static void hash_free (struct hash *o)
 {
 	if (o == NULL)
 		return;
 
+	free (o->block);
 	o->core->free (o);
 }
 
@@ -56,13 +63,10 @@ static int hash_set_key (struct hash *o, const void *key, size_t len)
 }
 
 /*
- * 1. Process integer number of input blocks.
- * 2. If out != NULL then process last possiby partial block and write
- *    final hash value to out.
+ * If out != NULL then process last possiby partial block and write final
+ * hash value to out.
  *
- * This function never stores input plain text data in context.
- *
- * Returns number of bytes processed.
+ * Returns number of bytes processed or zero on error.
  */
 size_t hash_data (struct hash *o, const void *in, size_t len, void *out);
 

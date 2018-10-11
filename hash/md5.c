@@ -111,6 +111,8 @@ static const u32 T[64] = {
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	u32 hash[MD5_ORDER];
 	u64 count;
 };

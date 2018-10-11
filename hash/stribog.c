@@ -163,6 +163,8 @@ static void add512 (const u512 *a, const u512 *b, u512 *result)
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	u512 h, N, Sum;
 };
 

@@ -17,6 +17,8 @@
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	u128 k[10];	/* round keys */
 	u128 kd[10];	/* decryption keys */
 };

@@ -122,7 +122,6 @@ static void *get_block (const struct crypto_core *core, void *o, void *arg)
 
 static void hash_blob (const struct crypto_core *core, void *o, char *data)
 {
-	struct hash *h = o;
 	const size_t hs = core->get (o, CRYPTO_HASH_SIZE);
 	char hash[hs];
 	size_t len;
@@ -131,21 +130,18 @@ static void hash_blob (const struct crypto_core *core, void *o, char *data)
 		error ("data required", 0);
 
 	len = hex2blob (data);
-	h->core = core;
 	hash_data (o, data, len, hash);
 	show (hash, hs);
 }
 
 static void hash (const struct crypto_core *core, void *o, char *data)
 {
-	struct hash *h = o;
 	const size_t hs = core->get (o, CRYPTO_HASH_SIZE);
 	char hash[hs];
 
 	if (data == NULL)
 		error ("data required", 0);
 
-	h->core = core;
 	hash_data (o, data, strlen (data), hash);
 	show (hash, hs);
 }
@@ -188,7 +184,7 @@ int main (int argc, char *argv[])
 	if ((core = find_core (argv[1])) == NULL)
 		error ("cannot find core algorithm", 0);
 
-	if ((o = core->alloc ()) == NULL)
+	if ((o = hash_alloc (core)) == NULL)
 		error ("cannot initialize algorithm", 1);
 
 	for (argv += 2; (op = argv[0]) != NULL; ++argv) {

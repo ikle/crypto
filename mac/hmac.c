@@ -20,6 +20,8 @@
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	struct hash *hash;
 	u8 *pad;
 };

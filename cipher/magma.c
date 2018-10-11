@@ -21,6 +21,8 @@
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	u32 k[8];
 	u32 k87[256], k65[256], k43[256], k21[256];
 };

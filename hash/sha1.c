@@ -82,6 +82,8 @@ static void mix_word (u32 *W, int i)
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	u32 hash[SHA1_ORDER];
 	u64 count;
 };

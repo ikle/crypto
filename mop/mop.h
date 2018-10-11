@@ -15,6 +15,8 @@
 
 struct state {
 	const struct crypto_core *core;
+	void *block;
+	size_t avail;
 	struct cipher *cipher;
 	u8 *iv;
 };
