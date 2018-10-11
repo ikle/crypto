@@ -2,7 +2,7 @@ AR ?= ar
 RANLIB ?= ranlib
 
 TARGETS = libcrypto.a
-CFLAGS = -O6 -I"$(CURDIR)"/include
+CFLAGS += -I"$(CURDIR)"/include
 
 SOURCES = hash/*.c cipher/*.c mac/*.c mop/*.c kdf/*.c
 OBJECTS = $(patsubst %.c,%.o, $(wildcard $(SOURCES)))
