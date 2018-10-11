@@ -1,0 +1,9 @@
+Redesign KDF API:
+
+1. Make KDF works as a hash object.
+2. Use set_prf method to set PRF.
+3. Use set_salt method to set KDF salt.
+4. Use set_count method to set KDF iteration count.
+5. Provide resonable defaults for count (KDF and implementation depended).
+6. Pass unknown set method to PRF: set_algo and set_key should sets
+   algo and key for PRF.
