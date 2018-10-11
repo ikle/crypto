@@ -1,0 +1,2 @@
+1. Accept partial block in high-level hash API — add block buffer after
+   core pointer to all hash objects.
