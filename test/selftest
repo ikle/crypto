@@ -107,3 +107,10 @@ expect_hash dc19847e05c64d2faf10ebfb4a3d2a20
 # Extend previous test
 spawn ./pbkdf1-test password x78578E5A5D63CB06 1000 20
 expect_hash dc19847e05c64d2faf10ebfb4a3d2a20b4e35efe
+
+# passlib/tests/test_utils_crypto.py
+# md5 password salt 1000  1	84
+# md5 password salt 1000  8	8475c6a8531a5d27
+# md5 password salt 1000 16	8475c6a8531a5d27e386cd496457812c
+spawn ./pbkdf1-test password :salt 1000 20
+expect_hash 4a8fd48e426ed081b535be5769892fa396293efb
