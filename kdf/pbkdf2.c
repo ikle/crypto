@@ -15,7 +15,7 @@
 #include <crypto/endian.h>
 #include <crypto/utils.h>
 
-#include <crypto/kdf/pbkdf2.h>
+#include <kdf/pbkdf2.h>
 
 static void F (struct hash *prf, const u8 *salt, size_t salt_len,
 	       unsigned count, size_t index, void *out)

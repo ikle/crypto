@@ -14,7 +14,7 @@
 
 #include <crypto/types.h>
 
-#include <crypto/kdf/pbkdf1.h>
+#include <kdf/pbkdf1.h>
 
 int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
 	    const void *salt, size_t salt_len,

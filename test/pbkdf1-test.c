@@ -4,8 +4,7 @@
 #include <string.h>
 
 #include <hash/sha1.h>
-
-#include <crypto/kdf/pbkdf2.h>
+#include <kdf/pbkdf2.h>
 
 static void error (const char *message, int system)
 {
