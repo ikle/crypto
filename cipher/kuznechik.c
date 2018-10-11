@@ -136,8 +136,10 @@ static void init_tables (void)
 	done = 1;
 }
 
-static int set_key (struct state *c, const void *key, size_t len)
+static int set_key (struct state *c, va_list ap)
 {
+	const void *key = va_arg (ap, const void *);
+	size_t len = va_arg (ap, size_t);
 	int i;
 	const u128 N0 = {};
 	u128 C, x, y, z;
@@ -301,21 +303,12 @@ static int set (void *state, int type, ...)
 	va_start (ap, type);
 
 	switch (type) {
-	case CRYPTO_KEY: {
-			const void *key;
-			size_t len;
-
-			key = va_arg (ap, const void *);
-			len = va_arg (ap, size_t);
-			status = set_key (state, key, len);
-			break;
-		}
-	default:
-		status = -ENOSYS;
+	case CRYPTO_KEY:
+		return set_key (state, ap);
 	}
 
 	va_end (ap);
-	return status;
+	return -ENOSYS;
 }
 
 const struct crypto_core kuznechik_core = {
