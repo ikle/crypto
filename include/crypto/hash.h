@@ -18,7 +18,8 @@ struct hash {
 	/* core-specific state follows */
 };
 
-static struct hash *hash_alloc (const struct crypto_core *core)
+static inline
+struct hash *hash_alloc (const struct crypto_core *core)
 {
 	struct hash *o;
 
@@ -33,7 +34,8 @@ static struct hash *hash_alloc (const struct crypto_core *core)
 
 #include <stdlib.h>
 
-static void hash_free (struct hash *o)
+static inline
+void hash_free (struct hash *o)
 {
 	if (o == NULL)
 		return;
@@ -42,22 +44,26 @@ static void hash_free (struct hash *o)
 	o->core->free (o);
 }
 
-static size_t hash_get_block_size (const struct hash *o)
+static inline
+size_t hash_get_block_size (const struct hash *o)
 {
 	return o->core->get (o, CRYPTO_BLOCK_SIZE);
 }
 
-static size_t hash_get_hash_size (const struct hash *o)
+static inline
+size_t hash_get_hash_size (const struct hash *o)
 {
 	return o->core->get (o, CRYPTO_HASH_SIZE);
 }
 
-static int hash_set_algo (struct hash *o, const struct crypto_core *core)
+static inline
+int hash_set_algo (struct hash *o, const struct crypto_core *core)
 {
 	return o->core->set (o, CRYPTO_ALGO, core);
 }
 
-static int hash_set_key (struct hash *o, const void *key, size_t len)
+static inline
+int hash_set_key (struct hash *o, const void *key, size_t len)
 {
 	return o->core->set (o, CRYPTO_KEY, key, len);
 }

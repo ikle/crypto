@@ -10,12 +10,12 @@
 #endif
 
 /* allows 0 <= count < 32 */
-static u32 rol32 (u32 x, unsigned count)
+static inline u32 rol32 (u32 x, unsigned count)
 {
 	return x << count | x >> (32 - count);
 }
 
-static void xor_block (const u8 *a, const u8 *b, u8 *out, size_t count)
+static inline void xor_block (const u8 *a, const u8 *b, u8 *out, size_t count)
 {
 	size_t i;
 

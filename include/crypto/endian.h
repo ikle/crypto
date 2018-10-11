@@ -3,7 +3,7 @@
 
 #include <crypto/types.h>
 
-static u32 read_le32 (const void *from)
+static inline u32 read_le32 (const void *from)
 {
 	const u8 *in = from;
 	const u32 a = in[0], b = in[1], c = in[2], d = in[3];
@@ -11,7 +11,7 @@ static u32 read_le32 (const void *from)
 	return a | (b << 8) | (c << 16) | (d << 24);
 }
 
-static void write_le32 (u32 x, void *to)
+static inline void write_le32 (u32 x, void *to)
 {
 	u8 *out = to;
 
@@ -21,7 +21,7 @@ static void write_le32 (u32 x, void *to)
 	out[3] = x >> 24;
 }
 
-static u32 read_be32 (const void *from)
+static inline u32 read_be32 (const void *from)
 {
 	const u8 *in = from;
 	const u32 a = in[0], b = in[1], c = in[2], d = in[3];
@@ -29,7 +29,7 @@ static u32 read_be32 (const void *from)
 	return d | (c << 8) | (b << 16) | (a << 24);
 }
 
-static void write_be32 (u32 x, void *to)
+static inline void write_be32 (u32 x, void *to)
 {
 	u8 *out = to;
 
@@ -39,7 +39,7 @@ static void write_be32 (u32 x, void *to)
 	out[3] = x;
 }
 
-static u64 read_le64 (const void *from)
+static inline u64 read_le64 (const void *from)
 {
 	const u8 *in = from;
 	const u64 a = in[0], b = in[1], c = in[2], d = in[3],
@@ -49,7 +49,7 @@ static u64 read_le64 (const void *from)
 	       (e << 32) | (f << 40) | (g << 48) | (h << 56);
 }
 
-static void write_le64 (u64 x, void *to)
+static inline void write_le64 (u64 x, void *to)
 {
 	u8 *out = to;
 
@@ -63,7 +63,7 @@ static void write_le64 (u64 x, void *to)
 	out[7] = x >> 56;
 }
 
-static u64 read_be64 (const void *from)
+static inline u64 read_be64 (const void *from)
 {
 	const u8 *in = from;
 	const u64 a = in[0], b = in[1], c = in[2], d = in[3],
@@ -73,7 +73,7 @@ static u64 read_be64 (const void *from)
 	       (d << 32) | (c << 40) | (b << 48) | (a << 56);
 }
 
-static void write_be64 (u64 x, void *to)
+static inline void write_be64 (u64 x, void *to)
 {
 	u8 *out = to;
 
