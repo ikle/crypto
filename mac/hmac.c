@@ -82,6 +82,7 @@ static void init_hash (struct state *o, size_t bs)
 
 static int set_key (struct state *o, const void *key, size_t len)
 {
+	// todo: check o->hash != NULL, key != NULL
 	const size_t bs = hash_get_block_size (o->hash);
 	size_t i;
 
