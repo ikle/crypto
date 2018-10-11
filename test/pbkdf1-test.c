@@ -64,6 +64,7 @@ static void show (const void *data, size_t len)
 int main (int argc, char *argv[])
 {
 	struct hash *prf;
+	struct kdf  *kdf;
 
 	if (argc != 5)
 		error ("usage:\n\tpbkdf1-test <password> <salt-blob> <count>"
@@ -71,6 +72,9 @@ int main (int argc, char *argv[])
 
 	if ((prf = hash_alloc (&sha1_core)) == NULL)
 		error ("cannot allocate SHA1 context", 1);
+
+	if ((kdf = kdf_alloc (&pbkdf1_core)) == NULL)
+		error ("cannot allocate PBKDF1 context", 1);
 
 	const char *key  = argv[1];
 	char *salt = argv[2];
@@ -82,10 +86,13 @@ int main (int argc, char *argv[])
 	if (!read_blob (salt, &salt_len))
 		error ("cannot parse salt blob", 1);
 
-	errno = -kdf (&pbkdf1_core,
-		      prf, key, strlen (key), salt, salt_len,
-		      count, buf, len);
-	if (errno != 0)
+	if (!kdf_set_prf (kdf, prf)		  ||
+	    !kdf_set_key (kdf, key, strlen (key)) ||
+	    !kdf_set_salt (kdf, salt, salt_len)	  ||
+	    !kdf_set_count (kdf, count))
+		error ("cannot initialize KDF", 1);
+
+	if (!kdf_compute (kdf, buf, len))
 		error ("cannot derive key", 1);
 
 	show (buf, len);

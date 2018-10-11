@@ -10,57 +10,165 @@
  */
 
 #include <errno.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <crypto/types.h>
 
 #include <kdf/pbkdf1.h>
 
-static
-int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
-	    const void *salt, size_t salt_len,
-	    unsigned count, void *out, size_t len)
+struct state {
+	const struct crypto_core *core;
+	void *block;
+	size_t avail;
+
+	struct hash *prf;
+	const void *salt;
+	size_t salt_len;
+	size_t count;
+	u8 *hash;
+};
+
+static void kdf_clean (struct state *o)
 {
-	const size_t hs = hash_get_hash_size  (prf);
-	const size_t bs = hash_get_block_size (prf);
-	size_t n;
-	u8 block[bs];
-	u8 hash[hs];
+	o->prf = NULL;
+	free (o->hash);
+	o->hash = NULL;
+}
 
-	/* 1. Check output length */
+static int set_prf (struct state *o, va_list ap)
+{
+	struct hash *prf = va_arg (ap, struct hash *);
 
-	if (len > hs)
+	if (prf == NULL)
 		return -EINVAL;
 
-	if (count == 0)
-		count = 1000;
+	kdf_clean (o);
+	o->prf = prf;
 
-	/* 2. T_1 = Hash (P | S) */
+	const size_t hs = hash_get_hash_size (prf);
 
-	n = hash_data (prf, key, key_len, NULL);
-	key_len -= n;
+	if ((o->hash = malloc (hs)) == NULL)
+		return -ENOMEM;
 
-	memcpy (block, key + n, key_len);
-	n = bs - key_len;
-
-	if (salt_len < n) {
-		memcpy (block + key_len, salt, salt_len);
-		hash_data (prf, block, key_len + salt_len, hash);
-	}
-	else {
-		memcpy (block + key_len, salt, n);
-		hash_data (prf, block, bs, NULL);
-		hash_data (prf, salt + n, salt_len - n, hash);
-	}
-
-	/* 3. T_i = Hash (T_{i-1}) */
-	for (--count; count > 0; --count)
-		hash_data (prf, hash, hs, hash);
-
-	memcpy (out, hash, len);
 	return 0;
 }
 
-const struct kdf_core pbkdf1_core = {
-	.compute	= pbkdf1,
+static int set_key (struct state *o, va_list ap)
+{
+	const void *key = va_arg (ap, const void *);
+	size_t len = va_arg (ap, size_t);
+
+	if (o->prf == NULL || key == NULL)
+		return -EINVAL;
+
+	// 1. hash_start (o->prf)
+	hash_data (o->prf, key, len, NULL);
+	// 3. mark "key installed"
+
+	return 0;
+}
+
+static int set_salt (struct state *o, va_list ap)
+{
+	const void *salt = va_arg (ap, const void *);
+	size_t len = va_arg (ap, size_t);
+
+	if (o->prf == NULL || salt == NULL)
+		return -EINVAL;
+
+	o->salt     = salt;
+	o->salt_len = len;
+	return 0;
+}
+
+static void *kdf_core_alloc (void)
+{
+	struct state *o;
+
+	if ((o = malloc (sizeof (*o))) == NULL)
+		return NULL;
+
+	o->prf   = NULL;
+	o->count = 0;
+	o->hash  = NULL;
+	return o;
+}
+
+static void kdf_core_free (void *state)
+{
+	kdf_clean (state);
+	free (state);
+}
+
+static int kdf_core_get (const void *state, int type, ...)
+{
+	const struct state *o = state;
+
+	if (o->prf == NULL)
+		return -EINVAL;
+
+	switch (type) {
+	case CRYPTO_HASH_SIZE:
+		return o->prf->core->get (o->prf, type);
+	}
+
+	return -ENOSYS;
+}
+
+static int kdf_core_set (void *state, int type, ...)
+{
+	struct state *o = state;
+	va_list ap;
+
+	va_start (ap, type);
+
+	switch (type) {
+	case CRYPTO_PRF:
+		return set_prf (o, ap);
+	case CRYPTO_KEY:
+		return set_key (o, ap);
+	case CRYPTO_SALT:
+		return set_salt (o, ap);
+	case CRYPTO_COUNT:
+		o->count = va_arg (ap, size_t);
+		return 0;
+	}
+
+	va_end (ap);
+	return -ENOSYS;
+}
+
+static void kdf_core_final (void *state, const void *in, size_t len,
+			    void *out)
+{
+	struct state *o = state;
+
+	if (o->prf == NULL || o->salt == NULL)
+		return;
+
+	size_t count = o->count == 0 ? 1000 : o->count;
+	const size_t hs = hash_get_hash_size (o->prf);
+
+	hash_data (o->prf, o->salt, o->salt_len, o->hash);
+
+	/* 3. T_i = Hash (T_{i-1}) */
+	for (--count; count > 0; --count)
+		hash_data (o->prf, o->hash, hs, o->hash);
+
+	if (len > hs)
+		len = hs;
+
+	memcpy (out, o->hash, len);  // oops, len is output length here!
+}
+
+const struct crypto_core pbkdf1_core = {
+	.alloc		= kdf_core_alloc,
+	.free		= kdf_core_free,
+
+	.get		= kdf_core_get,
+	.set		= kdf_core_set,
+
+	.final		= kdf_core_final,
 };

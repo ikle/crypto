@@ -17,6 +17,9 @@ enum crypto_type {
 	CRYPTO_ALGO,
 	CRYPTO_KEY,
 	CRYPTO_IV,
+	CRYPTO_PRF,
+	CRYPTO_SALT,
+	CRYPTO_COUNT,
 };
 
 struct crypto_core {

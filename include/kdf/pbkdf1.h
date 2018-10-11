@@ -14,6 +14,6 @@
 
 #include <crypto/kdf.h>
 
-extern const struct kdf_core pbkdf1_core;
+extern const struct crypto_core pbkdf1_core;
 
 #endif  /* CRYPTO_PBKDF1_H */

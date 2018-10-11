@@ -49,9 +49,8 @@ int main (int argc, char *argv[])
 	const unsigned len = atoi (argv[4]);
 	char buf[len];
 
-	errno = -kdf (&pbkdf2_core,
-		      prf, key, strlen (key), salt, strlen (salt),
-		      count, buf, len);
+	errno = -pbkdf2_core.compute (prf, key, strlen (key),
+				      salt, strlen (salt), count, buf, len);
 	if (errno != 0)
 		error ("cannot derive key", 1);
 
