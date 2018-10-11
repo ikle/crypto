@@ -92,6 +92,7 @@ static int set_iv (struct state *o, const void *iv)
 	const size_t bs = cipher_get_block_size (o->cipher);
 
 	memcpy (o->iv, iv, bs);
+	return 0;
 }
 
 int mop_get (const void *state, int type, ...)
