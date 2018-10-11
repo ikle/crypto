@@ -120,7 +120,8 @@ static int hmac_core_get (const void *state, int type, ...)
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_HASH_SIZE:
-		return o->hash->core->get (o->hash, type);
+		return o->hash == NULL ? -EINVAL :
+					 o->hash->core->get (o->hash, type);
 	}
 
 	return -ENOSYS;
