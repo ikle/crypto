@@ -7,6 +7,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+#include <crypto/endian.h>
 #include <crypto/utils.h>
 #include <mop/ctr.h>
 
