@@ -42,8 +42,10 @@ static void table_init (struct state *o, const struct pi *b)
 	}
 }
 
-static int set_key (struct state *o, int le, const u8 *key, size_t len)
+static int set_key (struct state *o, int le, va_list ap)
 {
+	const void *key = va_arg (ap, const void *);
+	size_t len = va_arg (ap, size_t);
 	size_t i;
 
 	if (len != 32)
@@ -174,17 +176,9 @@ static int get (const void *state, int type, ...)
 
 static int set_va (void *state, int le, int type, va_list ap)
 {
-	int status;
-
 	switch (type) {
-	case CRYPTO_KEY: {
-			const void *key;
-			size_t len;
-
-			key = va_arg (ap, const void *);
-			len = va_arg (ap, size_t);
-			return set_key (state, le, key, len);
-		}
+	case CRYPTO_KEY:
+		return set_key (state, le, ap);
 	}
 
 	return -ENOSYS;
