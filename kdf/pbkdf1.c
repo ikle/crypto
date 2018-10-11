@@ -28,8 +28,11 @@ int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
 
 	/* 1. Check output length */
 
-	if (len > hs || count < 1)
+	if (len > hs)
 		return -EINVAL;
+
+	if (count == 0)
+		count = 1000;
 
 	/* 2. T_1 = Hash (P | S) */
 
