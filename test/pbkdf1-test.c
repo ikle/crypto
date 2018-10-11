@@ -8,7 +8,7 @@
 
 static void error (const char *message, int system)
 {
-	fprintf (stderr, "cipher-test: ");
+	fprintf (stderr, "pbkdf1-test: ");
 
 	if (system)
 		perror (message);
