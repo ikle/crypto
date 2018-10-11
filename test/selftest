@@ -99,3 +99,11 @@ expect_hash 4b007901b765489abead49d926f721d065a429c1
 
 spawn ./pbkdf2-test passwordPASSWORDpassword saltSALTsaltSALTsaltSALTsaltSALTsalt 4096 25
 expect_hash 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
+
+# From http://www.di-mgt.com.au/cryptoKDFs.html
+spawn ./pbkdf1-test password x78578E5A5D63CB06 1000 16
+expect_hash dc19847e05c64d2faf10ebfb4a3d2a20
+
+# Extend previous test
+spawn ./pbkdf1-test password x78578E5A5D63CB06 1000 20
+expect_hash dc19847e05c64d2faf10ebfb4a3d2a20b4e35efe
