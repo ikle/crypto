@@ -42,6 +42,7 @@ static void F (struct hash *prf, const u8 *salt, size_t salt_len,
 	}
 }
 
+static
 int pbkdf2 (struct hash *prf, const void *key, size_t key_len,
 	    const void *salt, size_t salt_len,
 	    unsigned count, void *out, size_t len)
@@ -63,3 +64,7 @@ int pbkdf2 (struct hash *prf, const void *key, size_t key_len,
 
 	return 0;
 }
+
+const struct kdf_core pbkdf2_core = {
+	.compute	= pbkdf2,
+};

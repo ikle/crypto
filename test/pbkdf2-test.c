@@ -7,8 +7,6 @@
 #include <kdf/pbkdf2.h>
 #include <mac/hmac.h>
 
-#include <crypto/hash.h>
-
 static void error (const char *message, int system)
 {
 	fprintf (stderr, "cipher-test: ");
@@ -49,8 +47,9 @@ int main (int argc, char *argv[])
 	const unsigned len = atoi (argv[4]);
 	char buf[len];
 
-	errno = -pbkdf2 (prf, key, strlen (key), salt, strlen (salt),
-			 count, buf, len);
+	errno = -kdf (&pbkdf2_core,
+		      prf, key, strlen (key), salt, strlen (salt),
+		      count, buf, len);
 	if (errno != 0)
 		error ("cannot derive key", 1);
 

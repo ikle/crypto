@@ -16,6 +16,7 @@
 
 #include <kdf/pbkdf1.h>
 
+static
 int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
 	    const void *salt, size_t salt_len,
 	    unsigned count, void *out, size_t len)
@@ -59,3 +60,7 @@ int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
 	memcpy (out, hash, len);
 	return 0;
 }
+
+const struct kdf_core pbkdf1_core = {
+	.compute	= pbkdf1,
+};

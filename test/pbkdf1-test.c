@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <hash/sha1.h>
-#include <kdf/pbkdf2.h>
+#include <kdf/pbkdf1.h>
 
 static void error (const char *message, int system)
 {
@@ -80,8 +80,9 @@ int main (int argc, char *argv[])
 	if (!read_blob (salt, &salt_len))
 		error ("cannot parse salt blob", 1);
 
-	errno = -pbkdf1 (prf, key, strlen (key), salt, salt_len,
-			 count, buf, len);
+	errno = -kdf (&pbkdf1_core,
+		      prf, key, strlen (key), salt, salt_len,
+		      count, buf, len);
 	if (errno != 0)
 		error ("cannot derive key", 1);
 

@@ -12,10 +12,8 @@
 #ifndef CRYPTO_PBKDF1_H
 #define CRYPTO_PBKDF1_H  1
 
-#include <crypto/hash.h>
+#include <crypto/kdf.h>
 
-int pbkdf1 (struct hash *prf, const void *key, size_t key_len,
-	    const void *salt, size_t salt_len,
-	    unsigned count, void *out, size_t len);
+extern const struct kdf_core pbkdf1_core;
 
 #endif  /* CRYPTO_PBKDF1_H */
