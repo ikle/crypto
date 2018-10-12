@@ -278,12 +278,7 @@ static void decrypt (void *state, const void *in, void *out)
 
 static void *alloc (void)
 {
-	struct state *o;
-
-	if ((o = malloc (sizeof (*o))) == NULL)
-		return NULL;
-
-	return o;
+	return calloc (1, sizeof (struct state));
 }
 
 static int get (const void *state, int type, ...)
