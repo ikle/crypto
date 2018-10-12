@@ -25,54 +25,54 @@ proc expect_hash hash {
 	}
 }
 
-spawn ./crypto-test md5 hash abc
+spawn ./crypto algo md5 hash :abc
 expect_hash 900150983cd24fb0d6963f7d28e17f72
 
-spawn ./crypto-test md5 hash ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+spawn ./crypto algo md5 hash :ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
 expect_hash d174ab98d277d9f5a5611c2c9f419d9f
 
-spawn ./crypto-test sha1 hash abc
+spawn ./crypto algo sha1 hash :abc
 expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
 
-spawn ./crypto-test sha1 hash abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+spawn ./crypto algo sha1 hash :abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
 expect_hash 84983e441c3bd26ebaae4aa1f95129e5e54670f1
 
 # R 34.11-2012 A.1
-spawn ./crypto-test stribog hash 012345678901234567890123456789012345678901234567890123456789012
+spawn ./crypto algo stribog hash :012345678901234567890123456789012345678901234567890123456789012
 expect_hash 1b54d01a4af5b9d5cc3d86d68d285462b19abc2475222f35c085122be4ba1ffa00ad30f8767b3a82384c6574f024c311e2a481332b08ef7f41797891c1646f48
 
 # R 34.11-2012 A.2
 # M = LE (CP-1251 ("Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы"))
-spawn ./crypto-test stribog hash-blob d1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb
+spawn ./crypto algo stribog hash xd1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb
 expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
 
-spawn ./crypto-test hmac algo md5 key "" hash ""
+spawn ./crypto algo md5 algo hmac key : hash :
 expect_hash 74e6f7298a9c2d168935f58c001bad88
 
 # RFC 2104 Sample Code, Test Vector #1
-spawn ./crypto-test hmac algo md5 key 0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b hash "Hi There"
+spawn ./crypto algo md5 algo hmac key x0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b hash ":Hi There"
 expect_hash 9294727a3638bb1c13f48ef8158bfc9d
 
-# RFC 2104 Sample Code, Test Vector #2, key = "Jefe"
-spawn ./crypto-test hmac algo md5 key 4a656665 hash "what do ya want for nothing?"
+# RFC 2104 Sample Code, Test Vector #2
+spawn ./crypto algo md5 algo hmac key :Jefe hash ":what do ya want for nothing?"
 expect_hash 750c783e6ab0b503eaa86e310a5db738
 
 # RFC 2104 Sample Code, Test Vector #3
-spawn ./crypto-test hmac algo md5 key AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA hash-blob DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+spawn ./crypto algo md5 algo hmac key xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA hash xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 expect_hash 56be34521d144c88dbb8c733f0e8b3f6
 
 # R 34.12-2015 A.1, R 34.13-2015 A.1.1
-spawn ./crypto-test kuznechik key 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef encrypt 1122334455667700ffeeddccbbaa9988
+spawn ./crypto algo kuznechik key x8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef encrypt x1122334455667700ffeeddccbbaa9988
 expect_hash 7f679d90bebc24305a468d42b9d4edcd
 
-spawn ./crypto-test kuznechik key 8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef decrypt 7f679d90bebc24305a468d42b9d4edcd
+spawn ./crypto algo kuznechik key x8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef decrypt x7f679d90bebc24305a468d42b9d4edcd
 expect_hash 1122334455667700ffeeddccbbaa9988
 
 # R 34.12-2015 A.2
-spawn ./crypto-test magma key ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encrypt fedcba9876543210
+spawn ./crypto algo magma key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encrypt xfedcba9876543210
 expect_hash 4ee901e5c2d8ca3d
 
-spawn ./crypto-test magma key ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff decrypt 4ee901e5c2d8ca3d
+spawn ./crypto algo magma key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff decrypt x4ee901e5c2d8ca3d
 expect_hash fedcba9876543210
 
 # GOST R 34.13-2015 A.1.6
@@ -84,7 +84,7 @@ spawn ./crypto-test cmac algo magma key ffeeddccbbaa99887766554433221100f0f1f2f3
 expect_hash 154e72102030c5bb
 
 # R 34.13-2015 A.2.1
-spawn ./crypto-test magma key ffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encrypt 92def06b3c130a59
+spawn ./crypto algo magma key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff encrypt x92def06b3c130a59
 expect_hash 2b073f0494f372a0
 
 # RFC 6070 PBKDF2 HMAC-SHA1 Test Vectors
