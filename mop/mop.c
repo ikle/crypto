@@ -52,8 +52,10 @@ void mop_free (void *state)
 	free (o);
 }
 
-static int set_algo (struct state *o, const struct crypto_core *algo)
+static int set_algo (struct state *o, va_list ap)
 {
+	const struct crypto_core *algo =
+		va_arg (ap, const struct crypto_core *);
 	int error;
 
 	if (algo == NULL)
@@ -87,8 +89,9 @@ no_cipher:
 	return error;
 }
 
-static int set_iv (struct state *o, const void *iv)
+static int set_iv (struct state *o, va_list ap)
 {
+	const void *iv = va_arg (ap, const void *);
 	const size_t bs = cipher_get_block_size (o->cipher);
 
 	memcpy (o->iv, iv, bs);
@@ -109,35 +112,22 @@ int mop_set (void *state, int type, ...)
 {
 	const struct state *o = state;
 	va_list ap;
-	int status;
 
 	va_start (ap, type);
 
 	switch (type) {
-	case CRYPTO_ALGO: {
-		const struct crypto_core *algo =
-			va_arg (ap, const struct crypto_core *);
-
-		status = set_algo (state, algo);
-		break;
-	}
+	case CRYPTO_ALGO:
+		return set_algo (state, ap);
 	case CRYPTO_KEY: {
 		const void *key = va_arg (ap, const void *);
 		size_t len = va_arg (ap, size_t);
 
-		status = cipher_set_key (o->cipher, key, len);
-		break;
+		return cipher_set_key (o->cipher, key, len);
 	}
-	case CRYPTO_IV: {
-		const void *iv = va_arg (ap, const void *);
-
-		status = set_iv (state, iv);
-		break;
-	}
-	default:
-		status = -ENOSYS;
+	case CRYPTO_IV:
+		return set_iv (state, ap);
 	}
 
 	va_end (ap);
-	return status;
+	return -ENOSYS;
 }
