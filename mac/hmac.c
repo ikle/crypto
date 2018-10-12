@@ -42,8 +42,11 @@ static void hmac_core_fini (struct state *o)
 	o->hash = NULL;
 }
 
-static int set_algo (struct state *o, const struct crypto_core *algo)
+static int set_algo (struct state *o, va_list ap)
 {
+	const struct crypto_core *algo =
+		va_arg (ap, const struct crypto_core *);
+
 	hmac_core_fini (o);
 
 	if (algo == NULL)
@@ -82,8 +85,11 @@ static void init_hash (struct state *o, size_t bs)
 	o->hash->core->transform (o->hash, o->pad);
 }
 
-static int set_key (struct state *o, const void *key, size_t len)
+static int set_key (struct state *o, va_list ap)
 {
+	const void *key = va_arg (ap, const void *);
+	size_t len = va_arg (ap, size_t);
+
 	if (o->hash == NULL || key == NULL)
 		return -EINVAL;
 
@@ -132,33 +138,18 @@ static int hmac_core_get (const void *state, int type, ...)
 static int hmac_core_set (void *state, int type, ...)
 {
 	va_list ap;
-	int status;
 
 	va_start (ap, type);
 
 	switch (type) {
-	case CRYPTO_ALGO: {
-			const struct crypto_core *algo;
-
-			algo = va_arg (ap, const struct crypto_core *);
-			status = set_algo (state, algo);
-			break;
-		}
-	case CRYPTO_KEY: {
-			const void *key;
-			size_t len;
-
-			key = va_arg (ap, const void *);
-			len = va_arg (ap, size_t);
-			status = set_key (state, key, len);
-			break;
-		}
-	default:
-		status = -ENOSYS;
+	case CRYPTO_ALGO:
+		return set_algo (state, ap);
+	case CRYPTO_KEY:
+		return set_key (state, ap);
 	}
 
 	va_end (ap);
-	return status;
+	return -ENOSYS;
 }
 
 static void hmac_core_free (void *state)
