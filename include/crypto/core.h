@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#ifndef CRYPTO_HASH_CORE_H
-#define CRYPTO_HASH_CORE_H  1
+#ifndef CRYPTO_CORE_H
+#define CRYPTO_CORE_H  1
 
 #include <stddef.h>
 
@@ -37,4 +37,4 @@ struct crypto_core {
 	void (*final) (void *state, const void *in, size_t len, void *out);
 };
 
-#endif  /* CRYPTO_HASH_CORE_H */
+#endif  /* CRYPTO_CORE_H */
