@@ -20,7 +20,10 @@ size_t hash_data (struct hash *o, const void *in, size_t len, void *out)
 	    (o->block = malloc (bs)) == NULL)
 		return 0;
 
-	if (o->avail >= bs)
+	if (o->avail == bs && len == 0 && out != NULL)
+		goto out;  /* it is a last block */
+
+	if (o->avail > bs)
 		return 0;
 
 	if (o->avail > 0) {
