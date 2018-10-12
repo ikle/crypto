@@ -91,10 +91,14 @@ no_cipher:
 
 static int set_iv (struct state *o, va_list ap)
 {
-	const void *iv = va_arg (ap, const void *);
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const void  *iv  = va_arg (ap, const void *);
+	const size_t len = va_arg (ap, size_t);
+	const size_t bs  = cipher_get_block_size (o->cipher);
 
-	memcpy (o->iv, iv, bs);
+	if (len != bs)
+		return -EINVAL;
+
+	memcpy (o->iv, iv, len);
 	return 0;
 }
 
