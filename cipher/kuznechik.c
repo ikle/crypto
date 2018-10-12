@@ -298,7 +298,6 @@ static int get (const void *state, int type, ...)
 static int set (void *state, int type, ...)
 {
 	va_list ap;
-	int status;
 
 	va_start (ap, type);
 
