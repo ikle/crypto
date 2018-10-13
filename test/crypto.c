@@ -195,6 +195,31 @@ static void hash (int argc, char *argv[])
 	show (block, hs);
 }
 
+static void fetch (int argc, char *argv[])
+{
+	size_t len;
+	char *end;
+
+	if (argc < 2)
+		errx (1, "fetch requires an argument");
+
+	if (algo == NULL)
+		errx (1, "algo does not defined");
+
+	len = strtoul (argv[1], &end, 0);
+	if (end[0] != '\0')
+		err (1, "count format error");
+
+	size_t hs = crypto_get_output_size (algo);
+
+	u8 block[hs];
+
+	if (!crypto_fetch (algo, block, len))
+		err (1, "cannot fetch result");
+
+	show (block, hs);
+}
+
 int main (int argc, char *argv[])
 {
 	--argc, ++argv;
@@ -230,6 +255,10 @@ int main (int argc, char *argv[])
 		}
 		else if (strcmp (argv[0], "hash") == 0) {
 			hash (argc, argv);
+			argc -= 2, argv += 2;
+		}
+		else if (strcmp (argv[0], "fetch") == 0) {
+			fetch (argc, argv);
 			argc -= 2, argv += 2;
 		}
 		else

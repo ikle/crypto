@@ -101,16 +101,22 @@ spawn ./pbkdf2-test passwordPASSWORDpassword saltSALTsaltSALTsaltSALTsaltSALTsal
 expect_hash 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
 
 # From http://www.di-mgt.com.au/cryptoKDFs.html
-spawn ./pbkdf1-test password x78578E5A5D63CB06 1000 16
+spawn ./crypto algo sha1 algo pbkdf1 key :password salt x78578E5A5D63CB06 count 1000 fetch 16
 expect_hash dc19847e05c64d2faf10ebfb4a3d2a20
 
 # Extend previous test
-spawn ./pbkdf1-test password x78578E5A5D63CB06 1000 20
+spawn ./crypto algo sha1 algo pbkdf1 key :password salt x78578E5A5D63CB06 count 1000 fetch 20
 expect_hash dc19847e05c64d2faf10ebfb4a3d2a20b4e35efe
 
 # passlib/tests/test_utils_crypto.py
-# md5 password salt 1000  1	84
-# md5 password salt 1000  8	8475c6a8531a5d27
-# md5 password salt 1000 16	8475c6a8531a5d27e386cd496457812c
-spawn ./pbkdf1-test password :salt 1000 20
+spawn ./crypto algo md5 algo pbkdf1 key :password salt :salt count 1000 fetch 1
+expect_hash 84
+
+spawn ./crypto algo md5 algo pbkdf1 key :password salt :salt count 1000 fetch 8
+expect_hash 8475c6a8531a5d27
+
+spawn ./crypto algo md5 algo pbkdf1 key :password salt :salt count 1000 fetch 16
+expect_hash 8475c6a8531a5d27e386cd496457812c
+
+spawn ./crypto algo sha1 algo pbkdf1 key :password salt :salt count 1000 fetch 20
 expect_hash 4a8fd48e426ed081b535be5769892fa396293efb
