@@ -140,13 +140,12 @@ static int kdf_core_set (void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static void kdf_core_final (void *state, const void *in, size_t len,
-			    void *out)
+static int kdf_core_fetch (void *state, void *out, size_t len)
 {
 	struct state *o = state;
 
 	if (o->prf == NULL || o->salt == NULL)
-		return;
+		return -EINVAL;
 
 	size_t count = o->count == 0 ? 1000 : o->count;
 	const size_t hs = hash_get_hash_size (o->prf);
@@ -161,6 +160,7 @@ static void kdf_core_final (void *state, const void *in, size_t len,
 		len = hs;
 
 	memcpy (out, o->hash, len);  // oops, len is output length here!
+	return 0;
 }
 
 const struct crypto_core pbkdf1_core = {
@@ -170,5 +170,5 @@ const struct crypto_core pbkdf1_core = {
 	.get		= kdf_core_get,
 	.set		= kdf_core_set,
 
-	.final		= kdf_core_final,
+	.fetch		= kdf_core_fetch,
 };
