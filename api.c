@@ -237,15 +237,15 @@ void crypto_decrypt (struct crypto *o, const void *in, void *out)
 
 int crypto_update (struct crypto *o, const void *in, size_t len)
 {
-#if 0
-	if (o->core->update != NULL)
-		return = o->core->update (o, data, len);
-#else
+	if (o->core->update != NULL) {
+		errno = -o->core->update (o, in, len);
+		return errno == 0;
+	}
+
 	if (o->core->transform != NULL && o->core->final != NULL) {
 		hash_data ((void *) o, in, len, NULL);
 		return 1;
 	}
-#endif
 
 	errno = -ENOSYS;
 	return 0;
@@ -255,12 +255,10 @@ int crypto_update (struct crypto *o, const void *in, size_t len)
 
 int crypto_fetch (struct crypto *o, void *out, size_t len)
 {
-#if 0
-	if (o->core->fetch != NULL)
-		return = o->core->fetch (o, out, len);
-#else
-	if (o->core == &pbkdf1_core)
-		return kdf_compute ((void *) o, out, len);
+	if (o->core->fetch != NULL) {
+		errno = -o->core->fetch (o, out, len);
+		return errno == 0;
+	}
 
 	if (o->core->transform != NULL || o->core->final != NULL) {
 		size_t hs = crypto_get_output_size (o);
@@ -279,7 +277,6 @@ int crypto_fetch (struct crypto *o, void *out, size_t len)
 		memcpy (out, hash, len);
 		return 1;
 	}
-#endif
 
 	errno = -ENOSYS;
 	return 0;
