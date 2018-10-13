@@ -27,6 +27,16 @@ struct state {
 	u32 k87[256], k65[256], k43[256], k21[256];
 };
 
+static void magma_reset (struct state *o)
+{
+	memset (o->k, 0, sizeof (o->k));	barrier_data (o->k);
+
+	memset (o->k87, 0, sizeof (o->k87));	barrier_data (o->k87);
+	memset (o->k65, 0, sizeof (o->k65));	barrier_data (o->k65);
+	memset (o->k43, 0, sizeof (o->k43));	barrier_data (o->k43);
+	memset (o->k21, 0, sizeof (o->k21));	barrier_data (o->k21);
+}
+
 static void table_init (struct state *o, const struct pi *b)
 {
 	int i, h, l;
@@ -160,6 +170,12 @@ static void *alloc (void)
 	return calloc (1, sizeof (struct state));
 }
 
+static void magma_free (void *state)
+{
+	magma_reset (state);
+	free (state);
+}
+
 static int get (const void *state, int type, ...)
 {
 	switch (type) {
@@ -207,7 +223,7 @@ static int set_be (void *state, int type, ...)
 
 const struct crypto_core gost89_core = {
 	.alloc		= alloc,
-	.free		= free,
+	.free		= magma_free,
 
 	.get		= get,
 	.set 		= set_le,
