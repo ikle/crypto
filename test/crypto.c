@@ -172,13 +172,12 @@ static void crypt (int encrypt, int argc, char *argv[])
 	show (block, bs);
 }
 
-static void hash (int argc, char *argv[])
+static void update (int argc, char *argv[])
 {
 	size_t len;
-	size_t hs;
 
 	if (argc < 2)
-		errx (1, "hash requires an argument");
+		errx (1, "update requires an argument");
 
 	if (algo == NULL)
 		errx (1, "algo does not defined");
@@ -186,13 +185,8 @@ static void hash (int argc, char *argv[])
 	if (!read_blob (argv[1], &len))
 		err (1, "data block format error");
 
-	hs = crypto_get_output_size (algo);
-
-	u8 block[hs];
-
-	crypto_update (algo, argv[1], len);
-	crypto_fetch (algo, block, hs);
-	show (block, hs);
+	if (!crypto_update (algo, argv[1], len))
+		err (1, "cannot push data");
 }
 
 static void fetch (int argc, char *argv[])
@@ -253,8 +247,8 @@ int main (int argc, char *argv[])
 			crypt (0, argc, argv);
 			argc -= 2, argv += 2;
 		}
-		else if (strcmp (argv[0], "hash") == 0) {
-			hash (argc, argv);
+		else if (strcmp (argv[0], "update") == 0) {
+			update (argc, argv);
 			argc -= 2, argv += 2;
 		}
 		else if (strcmp (argv[0], "fetch") == 0) {

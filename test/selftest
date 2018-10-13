@@ -25,40 +25,40 @@ proc expect_hash hash {
 	}
 }
 
-spawn ./crypto algo md5 hash :abc
+spawn ./crypto algo md5 update :abc fetch 16
 expect_hash 900150983cd24fb0d6963f7d28e17f72
 
-spawn ./crypto algo md5 hash :ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+spawn ./crypto algo md5 update :ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 fetch 16
 expect_hash d174ab98d277d9f5a5611c2c9f419d9f
 
-spawn ./crypto algo sha1 hash :abc
+spawn ./crypto algo sha1 update :abc fetch 20
 expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
 
-spawn ./crypto algo sha1 hash :abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+spawn ./crypto algo sha1 update :abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq fetch 20
 expect_hash 84983e441c3bd26ebaae4aa1f95129e5e54670f1
 
 # R 34.11-2012 A.1
-spawn ./crypto algo stribog hash :012345678901234567890123456789012345678901234567890123456789012
+spawn ./crypto algo stribog update :012345678901234567890123456789012345678901234567890123456789012 fetch 64
 expect_hash 1b54d01a4af5b9d5cc3d86d68d285462b19abc2475222f35c085122be4ba1ffa00ad30f8767b3a82384c6574f024c311e2a481332b08ef7f41797891c1646f48
 
 # R 34.11-2012 A.2
 # M = LE (CP-1251 ("Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы"))
-spawn ./crypto algo stribog hash xd1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb
+spawn ./crypto algo stribog update xd1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb fetch 64
 expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
 
-spawn ./crypto algo md5 algo hmac key : hash :
+spawn ./crypto algo md5 algo hmac key : update : fetch 16
 expect_hash 74e6f7298a9c2d168935f58c001bad88
 
 # RFC 2104 Sample Code, Test Vector #1
-spawn ./crypto algo md5 algo hmac key x0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b hash ":Hi There"
+spawn ./crypto algo md5 algo hmac key x0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b update ":Hi There" fetch 16
 expect_hash 9294727a3638bb1c13f48ef8158bfc9d
 
 # RFC 2104 Sample Code, Test Vector #2
-spawn ./crypto algo md5 algo hmac key :Jefe hash ":what do ya want for nothing?"
+spawn ./crypto algo md5 algo hmac key :Jefe update ":what do ya want for nothing?" fetch 16
 expect_hash 750c783e6ab0b503eaa86e310a5db738
 
 # RFC 2104 Sample Code, Test Vector #3
-spawn ./crypto algo md5 algo hmac key xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA hash xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+spawn ./crypto algo md5 algo hmac key xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA update xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD fetch 16
 expect_hash 56be34521d144c88dbb8c733f0e8b3f6
 
 # R 34.12-2015 A.1, R 34.13-2015 A.1.1
@@ -76,11 +76,11 @@ spawn ./crypto algo magma key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f
 expect_hash fedcba9876543210
 
 # GOST R 34.13-2015 A.1.6
-spawn ./crypto algo kuznechik algo cmac key x8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef hash x1122334455667700ffeeddccbbaa998800112233445566778899aabbcceeff0a112233445566778899aabbcceeff0a002233445566778899aabbcceeff0a0011
+spawn ./crypto algo kuznechik algo cmac key x8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef update x1122334455667700ffeeddccbbaa998800112233445566778899aabbcceeff0a112233445566778899aabbcceeff0a002233445566778899aabbcceeff0a0011 fetch 16
 expect_hash 336f4d296059fbe34ddeb35b37749c67
 
 # GOST R 34.13-2015 A.2.6
-spawn ./crypto algo magma algo cmac key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff hash x92def06b3c130a59db54c704f8189d204a98fb2e67a8024c8912409b17b57e41
+spawn ./crypto algo magma algo cmac key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff update x92def06b3c130a59db54c704f8189d204a98fb2e67a8024c8912409b17b57e41 fetch 8
 expect_hash 154e72102030c5bb
 
 # R 34.13-2015 A.2.1
