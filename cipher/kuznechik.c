@@ -11,6 +11,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include <crypto/utils.h>
+
 #include <cipher/kuznechik.h>
 
 #include "kuznechik-defs.h"
@@ -22,6 +24,12 @@ struct state {
 	u128 k[10];	/* round keys */
 	u128 kd[10];	/* decryption keys */
 };
+
+static void kuznechik_reset (struct state *o)
+{
+	memset (o->k, 0,  sizeof (o->k));	barrier_data (o->k);
+	memset (o->kd, 0, sizeof (o->k));	barrier_data (o->kd);
+}
 
 static void S (u128 *x)
 {
@@ -281,6 +289,12 @@ static void *alloc (void)
 	return calloc (1, sizeof (struct state));
 }
 
+static void kuznechik_free (void *state)
+{
+	kuznechik_reset (state);
+	free (state);
+}
+
 static int get (const void *state, int type, ...)
 {
 	switch (type) {
@@ -307,7 +321,7 @@ static int set (void *state, int type, ...)
 
 const struct crypto_core kuznechik_core = {
 	.alloc		= alloc,
-	.free		= free,
+	.free		= kuznechik_free,
 
 	.get		= get,
 	.set		= set,
