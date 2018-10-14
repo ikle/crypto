@@ -16,8 +16,7 @@
 #include <crypto/utils.h>
 
 #include <cipher/magma.h>
-
-#include "magma-defs.h"
+#include <cipher/magma-sb.h>
 
 struct state {
 	const struct crypto_core *core;
@@ -37,7 +36,7 @@ static void magma_reset (struct state *o)
 	memset (o->k21, 0, sizeof (o->k21));	barrier_data (o->k21);
 }
 
-static void table_init (struct state *o, const struct pi *b)
+static void table_init (struct state *o, const struct gost89_sb *b)
 {
 	int i, h, l;
 
@@ -64,7 +63,7 @@ static int set_key (struct state *o, int le, va_list ap)
 	for (i = 0; i < 8; ++i, key += 4)
 		o->k[i] = (le ? read_le32 : read_be32) (key);
 
-	table_init (o, &sb_magma);
+	table_init (o, &magma_sb);
 	return 0;
 }
 
