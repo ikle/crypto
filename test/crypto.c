@@ -204,14 +204,12 @@ static void fetch (int argc, char *argv[])
 	if (end[0] != '\0')
 		err (1, "count format error");
 
-	size_t hs = crypto_get_output_size (algo);
-
-	u8 block[hs];
+	u8 block[len];
 
 	if (!crypto_fetch (algo, block, len))
 		err (1, "cannot fetch result");
 
-	show (block, hs);
+	show (block, len);
 }
 
 int main (int argc, char *argv[])
