@@ -1,3 +1,11 @@
+/*
+ * Crypto API Endian Helpers
+ *
+ * Copyright (c) 2011-2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CRYPTO_ENDIAN_H
 #define CRYPTO_ENDIAN_H  1
 

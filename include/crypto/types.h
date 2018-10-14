@@ -1,3 +1,11 @@
+/*
+ * Crypto API Core Types
+ *
+ * Copyright (c) 2011-2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #ifndef CRYPTO_TYPES_H
 #define CRYPTO_TYPES_H  1
 
