@@ -168,10 +168,8 @@ struct state {
 	u512 h, N, Sum;
 };
 
-static void stribog_core_init (void *state)
+static void stribog_reset (struct state *o)
 {
-	struct state *o = state;
-
 	/* IV for stribog-512, fill with 0x01 x 64 for stribog-256 */
 	memset (&o->h, 0, sizeof (o->h));	barrier_data (&o->h);
 
@@ -186,7 +184,7 @@ static void *stribog_core_alloc (void)
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
-	stribog_core_init (o);
+	stribog_reset (o);
 	return o;
 }
 
@@ -202,6 +200,12 @@ static int stribog_core_get (const void *state, int type, ...)
 
 static int stribog_core_set (void *state, int type, ...)
 {
+	switch (type) {
+	case CRYPTO_RESET:
+		stribog_reset (state);
+		return 0;
+	}
+
 	return -ENOSYS;
 }
 
@@ -272,7 +276,7 @@ static void stribog_core_final (void *state, const void *in, size_t len,
 	g (&N0, &o->h, &o->Sum, &o->h);
 
 	stribog_core_result (state, out);
-	stribog_core_init (state);
+	stribog_reset (state);
 }
 
 const struct crypto_core stribog_core = {

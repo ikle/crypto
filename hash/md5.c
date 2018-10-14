@@ -117,10 +117,8 @@ struct state {
 	u64 count;
 };
 
-static void md5_core_init (void *state)
+static void md5_reset (struct state *o)
 {
-	struct state *o = state;
-
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
 	o->count = 0;
@@ -133,7 +131,7 @@ static void *md5_core_alloc (void)
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
-	md5_core_init (o);
+	md5_reset (o);
 	return o;
 }
 
@@ -149,6 +147,12 @@ static int md5_core_get (const void *state, int type, ...)
 
 static int md5_core_set (void *state, int type, ...)
 {
+	switch (type) {
+	case CRYPTO_RESET:
+		md5_reset (state);
+		return 0;
+	}
+
 	return -ENOSYS;
 }
 
@@ -232,7 +236,7 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 	write_le64 ((o->count + len) * 8, num);
 	transform (state, block, 0);
 	md5_core_result (state, out);
-	md5_core_init (state);
+	md5_reset (state);
 }
 
 const struct crypto_core md5_core = {

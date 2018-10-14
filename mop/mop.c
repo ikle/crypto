@@ -27,7 +27,7 @@ void *mop_alloc (void)
 	return o;
 }
 
-static void reset (struct state *o)
+static void mop_reset (struct state *o)
 {
 	if (o->cipher == NULL)
 		return;
@@ -37,8 +37,20 @@ static void reset (struct state *o)
 	memset (o->iv, 0, bs);
 	barrier_data (o->iv);
 
+	o->cipher->core->set (o->cipher, CRYPTO_RESET);
+}
+
+static void mop_fini (struct state *o)
+{
+	if (o->cipher == NULL)
+		return;
+
+	mop_reset (o);
+
 	cipher_free (o->cipher);
 	free (o->iv);
+
+	o->cipher = NULL;
 }
 
 void mop_free (void *state)
@@ -48,7 +60,7 @@ void mop_free (void *state)
 	if (o == NULL)
 		return;
 
-	reset (o);
+	mop_fini (o);
 	free (o);
 }
 
@@ -61,7 +73,7 @@ static int set_algo (struct state *o, va_list ap)
 	if (algo == NULL)
 		return -EINVAL;
 
-	reset (o);
+	mop_fini (o);
 
 	if ((o->cipher = cipher_alloc (algo)) == NULL) {
 		error = -errno;  /* PTR_ERR (o->cipher) */
@@ -114,12 +126,15 @@ int mop_get (const void *state, int type, ...)
 
 int mop_set (void *state, int type, ...)
 {
-	const struct state *o = state;
+	struct state *o = state;
 	va_list ap;
 
 	va_start (ap, type);
 
 	switch (type) {
+	case CRYPTO_RESET:
+		mop_reset (state);
+		return 0;
 	case CRYPTO_ALGO:
 		return set_algo (state, ap);
 	case CRYPTO_KEY: {

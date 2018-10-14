@@ -188,6 +188,9 @@ static int get (const void *state, int type, ...)
 static int set_va (void *state, int le, int type, va_list ap)
 {
 	switch (type) {
+	case CRYPTO_RESET:
+		magma_reset (state);
+		return 0;
 	case CRYPTO_KEY:
 		return set_key (state, le, ap);
 	}

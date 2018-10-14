@@ -26,7 +26,7 @@ struct state {
 	u8 *pad;
 };
 
-static void hmac_core_fini (struct state *o)
+static void hmac_reset (struct state *o)
 {
 	if (o->hash == NULL)
 		return;
@@ -35,6 +35,16 @@ static void hmac_core_fini (struct state *o)
 
 	memset (o->pad, 0, bs);
 	barrier_data (o->pad);
+
+	o->hash->core->set (o->hash, CRYPTO_RESET);
+}
+
+static void hmac_core_fini (struct state *o)
+{
+	if (o->hash == NULL)
+		return;
+
+	hmac_reset (o);
 
 	hash_free (o->hash);
 	free (o->pad);
@@ -142,6 +152,9 @@ static int hmac_core_set (void *state, int type, ...)
 	va_start (ap, type);
 
 	switch (type) {
+	case CRYPTO_RESET:
+		hmac_reset (state);
+		return 0;
 	case CRYPTO_ALGO:
 		return set_algo (state, ap);
 	case CRYPTO_KEY:

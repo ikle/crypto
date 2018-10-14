@@ -88,10 +88,8 @@ struct state {
 	u64 count;
 };
 
-static void sha1_core_init (void *state)
+static void sha1_reset (struct state *o)
 {
-	struct state *o = state;
-
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
 	o->count = 0;
@@ -104,7 +102,7 @@ static void *sha1_core_alloc (void)
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
-	sha1_core_init (o);
+	sha1_reset (o);
 	return o;
 }
 
@@ -120,6 +118,12 @@ static int sha1_core_get (const void *state, int type, ...)
 
 static int sha1_core_set (void *state, int type, ...)
 {
+	switch (type) {
+	case CRYPTO_RESET:
+		sha1_reset (state);
+		return 0;
+	}
+
 	return -ENOSYS;
 }
 
@@ -206,7 +210,7 @@ static void sha1_core_final (void *state, const void *in, size_t len,
 	write_be64 ((o->count + len) * 8, num);
 	transform (state, block, 0);
 	sha1_core_result (state, out);
-	sha1_core_init (state);
+	sha1_reset (state);
 }
 
 const struct crypto_core sha1_core = {

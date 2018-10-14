@@ -105,11 +105,7 @@ void crypto_free (struct crypto *o)
 
 void crypto_reset (struct crypto *o)
 {
-#if 0
-	o->core->set (o, CRYPTO_RESET);
-#else
-	errno = ENOSYS;
-#endif
+	errno = -o->core->set (o, CRYPTO_RESET);
 }
 
 /* returns requested size on success, zero overwise */

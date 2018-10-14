@@ -12,6 +12,7 @@
 #include <stddef.h>
 
 enum crypto_type {
+	CRYPTO_RESET,
 	CRYPTO_BLOCK_SIZE,
 	CRYPTO_HASH_SIZE,
 	CRYPTO_ALGO,

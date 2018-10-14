@@ -311,6 +311,9 @@ static int set (void *state, int type, ...)
 	va_start (ap, type);
 
 	switch (type) {
+	case CRYPTO_RESET:
+		kuznechik_reset (state);
+		return 0;
 	case CRYPTO_KEY:
 		return set_key (state, ap);
 	}
