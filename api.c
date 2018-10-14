@@ -43,6 +43,7 @@ static const struct core_map map[] = {
 
 	{"kuznechik",	&kuznechik_core	},
 	{"magma",	&magma_core	},
+	{"gost89",	&gost89_core	},
 
 	{"hmac",	&hmac_core	},
 	{"cmac",	&cmac_core	},
