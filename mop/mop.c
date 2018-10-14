@@ -66,8 +66,7 @@ void mop_free (void *state)
 
 static int set_algo (struct state *o, va_list ap)
 {
-	const struct crypto_core *algo =
-		va_arg (ap, const struct crypto_core *);
+	struct cipher *algo = va_arg (ap, struct cipher *);
 	int error;
 
 	if (algo == NULL)
@@ -75,10 +74,7 @@ static int set_algo (struct state *o, va_list ap)
 
 	mop_fini (o);
 
-	if ((o->cipher = cipher_alloc (algo)) == NULL) {
-		error = -errno;  /* PTR_ERR (o->cipher) */
-		goto no_cipher;
-	}
+	o->cipher = algo;
 
 	const size_t bs = cipher_get_block_size (o->cipher);
 
@@ -97,7 +93,6 @@ no_iv:
 no_bs:
 	cipher_free (o->cipher);
 	o->cipher = NULL;
-no_cipher:
 	return error;
 }
 

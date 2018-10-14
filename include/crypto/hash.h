@@ -57,9 +57,9 @@ size_t hash_get_hash_size (const struct hash *o)
 }
 
 static inline
-int hash_set_algo (struct hash *o, const struct crypto_core *core)
+int hash_set_algo (struct hash *o, struct hash *algo)
 {
-	return o->core->set (o, CRYPTO_ALGO, core);
+	return o->core->set (o, CRYPTO_ALGO, algo);
 }
 
 static inline

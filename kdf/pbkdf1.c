@@ -125,7 +125,7 @@ static int kdf_core_set (void *state, int type, ...)
 	va_start (ap, type);
 
 	switch (type) {
-	case CRYPTO_PRF:
+	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
 		return set_key (o, ap);

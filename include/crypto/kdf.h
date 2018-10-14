@@ -49,7 +49,7 @@ size_t kdf_get_size (const struct kdf *o)
 static inline
 int kdf_set_prf (struct kdf *o, struct hash *prf)
 {
-	errno = -o->core->set (o, CRYPTO_PRF, prf);
+	errno = -o->core->set (o, CRYPTO_ALGO, prf);
 	return errno == 0;
 }
 

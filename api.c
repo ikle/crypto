@@ -152,23 +152,12 @@ size_t crypto_get_output_size (struct crypto *o)
 
 int crypto_set_algo (struct crypto *o, struct crypto *algo)
 {
-#if 0
-	return o->core->set (o, CRYPTO_ALGO, algo);
-#else
-	if (algo == NULL) {
-		errno = EINVAL;
-		return 0;
-	}
+	errno = -o->core->set (o, CRYPTO_ALGO, algo);
 
-	if (o->core == &pbkdf1_core)
-		errno = -o->core->set (o, CRYPTO_PRF, algo);
-	else {
-		errno = -o->core->set (o, CRYPTO_ALGO, algo->core);
+	if (errno == ENOSYS)
 		crypto_free (algo);
-	}
 
 	return errno == 0;
-#endif
 }
 
 int crypto_set_key (struct crypto *o, const void *key, size_t len)

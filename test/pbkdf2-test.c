@@ -31,16 +31,19 @@ static void show (const void *data, size_t len)
 
 int main (int argc, char *argv[])
 {
-	struct hash *prf;
+	struct hash *sha1, *prf;
 
 	if (argc != 5)
 		error ("usage:\n\tpbkdf2-test <password> <salt> <count>"
 		       " <out-length>\n", 0);
 
+	if ((sha1 = hash_alloc (&sha1_core)) == NULL)
+		error ("cannot allocate SHA1 context", 1);
+
 	if ((prf = hash_alloc (&hmac_core)) == NULL)
 		error ("cannot allocate HMAC context", 1);
 
-	if ((errno = -hash_set_algo (prf, &sha1_core)) != 0)
+	if ((errno = -hash_set_algo (prf, sha1)) != 0)
 		error ("cannot initialize HMAC-SHA1", 1);
 
 	const char *key  = argv[1];

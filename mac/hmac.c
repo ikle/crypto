@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/api.h>
 #include <crypto/types.h>
 #include <crypto/utils.h>
 
@@ -54,16 +55,14 @@ static void hmac_core_fini (struct state *o)
 
 static int set_algo (struct state *o, va_list ap)
 {
-	const struct crypto_core *algo =
-		va_arg (ap, const struct crypto_core *);
+	struct hash *algo = va_arg (ap, struct hash *);
 
 	hmac_core_fini (o);
 
 	if (algo == NULL)
 		return -EINVAL;
 
-	if ((o->hash = hash_alloc (algo)) == NULL)
-		goto no_hash;
+	o->hash = algo;
 
 	const size_t bs = hash_get_block_size (o->hash);
 	const size_t hs = hash_get_hash_size  (o->hash);
@@ -81,7 +80,6 @@ no_pad:
 wrong_hash:
 	hash_free (o->hash);
 	o->hash = NULL;
-no_hash:
 	return -errno;
 }
 
