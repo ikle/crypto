@@ -21,11 +21,12 @@ size_t crypto_get_block_size  (struct crypto *o);
 size_t crypto_get_output_size (struct crypto *o);
 
 /* returns non-zero on success, zero overwise */
-int crypto_set_algo  (struct crypto *o, struct crypto *algo);
-int crypto_set_key   (struct crypto *o, const void *key,  size_t len);
-int crypto_set_iv    (struct crypto *o, const void *iv,   size_t len);
-int crypto_set_salt  (struct crypto *o, const void *salt, size_t len);
-int crypto_set_count (struct crypto *o, size_t count);
+int crypto_set_algo	(struct crypto *o, struct crypto *algo);
+int crypto_set_paramset	(struct crypto *o, const void *set,  size_t len);
+int crypto_set_key	(struct crypto *o, const void *key,  size_t len);
+int crypto_set_iv	(struct crypto *o, const void *iv,   size_t len);
+int crypto_set_salt	(struct crypto *o, const void *salt, size_t len);
+int crypto_set_count	(struct crypto *o, size_t count);
 
 /* process one block of data */
 void crypto_encrypt (struct crypto *o, const void *in, void *out);

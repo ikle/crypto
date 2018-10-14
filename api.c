@@ -155,6 +155,12 @@ int crypto_set_algo (struct crypto *o, struct crypto *algo)
 	return errno == 0;
 }
 
+int crypto_set_paramset (struct crypto *o, const void *set, size_t len)
+{
+	errno = -o->core->set (o, CRYPTO_PARAMSET, set, len);
+	return errno == 0;
+}
+
 int crypto_set_key (struct crypto *o, const void *key, size_t len)
 {
 	errno = -o->core->set (o, CRYPTO_KEY, key, len);

@@ -22,6 +22,7 @@ struct state {
 	const struct crypto_core *core;
 	void *block;
 	size_t avail;
+	const struct gost89_sb *sb;
 	u32 k[8];
 	u32 k87[256], k65[256], k43[256], k21[256];
 };
@@ -36,9 +37,13 @@ static void magma_reset (struct state *o)
 	memset (o->k21, 0, sizeof (o->k21));	barrier_data (o->k21);
 }
 
-static void table_init (struct state *o, const struct gost89_sb *b)
+static void table_init (struct state *o, int le)
 {
+	const struct gost89_sb *b = o->sb;
 	int i, h, l;
+
+	if (b == NULL)
+		b = le ? &gost89_sb_cpro_a : &magma_sb;
 
 	for (i = 0; i < 256; ++i) {
 		h = i / 16;
@@ -49,6 +54,18 @@ static void table_init (struct state *o, const struct gost89_sb *b)
 		o->k43[i] = rol32 ((b->pi[3][h] << 4 | b->pi[2][l]) << 8,  11);
 		o->k21[i] = rol32 ((b->pi[1][h] << 4 | b->pi[0][l]),       11);
 	}
+}
+
+static int set_sb (struct state *o, int le, va_list ap)
+{
+	const struct gost89_sb *sb = va_arg (ap, const struct gost89_sb *);
+	size_t len = va_arg (ap, size_t);
+
+	if (len != sizeof (*sb))
+		return -EINVAL;
+
+	o->sb = sb;
+	return 0;
 }
 
 static int set_key (struct state *o, int le, va_list ap)
@@ -63,7 +80,7 @@ static int set_key (struct state *o, int le, va_list ap)
 	for (i = 0; i < 8; ++i, key += 4)
 		o->k[i] = (le ? read_le32 : read_be32) (key);
 
-	table_init (o, le ? &gost89_sb_cpro_a : &magma_sb);
+	table_init (o, le);
 	return 0;
 }
 
@@ -190,6 +207,8 @@ static int set_va (void *state, int le, int type, va_list ap)
 	case CRYPTO_RESET:
 		magma_reset (state);
 		return 0;
+	case CRYPTO_PARAMSET:
+		return set_sb (state, le, ap);
 	case CRYPTO_KEY:
 		return set_key (state, le, ap);
 	}
