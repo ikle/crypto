@@ -32,6 +32,7 @@ struct state {
 
 static void pbkdf1_fini (struct state *o)
 {
+	hash_free (o->prf);
 	o->prf = NULL;
 	free (o->hash);
 	o->hash = NULL;
