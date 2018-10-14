@@ -33,11 +33,13 @@ struct crypto_core {
 	void (*encrypt) (void *state, const void *in, void *out);
 	void (*decrypt) (void *state, const void *in, void *out);
 
-	int (*update) (void *state, const void *in, size_t len);
-	int (*fetch)  (void *state, void *out, size_t len);
-
+	/* transform one block of data, and finatize processing */
 	void (*transform) (void *state, const void *block);
 	void (*final) (void *state, const void *in, size_t len, void *out);
+
+	/* update object with data, and fetch result */
+	int (*update) (void *state, const void *in, size_t len);
+	int (*fetch)  (void *state, void *out, size_t len);
 };
 
 #endif  /* CRYPTO_CORE_H */
