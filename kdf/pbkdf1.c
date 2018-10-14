@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/hash.h>
 #include <crypto/types.h>
 
 #include <kdf/pbkdf1.h>

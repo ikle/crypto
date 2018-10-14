@@ -12,6 +12,7 @@
 
 #include <crypto/api.h>
 #include <crypto/core.h>
+#include <crypto/hash.h>
 
 #include <hash/md5.h>
 #include <hash/sha1.h>
@@ -29,6 +30,7 @@
 #include <mop/ofb.h>
 
 #include <kdf/pbkdf1.h>
+#include <kdf/pbkdf2.h>
 
 struct core_map {
 	const char *algo;
@@ -52,6 +54,7 @@ static const struct core_map map[] = {
 	{"ofb",		&ofb_core	},
 
 	{"pbkdf1",	&pbkdf1_core	},
+	{"pbkdf2",	&pbkdf2_core	},
 	{},
 };
 

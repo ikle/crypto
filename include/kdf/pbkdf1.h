@@ -12,7 +12,7 @@
 #ifndef CRYPTO_PBKDF1_H
 #define CRYPTO_PBKDF1_H  1
 
-#include <crypto/kdf.h>
+#include <crypto/core.h>
 
 extern const struct crypto_core pbkdf1_core;
 

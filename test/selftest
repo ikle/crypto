@@ -102,16 +102,16 @@ spawn ./crypto algo magma key xffeeddccbbaa99887766554433221100f0f1f2f3f4f5f6f7f
 expect_hash 2b073f0494f372a0
 
 # RFC 6070 PBKDF2 HMAC-SHA1 Test Vectors
-spawn ./pbkdf2-test password salt 1 20
+spawn ./crypto algo sha1 algo hmac algo pbkdf2 key :password salt :salt count 1 fetch 20
 expect_hash 0c60c80f961f0e71f3a9b524af6012062fe037a6
 
-spawn ./pbkdf2-test password salt 2 20
+spawn ./crypto algo sha1 algo hmac algo pbkdf2 key :password salt :salt count 2 fetch 20
 expect_hash ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957
 
-spawn ./pbkdf2-test password salt 4096 20
+spawn ./crypto algo sha1 algo hmac algo pbkdf2 key :password salt :salt count 4096 fetch 20
 expect_hash 4b007901b765489abead49d926f721d065a429c1
 
-spawn ./pbkdf2-test passwordPASSWORDpassword saltSALTsaltSALTsaltSALTsaltSALTsalt 4096 25
+spawn ./crypto algo sha1 algo hmac algo pbkdf2 key :passwordPASSWORDpassword salt :saltSALTsaltSALTsaltSALTsaltSALTsalt count 4096 fetch 25
 expect_hash 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
 
 # From http://www.di-mgt.com.au/cryptoKDFs.html

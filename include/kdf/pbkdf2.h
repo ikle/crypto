@@ -12,8 +12,8 @@
 #ifndef CRYPTO_PBKDF2_H
 #define CRYPTO_PBKDF2_H  1
 
-#include <crypto/kdf.h>
+#include <crypto/core.h>
 
-extern const struct kdf_core pbkdf2_core;
+extern const struct crypto_core pbkdf2_core;
 
 #endif  /* CRYPTO_PBKDF2_H */
