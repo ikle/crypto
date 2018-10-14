@@ -63,7 +63,7 @@ static int set_key (struct state *o, int le, va_list ap)
 	for (i = 0; i < 8; ++i, key += 4)
 		o->k[i] = (le ? read_le32 : read_be32) (key);
 
-	table_init (o, &magma_sb);
+	table_init (o, le ? &gost89_sb_cpro_a : &magma_sb);
 	return 0;
 }
 
