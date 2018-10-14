@@ -126,7 +126,7 @@ static int pbkdf2_get (const void *state, int type, ...)
 		return -EINVAL;
 
 	switch (type) {
-	case CRYPTO_HASH_SIZE:
+	case CRYPTO_OUTPUT_SIZE:
 		return UINT32_MAX;
 	}
 

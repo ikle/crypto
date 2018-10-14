@@ -130,10 +130,7 @@ size_t crypto_get_block_size (struct crypto *o)
 
 size_t crypto_get_output_size (struct crypto *o)
 {
-#if 0
-	return o->core->get (o, CRYPTO_OUTPUT_SIZE);
-#else
-	int ret = o->core->get (o, CRYPTO_HASH_SIZE);
+	int ret = o->core->get (o, CRYPTO_OUTPUT_SIZE);
 
 	if (ret == 0)
 		ret = -ENOSYS;
@@ -144,7 +141,6 @@ size_t crypto_get_output_size (struct crypto *o)
 	}
 
 	return ret;
-#endif
 }
 
 /* returns non-zero on success, zero overwise */

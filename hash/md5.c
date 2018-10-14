@@ -138,8 +138,8 @@ static void *md5_core_alloc (void)
 static int md5_core_get (const void *state, int type, ...)
 {
 	switch (type) {
-	case CRYPTO_BLOCK_SIZE:	return MD5_BLOCK_SIZE;
-	case CRYPTO_HASH_SIZE:	return MD5_HASH_SIZE;
+	case CRYPTO_BLOCK_SIZE:		return MD5_BLOCK_SIZE;
+	case CRYPTO_OUTPUT_SIZE:	return MD5_HASH_SIZE;
 	}
 
 	return -ENOSYS;

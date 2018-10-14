@@ -112,7 +112,7 @@ static int pbkdf1_get (const void *state, int type, ...)
 		return -EINVAL;
 
 	switch (type) {
-	case CRYPTO_HASH_SIZE:
+	case CRYPTO_OUTPUT_SIZE:
 		return hash_get_hash_size (o->prf);
 	}
 

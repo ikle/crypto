@@ -53,7 +53,7 @@ size_t hash_get_block_size (const struct hash *o)
 static inline
 size_t hash_get_hash_size (const struct hash *o)
 {
-	return o->core->get (o, CRYPTO_HASH_SIZE);
+	return o->core->get (o, CRYPTO_OUTPUT_SIZE);
 }
 
 static inline
