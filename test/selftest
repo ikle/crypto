@@ -114,6 +114,28 @@ expect_hash 4b007901b765489abead49d926f721d065a429c1
 spawn ./crypto algo sha1 algo hmac algo pbkdf2 key :passwordPASSWORDpassword salt :saltSALTsaltSALTsaltSALTsaltSALTsalt count 4096 fetch 25
 expect_hash 3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038
 
+# GOST R 50.1.111-2016, A Control Examples
+
+spawn ./crypto algo stribog algo hmac algo pbkdf2 key :password salt :salt count 1 fetch 64
+expect_hash 64770af7f748c3b1c9ac831dbcfd85c26111b30a8a657ddc3056b80ca73e040d2854fd36811f6d825cc4ab66ec0a68a490a9e5cf5156b3a2b7eecddbf9a16b47
+
+spawn ./crypto algo stribog algo hmac algo pbkdf2 key :password salt :salt count 2 fetch 64
+expect_hash 5a585bafdfbb6e8830d6d68aa3b43ac00d2e4aebce01c9b31c2caed56f0236d4d34b2b8fbd2c4e89d54d46f50e47d45bbac301571743119e8d3c42ba66d348de
+
+spawn ./crypto algo stribog algo hmac algo pbkdf2 key :password salt :salt count 4096 fetch 64
+expect_hash e52deb9a2d2aaff4e2ac9d47a41f34c20376591c67807f0477e32549dc341bc7867c09841b6d58e29d0347c996301d55df0d34e47cf68f4e3c2cdaf1d9ab86c3
+
+# set timeout 200
+# spawn ./crypto algo stribog algo hmac algo pbkdf2 key :password salt :salt count 16777216 fetch 64
+# expect_hash 49e4843bba76e300afe24c4d23dc7392def12f2c0e244172367cd70a8982ac361adb601c7e2a314e8cb7b1e9df840e36ab5615be5d742b6cf203fb55fdc48071
+
+spawn ./crypto algo stribog algo hmac algo pbkdf2 key :passwordPASSWORDpassword salt :saltSALTsaltSALTsaltSALTsaltSALTsalt count 4096 fetch 100
+expect_hash b2d8f1245fc4d29274802057e4b54e0a0753aa22fc53760b301cf008679e58fe4bee9addcae99ba2b0b20f431a9c5e50f395c89387d0945aedeca6eb4015dfc2bd2421ee9bb71183ba882ceebfef259f33f9e27dc6178cb89dc37428cf9cc52a2baa2d3a
+
+# "pass\0word", "sa\0lt"
+spawn ./crypto algo stribog algo hmac algo pbkdf2 key x7061737300776f7264 salt x7361006c74 count 4096 fetch 64
+expect_hash 50df062885b69801a3c10248eb0a27ab6e522ffeb20c991c660f001475d73a4e167f782c18e97e92976d9c1d970831ea78ccb879f67068cdac1910740844e830
+
 # From http://www.di-mgt.com.au/cryptoKDFs.html
 spawn ./crypto algo sha1 algo pbkdf1 key :password salt x78578E5A5D63CB06 count 1000 fetch 16
 expect_hash dc19847e05c64d2faf10ebfb4a3d2a20
