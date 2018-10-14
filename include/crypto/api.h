@@ -17,7 +17,7 @@ void crypto_free (struct crypto *o);
 void crypto_reset (struct crypto *o);
 
 /* returns requested size on success, zero overwise */
-size_t crypto_get_input_size  (struct crypto *o);
+size_t crypto_get_block_size  (struct crypto *o);
 size_t crypto_get_output_size (struct crypto *o);
 
 /* returns non-zero on success, zero overwise */

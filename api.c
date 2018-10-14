@@ -113,11 +113,8 @@ void crypto_reset (struct crypto *o)
 
 /* returns requested size on success, zero overwise */
 
-size_t crypto_get_input_size (struct crypto *o)
+size_t crypto_get_block_size (struct crypto *o)
 {
-#if 0
-	return return o->core->get (o, CRYPTO_INPUT_SIZE);
-#else
 	int ret = o->core->get (o, CRYPTO_BLOCK_SIZE);
 
 	if (ret == 0)
@@ -129,7 +126,6 @@ size_t crypto_get_input_size (struct crypto *o)
 	}
 
 	return ret;
-#endif
 }
 
 size_t crypto_get_output_size (struct crypto *o)

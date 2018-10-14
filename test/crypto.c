@@ -158,7 +158,7 @@ static void crypt (int encrypt, int argc, char *argv[])
 	if (!read_blob (argv[1], &len))
 		err (1, "data block format error");
 
-	bs = crypto_get_input_size (algo);
+	bs = crypto_get_block_size (algo);
 	if (len != bs)
 		errx (1, "wrong size of block: got %zu, want %zu", len, bs);
 
