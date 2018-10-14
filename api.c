@@ -12,7 +12,6 @@
 
 #include <crypto/api.h>
 #include <crypto/core.h>
-#include <crypto/hash.h>
 
 #include <hash/md5.h>
 #include <hash/sha1.h>
@@ -197,6 +196,62 @@ void crypto_decrypt (struct crypto *o, const void *in, void *out)
 	errno = -ENOSYS;
 }
 
+/* update/fetch helpers */
+
+#include <crypto/types.h>
+
+static int crypto_hash_update (struct crypto *o, const void *in, size_t len)
+{
+	const size_t bs = crypto_get_block_size (o);
+	const char *data = in;
+	size_t tail;
+
+	if (bs == 0 || o->avail > bs)
+		return -EINVAL;
+
+	if (o->block == NULL &&
+	    (o->block = malloc (bs)) == NULL)
+		return -ENOMEM;
+
+	if (o->avail == bs && len == 0)
+		goto out;  /* it is a last block, delay processing */
+
+	if (o->avail > 0) {
+		tail = bs - o->avail;
+
+		if (len < tail)
+			goto out;
+
+		memcpy (o->block + o->avail, data, tail);
+		data += tail, len -= tail;
+		o->core->transform (o, o->block);
+		o->avail = 0;
+	}
+
+	for (; len > bs; data += bs, len -= bs)
+		o->core->transform (o, data);
+
+out:
+	memcpy (o->block + o->avail, data, len);
+	o->avail += len;
+	return 0;
+}
+
+static int crypto_hash_fetch (struct crypto *o, void *out, size_t len)
+{
+	const size_t hs = crypto_get_output_size (o);
+
+	if (hs == 0 || len > hs)
+		return -EINVAL;
+
+	u8 hash[hs];
+
+	o->core->final (o, o->block, o->avail, hash);
+	o->avail = 0;
+
+	memcpy (out, hash, len);
+	return 0;
+}
 /* update object with data, and fetch result */
 
 int crypto_update (struct crypto *o, const void *in, size_t len)
@@ -206,16 +261,14 @@ int crypto_update (struct crypto *o, const void *in, size_t len)
 		return errno == 0;
 	}
 
-	if (o->core->transform != NULL && o->core->final != NULL) {
-		hash_data ((void *) o, in, len, NULL);
+	if (o->core->transform != NULL) {
+		errno = -crypto_hash_update (o, in, len);
 		return 1;
 	}
 
 	errno = -ENOSYS;
 	return 0;
 }
-
-#include <crypto/types.h>
 
 int crypto_fetch (struct crypto *o, void *out, size_t len)
 {
@@ -224,22 +277,9 @@ int crypto_fetch (struct crypto *o, void *out, size_t len)
 		return errno == 0;
 	}
 
-	if (o->core->transform != NULL || o->core->final != NULL) {
-		size_t hs = crypto_get_output_size (o);
-
-		if (hs == 0)
-			return 0;
-
-		if (len > hs) {
-			errno = EINVAL;
-			return 0;
-		}
-
-		u8 hash[hs];
-
-		hash_data ((void *) o, NULL, 0, hash);
-		memcpy (out, hash, len);
-		return 1;
+	if (o->core->final != NULL) {
+		errno = -crypto_hash_fetch (o, out, len);
+		return errno == 0;
 	}
 
 	errno = -ENOSYS;
