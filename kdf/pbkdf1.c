@@ -127,6 +127,8 @@ static int pbkdf1_set (void *state, int type, ...)
 	va_start (ap, type);
 
 	switch (type) {
+	case CRYPTO_RESET:
+		return o->prf->core->set (o->prf, CRYPTO_RESET);
 	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
