@@ -30,7 +30,7 @@ struct state {
 	u8 *hash;
 };
 
-static void kdf_clean (struct state *o)
+static void pbkdf1_fini (struct state *o)
 {
 	o->prf = NULL;
 	free (o->hash);
@@ -44,7 +44,7 @@ static int set_prf (struct state *o, va_list ap)
 	if (prf == NULL)
 		return -EINVAL;
 
-	kdf_clean (o);
+	pbkdf1_fini (o);
 	o->prf = prf;
 
 	const size_t hs = hash_get_hash_size (prf);
@@ -83,7 +83,7 @@ static int set_salt (struct state *o, va_list ap)
 	return 0;
 }
 
-static void *kdf_core_alloc (void)
+static void *pbkdf1_alloc (void)
 {
 	struct state *o;
 
@@ -96,13 +96,13 @@ static void *kdf_core_alloc (void)
 	return o;
 }
 
-static void kdf_core_free (void *state)
+static void pbkdf1_free (void *state)
 {
-	kdf_clean (state);
+	pbkdf1_fini (state);
 	free (state);
 }
 
-static int kdf_core_get (const void *state, int type, ...)
+static int pbkdf1_get (const void *state, int type, ...)
 {
 	const struct state *o = state;
 
@@ -111,13 +111,13 @@ static int kdf_core_get (const void *state, int type, ...)
 
 	switch (type) {
 	case CRYPTO_HASH_SIZE:
-		return o->prf->core->get (o->prf, type);
+		return hash_get_hash_size (o->prf);
 	}
 
 	return -ENOSYS;
 }
 
-static int kdf_core_set (void *state, int type, ...)
+static int pbkdf1_set (void *state, int type, ...)
 {
 	struct state *o = state;
 	va_list ap;
@@ -140,7 +140,7 @@ static int kdf_core_set (void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int kdf_core_fetch (void *state, void *out, size_t len)
+static int pbkdf1_fetch (void *state, void *out, size_t len)
 {
 	struct state *o = state;
 
@@ -159,16 +159,16 @@ static int kdf_core_fetch (void *state, void *out, size_t len)
 	if (len > hs)
 		len = hs;
 
-	memcpy (out, o->hash, len);  // oops, len is output length here!
+	memcpy (out, o->hash, len);
 	return 0;
 }
 
 const struct crypto_core pbkdf1_core = {
-	.alloc		= kdf_core_alloc,
-	.free		= kdf_core_free,
+	.alloc		= pbkdf1_alloc,
+	.free		= pbkdf1_free,
 
-	.get		= kdf_core_get,
-	.set		= kdf_core_set,
+	.get		= pbkdf1_get,
+	.set		= pbkdf1_set,
 
-	.fetch		= kdf_core_fetch,
+	.fetch		= pbkdf1_fetch,
 };
