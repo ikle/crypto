@@ -25,12 +25,26 @@ proc expect_hash hash {
 	}
 }
 
+# RFC 1321, A.4 mddriver.c
+spawn ./crypto algo md5 update : fetch 16
+expect_hash d41d8cd98f00b204e9800998ecf8427e
+
 spawn ./crypto algo md5 update :abc fetch 16
 expect_hash 900150983cd24fb0d6963f7d28e17f72
+
+spawn ./crypto algo md5 update {:message digest} fetch 16
+expect_hash f96b697d7cb7938d525a2f31aaf161d0
+
+spawn ./crypto algo md5 update :abcdefghijklmnopqrstuvwxyz fetch 16
+expect_hash c3fcd3d76192e4007dfb496cca67e13b
 
 spawn ./crypto algo md5 update :ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 fetch 16
 expect_hash d174ab98d277d9f5a5611c2c9f419d9f
 
+spawn ./crypto algo md5 update :12345678901234567890123456789012345678901234567890123456789012345678901234567890 fetch 16
+expect_hash 57edf4a22be3c955ac49da2e2107b67a
+
+# RFC 3174, 7.3 Test Driver
 spawn ./crypto algo sha1 update :abc fetch 20
 expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
 
