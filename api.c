@@ -157,42 +157,26 @@ int crypto_set_algo (struct crypto *o, struct crypto *algo)
 
 int crypto_set_key (struct crypto *o, const void *key, size_t len)
 {
-#if 0
-	return o->core->set (o, CRYPTO_KEY, key, len);
-#else
 	errno = -o->core->set (o, CRYPTO_KEY, key, len);
 	return errno == 0;
-#endif
 }
 
 int crypto_set_iv (struct crypto *o, const void *iv, size_t len)
 {
-#if 0
-	return o->core->set (o, CRYPTO_IV, iv, len);
-#else
 	errno = -o->core->set (o, CRYPTO_IV, iv, len);
 	return errno == 0;
-#endif
 }
 
 int crypto_set_salt (struct crypto *o, const void *salt, size_t len)
 {
-#if 0
-	return o->core->set (o, CRYPTO_SALT, salt, len);
-#else
 	errno = -o->core->set (o, CRYPTO_SALT, salt, len);
 	return errno == 0;
-#endif
 }
 
 int crypto_set_count (struct crypto *o, size_t count)
 {
-#if 0
-	return o->core->set (o, CRYPTO_COUNT, count);
-#else
 	errno = -o->core->set (o, CRYPTO_COUNT, count);
 	return errno == 0;
-#endif
 }
 
 /* process one block of data */
