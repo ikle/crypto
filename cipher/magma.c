@@ -56,14 +56,44 @@ static void table_init (struct state *o, int le)
 	}
 }
 
+struct sb_map {
+	const char *name;
+	const struct gost89_sb *sb;
+};
+
+static const struct sb_map sb_map[] = {
+	{"magma",		&magma_sb},
+	{"gost89-test",		&gost89_sb_test},
+	{"gost89-cpro-a",	&gost89_sb_cpro_a},
+	{"gost89-cpro-b",	&gost89_sb_cpro_b},
+	{"gost89-cpro-c",	&gost89_sb_cpro_c},
+	{"gost89-cpro-d",	&gost89_sb_cpro_d},
+	{"gosthash-test",	&gosthash_sb_test},
+	{"gosthash-cpro",	&gosthash_sb_cpro},
+	{},
+};
+
 static int set_sb (struct state *o, int le, va_list ap)
 {
-	const struct gost89_sb *sb = va_arg (ap, const struct gost89_sb *);
+	const void *sb = va_arg (ap, const void *);
 	size_t len = va_arg (ap, size_t);
+	const struct sb_map *p;
 
-	if (len != sizeof (*sb))
+	/* got named paramset */
+	if (len == 0) {
+		for (p = sb_map; p->name != NULL; ++p)
+			if (strcmp (p->name, sb) == 0) {
+				o->sb = p->sb;
+				return 0;
+			}
+
+		return -ENOENT;
+	}
+
+	if (len != sizeof (*o->sb))
 		return -EINVAL;
 
+	/* got raw paramset */
 	o->sb = sb;
 	return 0;
 }
