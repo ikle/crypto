@@ -75,6 +75,19 @@ expect_hash 750c783e6ab0b503eaa86e310a5db738
 spawn ./crypto algo md5 algo hmac key xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA update xDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD fetch 16
 expect_hash 56be34521d144c88dbb8c733f0e8b3f6
 
+# GOST R 34.11-94, A Test Cases
+spawn ./crypto algo gost89 paramset gosthash-test key x546d203368656c326973652073736e62206167796967747473656865202c3d73 encrypt x0000000000000000
+expect_hash 1b0bbc32cebcab42
+
+spawn ./crypto algo gost89 paramset gosthash-test key x2033394d6c320d0965201a166e62001d6779410674740e136865160d3d730c11 encrypt x0000000000000000
+expect_hash fdcf9b5dc8eb0352
+
+spawn ./crypto algo gost89 paramset gosthash-test key x39b213f5f209a13f1ae9ba3aff1d0c6241f9e1c7f113008516f20d73f311b180 encrypt x0000000000000000
+expect_hash 280eff009958348d
+
+spawn ./crypto algo gost89 paramset gosthash-test key xec0a8ba15ec004a8bac50cac0c621deee1c7b8e7007ae2ecf2731bff4e80e2a0 encrypt x0000000000000000
+expect_hash 2d562a0d190486e7
+
 # R 34.12-2015 A.1, R 34.13-2015 A.1.1
 spawn ./crypto algo kuznechik key x8899aabbccddeeff0011223344556677fedcba98765432100123456789abcdef encrypt x1122334455667700ffeeddccbbaa9988
 expect_hash 7f679d90bebc24305a468d42b9d4edcd
