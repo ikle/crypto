@@ -8,6 +8,7 @@
  */
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -168,6 +169,20 @@ struct state {
 	u512 h, N, Sum;
 };
 
+static void load (const u512 *in, u512 *out);
+
+static int set_iv (struct state *o, va_list ap)
+{
+	const void  *iv  = va_arg (ap, const void *);
+	const size_t len = va_arg (ap, size_t);
+
+	if (len != sizeof (o->h))
+		return -EINVAL;
+
+	load (iv, &o->h);
+	return 0;
+}
+
 static void stribog_reset (struct state *o)
 {
 	/* IV for stribog-512, fill with 0x01 x 64 for stribog-256 */
@@ -200,12 +215,20 @@ static int stribog_core_get (const void *state, int type, ...)
 
 static int stribog_core_set (void *state, int type, ...)
 {
+	va_list ap;
+
+	va_start (ap, type);
+
 	switch (type) {
 	case CRYPTO_RESET:
 		stribog_reset (state);
 		return 0;
+	case CRYPTO_IV:
+		set_iv (state, ap);
+		return 0;
 	}
 
+	va_end (ap);
 	return -ENOSYS;
 }
 

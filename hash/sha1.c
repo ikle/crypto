@@ -8,6 +8,7 @@
  */
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,6 +89,20 @@ struct state {
 	u64 count;
 };
 
+static void load (const u32 *in, u32 *out);
+
+static int set_iv (struct state *o, va_list ap)
+{
+	const void  *iv  = va_arg (ap, const void *);
+	const size_t len = va_arg (ap, size_t);
+
+	if (len != sizeof (o->hash))
+		return -EINVAL;
+
+	load (iv, o->hash);
+	return 0;
+}
+
 static void sha1_reset (struct state *o)
 {
 	memcpy (o->hash, H0, sizeof (o->hash));
@@ -118,12 +133,20 @@ static int sha1_core_get (const void *state, int type, ...)
 
 static int sha1_core_set (void *state, int type, ...)
 {
+	va_list ap;
+
+	va_start (ap, type);
+
 	switch (type) {
 	case CRYPTO_RESET:
 		sha1_reset (state);
 		return 0;
+	case CRYPTO_IV:
+		set_iv (state, ap);
+		return 0;
 	}
 
+	va_end (ap);
 	return -ENOSYS;
 }
 
