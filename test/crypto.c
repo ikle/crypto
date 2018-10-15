@@ -74,6 +74,18 @@ static void set_algo (int argc, char *argv[])
 	algo = o;
 }
 
+static void set_paramset (int argc, char *argv[])
+{
+	if (argc < 2)
+		errx (1, "paramset requires an argument");
+
+	if (algo == NULL)
+		errx (1, "algo does not defined");
+
+	if (!crypto_set_paramset (algo, argv[1], 0))
+		err (1, "cannot set paramset");
+}
+
 static void set_key (int argc, char *argv[])
 {
 	size_t len;
@@ -219,6 +231,10 @@ int main (int argc, char *argv[])
 	while (argc > 0) {
 		if (strcmp (argv[0], "algo") == 0) {
 			set_algo (argc, argv);
+			argc -= 2, argv += 2;
+		}
+		else if (strcmp (argv[0], "paramset") == 0) {
+			set_paramset (argc, argv);
 			argc -= 2, argv += 2;
 		}
 		else if (strcmp (argv[0], "key") == 0) {
