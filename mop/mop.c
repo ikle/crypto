@@ -31,12 +31,12 @@ static void mop_reset (struct state *o)
 	if (o->cipher == NULL)
 		return;
 
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
 	memset (o->iv, 0, bs);
 	barrier_data (o->iv);
 
-	cipher_set (o->cipher, CRYPTO_RESET);
+	crypto_reset (o->cipher);
 }
 
 static void mop_fini (struct state *o)
@@ -46,7 +46,7 @@ static void mop_fini (struct state *o)
 
 	mop_reset (o);
 
-	cipher_free (o->cipher);
+	crypto_free (o->cipher);
 	free (o->iv);
 
 	o->cipher = NULL;
@@ -65,7 +65,7 @@ void mop_free (void *state)
 
 static int set_algo (struct state *o, va_list ap)
 {
-	struct cipher *algo = va_arg (ap, struct cipher *);
+	struct crypto *algo = va_arg (ap, struct crypto *);
 	int error;
 
 	if (algo == NULL)
@@ -75,7 +75,7 @@ static int set_algo (struct state *o, va_list ap)
 
 	o->cipher = algo;
 
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
 	if (bs < 8) {
 		error = -EINVAL;  /* we wont support too weak ciphers */
@@ -90,7 +90,7 @@ static int set_algo (struct state *o, va_list ap)
 	return 0;
 no_iv:
 no_bs:
-	cipher_free (o->cipher);
+	crypto_free (o->cipher);
 	o->cipher = NULL;
 	return error;
 }
@@ -99,7 +99,7 @@ static int set_iv (struct state *o, va_list ap)
 {
 	const void  *iv  = va_arg (ap, const void *);
 	const size_t len = va_arg (ap, size_t);
-	const size_t bs  = cipher_get_block_size (o->cipher);
+	const size_t bs  = crypto_get_block_size (o->cipher);
 
 	if (len != bs)
 		return -EINVAL;
@@ -115,7 +115,7 @@ int mop_get (const void *state, int type, va_list ap)
 	if (type == CRYPTO_OUTPUT_SIZE)
 		type = CRYPTO_BLOCK_SIZE;
 
-	return cipher_get (o->cipher, type);
+	return crypto_get (o->cipher, type);
 }
 
 int mop_set (void *state, int type, va_list ap)
@@ -132,7 +132,7 @@ int mop_set (void *state, int type, va_list ap)
 		const void *key = va_arg (ap, const void *);
 		size_t len = va_arg (ap, size_t);
 
-		return cipher_set_key (o->cipher, key, len);
+		return crypto_set (o->cipher, type, key, len);
 	}
 	case CRYPTO_IV:
 		return set_iv (state, ap);

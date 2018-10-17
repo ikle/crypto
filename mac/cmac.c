@@ -16,10 +16,10 @@
 static void cmac_update (void *state, const void *block)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
 	xor_block (o->iv, block, o->iv, bs);
-	cipher_encrypt_block (o->cipher, o->iv, o->iv);
+	crypto_encrypt (o->cipher, o->iv, o->iv);
 }
 
 static void mangle_key (const u8 *k0, u8 *k1, size_t len)
@@ -45,11 +45,11 @@ static void mangle_key (const u8 *k0, u8 *k1, size_t len)
 static void cmac_final (void *state, const void *in, size_t len, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 	u8 K[bs], W[bs];
 
 	memset (K, 0, bs);
-	cipher_encrypt_block (o->cipher, K, K);
+	crypto_encrypt (o->cipher, K, K);
 	mangle_key (K, K, bs);
 
 	memcpy (W, in, len);
@@ -62,7 +62,7 @@ static void cmac_final (void *state, const void *in, size_t len, void *out)
 
 	xor_block (W, o->iv, W, bs);
 	xor_block (W, K,     W, bs);
-	cipher_encrypt_block (o->cipher, W, out);
+	crypto_encrypt (o->cipher, W, out);
 }
 
 const struct crypto_core cmac_core = {

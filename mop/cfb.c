@@ -16,9 +16,9 @@
 static void cfb_encrypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
-	cipher_encrypt_block (o->cipher, o->iv, o->iv);
+	crypto_encrypt (o->cipher, o->iv, o->iv);
 
 	xor_block (in, o->iv, out, bs);
 
@@ -28,9 +28,9 @@ static void cfb_encrypt (void *state, const void *in, void *out)
 static void cfb_decrypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
-	cipher_encrypt_block (o->cipher, o->iv, o->iv);
+	crypto_encrypt (o->cipher, o->iv, o->iv);
 
 	xor_block (in, o->iv, out, bs);
 

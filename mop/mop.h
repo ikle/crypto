@@ -10,14 +10,17 @@
 #ifndef CRYPTO_MOP_CORE_H
 #define CRYPTO_MOP_CORE_H  1
 
+#include <stdarg.h>
+
+#include <crypto/api.h>
+#include <crypto/core.h>
 #include <crypto/types.h>
-#include <crypto/cipher.h>
 
 struct state {
 	const struct crypto_core *core;
 	void *block;
 	size_t avail;
-	struct cipher *cipher;
+	struct crypto *cipher;
 	u8 *iv;
 };
 

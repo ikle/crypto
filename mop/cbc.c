@@ -16,11 +16,11 @@
 static void cbc_encrypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
 	xor_block (o->iv, in, o->iv, bs);
 
-	cipher_encrypt_block (o->cipher, o->iv, o->iv);
+	crypto_encrypt (o->cipher, o->iv, o->iv);
 
 	memcpy (out, o->iv, bs);
 }
@@ -28,9 +28,9 @@ static void cbc_encrypt (void *state, const void *in, void *out)
 static void cbc_decrypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 
-	cipher_decrypt_block (o->cipher, in, out);
+	crypto_decrypt (o->cipher, in, out);
 
 	xor_block (o->iv, out, out, bs);
 

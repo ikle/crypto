@@ -16,10 +16,10 @@
 static void ctr_crypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
-	const size_t bs = cipher_get_block_size (o->cipher);
+	const size_t bs = crypto_get_block_size (o->cipher);
 	u8 *n;
 
-	cipher_encrypt_block (o->cipher, o->iv, out);
+	crypto_encrypt (o->cipher, o->iv, out);
 	xor_block (in, out, out, bs);
 
 	n = o->iv + bs - 8;  /* bs >= 8 */
