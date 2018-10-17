@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,7 +36,7 @@ static void mop_reset (struct state *o)
 	memset (o->iv, 0, bs);
 	barrier_data (o->iv);
 
-	o->cipher->core->set (o->cipher, CRYPTO_RESET);
+	cipher_set (o->cipher, CRYPTO_RESET);
 }
 
 static void mop_fini (struct state *o)
@@ -109,22 +108,19 @@ static int set_iv (struct state *o, va_list ap)
 	return 0;
 }
 
-int mop_get (const void *state, int type, ...)
+int mop_get (const void *state, int type, va_list ap)
 {
 	const struct state *o = state;
 
 	if (type == CRYPTO_OUTPUT_SIZE)
 		type = CRYPTO_BLOCK_SIZE;
 
-	return o->cipher->core->get (o->cipher, type);
+	return cipher_get (o->cipher, type);
 }
 
-int mop_set (void *state, int type, ...)
+int mop_set (void *state, int type, va_list ap)
 {
 	struct state *o = state;
-	va_list ap;
-
-	va_start (ap, type);
 
 	switch (type) {
 	case CRYPTO_RESET:
@@ -142,6 +138,5 @@ int mop_set (void *state, int type, ...)
 		return set_iv (state, ap);
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }

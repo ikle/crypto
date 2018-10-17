@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -222,7 +221,7 @@ static void magma_free (void *state)
 	free (state);
 }
 
-static int get (const void *state, int type, ...)
+static int get (const void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE: return 8;
@@ -231,7 +230,7 @@ static int get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int set_va (void *state, int le, int type, va_list ap)
+static int set (void *state, int le, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_RESET:
@@ -246,30 +245,14 @@ static int set_va (void *state, int le, int type, va_list ap)
 	return -ENOSYS;
 }
 
-static int set_le (void *state, int type, ...)
+static int set_le (void *state, int type, va_list ap)
 {
-	va_list ap;
-	int status;
-
-	va_start (ap, type);
-
-	status = set_va (state, 1, type, ap);
-
-	va_end (ap);
-	return status;
+	return set (state, 1, type, ap);
 }
 
-static int set_be (void *state, int type, ...)
+static int set_be (void *state, int type, va_list ap)
 {
-	va_list ap;
-	int status;
-
-	va_start (ap, type);
-
-	status = set_va (state, 0, type, ap);
-
-	va_end (ap);
-	return status;
+	return set (state, 0, type, ap);
 }
 
 const struct crypto_core gost89_core = {

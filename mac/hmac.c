@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,7 +36,7 @@ static void hmac_reset (struct state *o)
 	memset (o->pad, 0, bs);
 	barrier_data (o->pad);
 
-	o->hash->core->set (o->hash, CRYPTO_RESET);
+	hash_set (o->hash, CRYPTO_RESET);
 }
 
 static void hmac_core_fini (struct state *o)
@@ -129,7 +128,7 @@ static void *hmac_core_alloc (void)
 	return o;
 }
 
-static int hmac_core_get (const void *state, int type, ...)
+static int hmac_core_get (const void *state, int type, va_list ap)
 {
 	const struct state *o = state;
 
@@ -137,18 +136,14 @@ static int hmac_core_get (const void *state, int type, ...)
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_OUTPUT_SIZE:
 		return o->hash == NULL ? -EINVAL :
-					 o->hash->core->get (o->hash, type);
+					 hash_get (o->hash, type);
 	}
 
 	return -ENOSYS;
 }
 
-static int hmac_core_set (void *state, int type, ...)
+static int hmac_core_set (void *state, int type, va_list ap)
 {
-	va_list ap;
-
-	va_start (ap, type);
-
 	switch (type) {
 	case CRYPTO_RESET:
 		hmac_reset (state);
@@ -159,7 +154,6 @@ static int hmac_core_set (void *state, int type, ...)
 		return set_key (state, ap);
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

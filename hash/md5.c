@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -151,7 +150,7 @@ static void *md5_core_alloc (void)
 	return o;
 }
 
-static int md5_core_get (const void *state, int type, ...)
+static int md5_core_get (const void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:		return MD5_BLOCK_SIZE;
@@ -161,12 +160,8 @@ static int md5_core_get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int md5_core_set (void *state, int type, ...)
+static int md5_core_set (void *state, int type, va_list ap)
 {
-	va_list ap;
-
-	va_start (ap, type);
-
 	switch (type) {
 	case CRYPTO_RESET:
 		md5_reset (state);
@@ -176,7 +171,6 @@ static int md5_core_set (void *state, int type, ...)
 		return 0;
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

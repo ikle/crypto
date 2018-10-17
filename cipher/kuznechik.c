@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <string.h>
 
 #include <crypto/utils.h>
@@ -295,7 +294,7 @@ static void kuznechik_free (void *state)
 	free (state);
 }
 
-static int get (const void *state, int type, ...)
+static int get (const void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:	return 16;
@@ -304,12 +303,8 @@ static int get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int set (void *state, int type, ...)
+static int set (void *state, int type, va_list ap)
 {
-	va_list ap;
-
-	va_start (ap, type);
-
 	switch (type) {
 	case CRYPTO_RESET:
 		kuznechik_reset (state);
@@ -318,7 +313,6 @@ static int set (void *state, int type, ...)
 		return set_key (state, ap);
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

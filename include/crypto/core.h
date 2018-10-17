@@ -10,6 +10,7 @@
 #define CRYPTO_CORE_H  1
 
 #include <stddef.h>
+#include <stdarg.h>
 
 enum crypto_type {
 	CRYPTO_RESET,
@@ -27,8 +28,8 @@ struct crypto_core {
 	void *(*alloc) (void);
 	void (*free) (void *state);
 
-	int (*get) (const void *state, int type, ...);
-	int (*set) (void *state, int type, ...);
+	int (*get) (const void *state, int type, va_list ap);
+	int (*set) (void *state, int type, va_list ap);
 
 	/* encrypt/decrypt one block of data */
 	void (*encrypt) (void *state, const void *in, void *out);

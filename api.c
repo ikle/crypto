@@ -106,16 +106,38 @@ void crypto_free (struct crypto *o)
 	o->core->free (o);
 }
 
+int crypto_get (const struct crypto *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->get (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
+int crypto_set (struct crypto *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->set (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
 void crypto_reset (struct crypto *o)
 {
-	errno = -o->core->set (o, CRYPTO_RESET);
+	errno = -crypto_set (o, CRYPTO_RESET);
 }
 
 /* returns requested size on success, zero overwise */
 
 size_t crypto_get_block_size (struct crypto *o)
 {
-	int ret = o->core->get (o, CRYPTO_BLOCK_SIZE);
+	int ret = crypto_get (o, CRYPTO_BLOCK_SIZE);
 
 	if (ret == 0)
 		ret = -ENOSYS;
@@ -130,7 +152,7 @@ size_t crypto_get_block_size (struct crypto *o)
 
 size_t crypto_get_output_size (struct crypto *o)
 {
-	int ret = o->core->get (o, CRYPTO_OUTPUT_SIZE);
+	int ret = crypto_get (o, CRYPTO_OUTPUT_SIZE);
 
 	if (ret == 0)
 		ret = -ENOSYS;
@@ -147,7 +169,7 @@ size_t crypto_get_output_size (struct crypto *o)
 
 int crypto_set_algo (struct crypto *o, struct crypto *algo)
 {
-	errno = -o->core->set (o, CRYPTO_ALGO, algo);
+	errno = -crypto_set (o, CRYPTO_ALGO, algo);
 
 	if (errno == ENOSYS)
 		crypto_free (algo);
@@ -157,31 +179,31 @@ int crypto_set_algo (struct crypto *o, struct crypto *algo)
 
 int crypto_set_paramset (struct crypto *o, const void *set, size_t len)
 {
-	errno = -o->core->set (o, CRYPTO_PARAMSET, set, len);
+	errno = -crypto_set (o, CRYPTO_PARAMSET, set, len);
 	return errno == 0;
 }
 
 int crypto_set_key (struct crypto *o, const void *key, size_t len)
 {
-	errno = -o->core->set (o, CRYPTO_KEY, key, len);
+	errno = -crypto_set (o, CRYPTO_KEY, key, len);
 	return errno == 0;
 }
 
 int crypto_set_iv (struct crypto *o, const void *iv, size_t len)
 {
-	errno = -o->core->set (o, CRYPTO_IV, iv, len);
+	errno = -crypto_set (o, CRYPTO_IV, iv, len);
 	return errno == 0;
 }
 
 int crypto_set_salt (struct crypto *o, const void *salt, size_t len)
 {
-	errno = -o->core->set (o, CRYPTO_SALT, salt, len);
+	errno = -crypto_set (o, CRYPTO_SALT, salt, len);
 	return errno == 0;
 }
 
 int crypto_set_count (struct crypto *o, size_t count)
 {
-	errno = -o->core->set (o, CRYPTO_COUNT, count);
+	errno = -crypto_set (o, CRYPTO_COUNT, count);
 	return errno == 0;
 }
 

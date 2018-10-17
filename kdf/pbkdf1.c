@@ -10,7 +10,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -104,7 +103,7 @@ static void pbkdf1_free (void *state)
 	free (state);
 }
 
-static int pbkdf1_get (const void *state, int type, ...)
+static int pbkdf1_get (const void *state, int type, va_list ap)
 {
 	const struct state *o = state;
 
@@ -119,16 +118,13 @@ static int pbkdf1_get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int pbkdf1_set (void *state, int type, ...)
+static int pbkdf1_set (void *state, int type, va_list ap)
 {
 	struct state *o = state;
-	va_list ap;
-
-	va_start (ap, type);
 
 	switch (type) {
 	case CRYPTO_RESET:
-		return o->prf->core->set (o->prf, CRYPTO_RESET);
+		return hash_set (o->prf, CRYPTO_RESET, ap);
 	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
@@ -140,7 +136,6 @@ static int pbkdf1_set (void *state, int type, ...)
 		return 0;
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

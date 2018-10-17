@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -203,7 +202,7 @@ static void *stribog_core_alloc (void)
 	return o;
 }
 
-static int stribog_core_get (const void *state, int type, ...)
+static int stribog_core_get (const void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:		return STRIBOG_BLOCK_SIZE;
@@ -213,12 +212,8 @@ static int stribog_core_get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int stribog_core_set (void *state, int type, ...)
+static int stribog_core_set (void *state, int type, va_list ap)
 {
-	va_list ap;
-
-	va_start (ap, type);
-
 	switch (type) {
 	case CRYPTO_RESET:
 		stribog_reset (state);
@@ -228,7 +223,6 @@ static int stribog_core_set (void *state, int type, ...)
 		return 0;
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

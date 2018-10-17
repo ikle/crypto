@@ -38,21 +38,45 @@ void cipher_free (struct cipher *o)
 }
 
 static inline
+int cipher_get (const struct cipher *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->get (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
+static inline
+int cipher_set (struct cipher *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->set (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
+static inline
 size_t cipher_get_block_size (const struct cipher *o)
 {
-	return o->core->get (o, CRYPTO_BLOCK_SIZE);
+	return cipher_get (o, CRYPTO_BLOCK_SIZE);
 }
 
 static inline
 int cipher_set_algo (struct cipher *o, const struct crypto_core *core)
 {
-	return o->core->set (o, CRYPTO_ALGO, core);
+	return cipher_set (o, CRYPTO_ALGO, core);
 }
 
 static inline
 int cipher_set_key (struct cipher *o, const void *key, size_t len)
 {
-	return o->core->set (o, CRYPTO_KEY, key, len);
+	return cipher_set (o, CRYPTO_KEY, key, len);
 }
 
 static inline

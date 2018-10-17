@@ -45,27 +45,51 @@ void hash_free (struct hash *o)
 }
 
 static inline
+int hash_get (const struct hash *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->get (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
+static inline
+int hash_set (struct hash *o, int type, ...)
+{
+	va_list ap;
+	int ret;
+
+	va_start (ap, type);
+	ret = o->core->set (o, type, ap);
+	va_end (ap);
+	return ret;
+}
+
+static inline
 size_t hash_get_block_size (const struct hash *o)
 {
-	return o->core->get (o, CRYPTO_BLOCK_SIZE);
+	return hash_get (o, CRYPTO_BLOCK_SIZE);
 }
 
 static inline
 size_t hash_get_hash_size (const struct hash *o)
 {
-	return o->core->get (o, CRYPTO_OUTPUT_SIZE);
+	return hash_get (o, CRYPTO_OUTPUT_SIZE);
 }
 
 static inline
 int hash_set_algo (struct hash *o, struct hash *algo)
 {
-	return o->core->set (o, CRYPTO_ALGO, algo);
+	return hash_set (o, CRYPTO_ALGO, algo);
 }
 
 static inline
 int hash_set_key (struct hash *o, const void *key, size_t len)
 {
-	return o->core->set (o, CRYPTO_KEY, key, len);
+	return hash_set (o, CRYPTO_KEY, key, len);
 }
 
 /*

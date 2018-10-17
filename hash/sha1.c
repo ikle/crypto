@@ -8,7 +8,6 @@
  */
 
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -121,7 +120,7 @@ static void *sha1_core_alloc (void)
 	return o;
 }
 
-static int sha1_core_get (const void *state, int type, ...)
+static int sha1_core_get (const void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_BLOCK_SIZE:		return SHA1_BLOCK_SIZE;
@@ -131,12 +130,8 @@ static int sha1_core_get (const void *state, int type, ...)
 	return -ENOSYS;
 }
 
-static int sha1_core_set (void *state, int type, ...)
+static int sha1_core_set (void *state, int type, va_list ap)
 {
-	va_list ap;
-
-	va_start (ap, type);
-
 	switch (type) {
 	case CRYPTO_RESET:
 		sha1_reset (state);
@@ -146,7 +141,6 @@ static int sha1_core_set (void *state, int type, ...)
 		return 0;
 	}
 
-	va_end (ap);
 	return -ENOSYS;
 }
 

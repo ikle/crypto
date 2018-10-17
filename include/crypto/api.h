@@ -14,6 +14,9 @@
 struct crypto *crypto_alloc (const char *algo);
 void crypto_free (struct crypto *o);
 
+int crypto_get (const struct crypto *o, int type, ...);
+int crypto_set (struct crypto *o, int type, ...);
+
 void crypto_reset (struct crypto *o);
 
 /* returns requested size on success, zero overwise */

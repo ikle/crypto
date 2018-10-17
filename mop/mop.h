@@ -24,7 +24,7 @@ struct state {
 void *mop_alloc (void);
 void mop_free (void *state);
 
-int mop_get (const void *state, int type, ...);
-int mop_set (void *state, int type, ...);
+int mop_get (const void *state, int type, va_list ap);
+int mop_set (void *state, int type, va_list ap);
 
 #endif  /* CRYPTO_MOP_CORE_H */
