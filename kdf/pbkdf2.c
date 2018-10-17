@@ -22,7 +22,7 @@
 #include <kdf/pbkdf2.h>
 
 static void F (struct hash *prf, const u8 *salt, size_t salt_len,
-	       unsigned count, size_t index, void *out)
+	       size_t count, size_t index, void *out)
 {
 	u8 buf[4];
 	const size_t hs = hash_get_hash_size (prf);
