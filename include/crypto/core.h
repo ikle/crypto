@@ -21,7 +21,7 @@ enum crypto_type {
 	CRYPTO_KEY,
 	CRYPTO_IV,
 	CRYPTO_SALT,
-	CRYPTO_COUNT,
+	CRYPTO_COUNT,		/* round count */
 };
 
 struct crypto_core {
