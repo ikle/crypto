@@ -24,20 +24,14 @@
 static void F (struct hash *prf, const u8 *salt, size_t salt_len,
 	       unsigned count, size_t index, void *out)
 {
-	size_t eaten, left;
-	const size_t bs = hash_get_block_size (prf);
-	u8 buf[bs + 4];
-
-	eaten = hash_data (prf, salt, salt_len, NULL);
-	left = salt_len - eaten;
-
-	memcpy (buf, salt + eaten, left);
-	write_be32 (index, buf + left);
-
+	u8 buf[4];
 	const size_t hs = hash_get_hash_size (prf);
 	u8 hash[hs];
 
-	hash_data (prf, buf, left + 4, hash);
+	hash_data (prf, salt, salt_len, NULL);
+	write_be32 (index, buf);
+	hash_data (prf, buf, 4, hash);
+
 	memcpy (out, hash, hs);
 
 	for (; count > 1; --count) {
