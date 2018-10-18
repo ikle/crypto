@@ -54,13 +54,11 @@ static void mop_fini (struct state *o)
 
 void mop_free (void *state)
 {
-	struct state *o = state;
-
-	if (o == NULL)
+	if (state == NULL)
 		return;
 
-	mop_fini (o);
-	free (o);
+	mop_fini (state);
+	free (state);
 }
 
 static int set_algo (struct state *o, va_list ap)
@@ -72,7 +70,6 @@ static int set_algo (struct state *o, va_list ap)
 		return -EINVAL;
 
 	mop_fini (o);
-
 	o->cipher = algo;
 
 	const size_t bs = crypto_get_block_size (o->cipher);
