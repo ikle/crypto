@@ -10,6 +10,7 @@
  */
 
 #include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -110,7 +111,7 @@ static int pbkdf2_get (const void *state, int type, va_list ap)
 
 	switch (type) {
 	case CRYPTO_OUTPUT_SIZE:
-		return UINT32_MAX;
+		return INT_MAX;  /* 2^32-1 really */
 	}
 
 	return -ENOSYS;
