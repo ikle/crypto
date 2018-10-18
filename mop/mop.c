@@ -115,7 +115,7 @@ int mop_get (const void *state, int type, va_list ap)
 	if (type == CRYPTO_OUTPUT_SIZE)
 		type = CRYPTO_BLOCK_SIZE;
 
-	return crypto_get (o->cipher, type);
+	return o->cipher->core->get (o->cipher, type, ap);
 }
 
 int mop_set (void *state, int type, va_list ap)
@@ -128,12 +128,8 @@ int mop_set (void *state, int type, va_list ap)
 		return 0;
 	case CRYPTO_ALGO:
 		return set_algo (state, ap);
-	case CRYPTO_KEY: {
-		const void *key = va_arg (ap, const void *);
-		size_t len = va_arg (ap, size_t);
-
-		return crypto_set (o->cipher, type, key, len);
-	}
+	case CRYPTO_KEY:
+		return o->cipher->core->set (o->cipher, type, ap);
 	case CRYPTO_IV:
 		return set_iv (state, ap);
 	}
