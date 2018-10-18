@@ -44,4 +44,11 @@ struct crypto_core {
 	int (*fetch)  (void *state, void *out, size_t len);
 };
 
+struct crypto {
+	const struct crypto_core *core;
+	void *block;
+	size_t avail;
+	/* core-specific state follows */
+};
+
 #endif  /* CRYPTO_CORE_H */

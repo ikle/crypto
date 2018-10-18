@@ -70,13 +70,6 @@ static const struct crypto_core *find (const char *algo)
 	return NULL;
 }
 
-struct crypto {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
-	/* core-specific state follows */
-};
-
 struct crypto *crypto_alloc (const char *algo)
 {
 	const struct crypto_core *core;
