@@ -76,7 +76,7 @@ static int set_salt (struct state *o, va_list ap)
 	const void *salt = va_arg (ap, const void *);
 	size_t len = va_arg (ap, size_t);
 
-	if (o->prf == NULL || salt == NULL)
+	if (salt == NULL)
 		return -EINVAL;
 
 	o->salt     = salt;
