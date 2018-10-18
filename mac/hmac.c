@@ -55,6 +55,7 @@ static void hmac_core_fini (struct state *o)
 static int set_algo (struct state *o, va_list ap)
 {
 	struct hash *algo = va_arg (ap, struct hash *);
+	int error;
 
 	hmac_core_fini (o);
 
@@ -67,19 +68,21 @@ static int set_algo (struct state *o, va_list ap)
 	const size_t hs = hash_get_hash_size  (o->hash);
 
 	if (hs > bs) {
-		errno = EINVAL;
+		error = -EINVAL;
 		goto wrong_hash;
 	}
 
-	if ((o->pad = malloc (bs)) == NULL)
+	if ((o->pad = malloc (bs)) == NULL) {
+		error = -ENOMEM;
 		goto no_pad;
+	}
 
 	return 0;
 no_pad:
 wrong_hash:
 	hash_free (o->hash);
 	o->hash = NULL;
-	return -errno;
+	return error;
 }
 
 static void init_hash (struct state *o, size_t bs)
