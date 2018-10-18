@@ -99,7 +99,7 @@ void crypto_free (struct crypto *o)
 	o->core->free (o);
 }
 
-int crypto_get (const struct crypto *o, int type, ...)
+static int crypto_get (const struct crypto *o, int type, ...)
 {
 	va_list ap;
 	int ret;
@@ -110,7 +110,7 @@ int crypto_get (const struct crypto *o, int type, ...)
 	return ret;
 }
 
-int crypto_set (struct crypto *o, int type, ...)
+static int crypto_set (struct crypto *o, int type, ...)
 {
 	va_list ap;
 	int ret;
