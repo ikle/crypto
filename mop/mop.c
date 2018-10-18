@@ -80,7 +80,7 @@ static int set_algo (struct state *o, va_list ap)
 	}
 
 	if ((o->iv = calloc (1, bs)) == NULL) {
-		error = -errno;  /* PTR_ERR (o->iv) */
+		error = -ENOMEM;
 		goto no_iv;
 	}
 
