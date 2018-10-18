@@ -13,28 +13,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <crypto/api.h>
 #include <crypto/endian.h>
-#include <crypto/hash.h>
 #include <crypto/types.h>
 #include <crypto/utils.h>
 
 #include <kdf/pbkdf2.h>
 
-static void F (struct hash *prf, const u8 *salt, size_t salt_len,
+static void F (struct crypto *prf, const u8 *salt, size_t salt_len,
 	       size_t count, size_t index, void *out)
 {
 	u8 buf[4];
-	const size_t hs = hash_get_hash_size (prf);
+	const size_t hs = crypto_get_output_size (prf);
 	u8 hash[hs];
 
-	hash_data (prf, salt, salt_len, NULL);
+	crypto_update (prf, salt, salt_len);
 	write_be32 (index, buf);
-	hash_data (prf, buf, 4, hash);
-
+	crypto_update (prf, buf, 4);
+	crypto_fetch  (prf, hash, hs);
 	memcpy (out, hash, hs);
 
 	for (; count > 1; --count) {
-		hash_data (prf, hash, hs, hash);
+		crypto_update (prf, hash, hs);
+		crypto_fetch  (prf, hash, hs);
 		xor_block (out, hash, out, hs);
 	}
 }
@@ -44,7 +45,7 @@ struct state {
 	void *block;
 	size_t avail;
 
-	struct hash *prf;
+	struct crypto *prf;
 	const void *salt;
 	size_t salt_len;
 	size_t count;
@@ -52,13 +53,13 @@ struct state {
 
 static void pbkdf2_fini (struct state *o)
 {
-	hash_free (o->prf);
+	crypto_free (o->prf);
 	o->prf = NULL;
 }
 
 static int set_prf (struct state *o, va_list ap)
 {
-	struct hash *prf = va_arg (ap, struct hash *);
+	struct crypto *prf = va_arg (ap, struct crypto *);
 
 	if (prf == NULL)
 		return -EINVAL;
@@ -67,17 +68,6 @@ static int set_prf (struct state *o, va_list ap)
 	o->prf = prf;
 
 	return 0;
-}
-
-static int set_key (struct state *o, va_list ap)
-{
-	const void *key = va_arg (ap, const void *);
-	size_t len = va_arg (ap, size_t);
-
-	if (o->prf == NULL || key == NULL)
-		return -EINVAL;
-
-	return hash_set_key (o->prf, key, len);
 }
 
 static int set_salt (struct state *o, va_list ap)
@@ -132,11 +122,12 @@ static int pbkdf2_set (void *state, int type, va_list ap)
 
 	switch (type) {
 	case CRYPTO_RESET:
-		return hash_set (o->prf, CRYPTO_RESET);
+		return o->prf->core->set (o->prf, type, ap);
 	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
-		return set_key (o, ap);
+		return o->prf == NULL ? -EINVAL :
+					o->prf->core->set (o->prf, type, ap);
 	case CRYPTO_SALT:
 		return set_salt (o, ap);
 	case CRYPTO_COUNT:
@@ -157,7 +148,7 @@ static int pbkdf2_fetch (void *state, void *out, size_t len)
 	size_t count = o->count == 0 ? 1000 : o->count;
 	u8 *p;
 	size_t i;
-	const size_t hs = hash_get_hash_size (o->prf);
+	const size_t hs = crypto_get_output_size (o->prf);
 	u8 hash[hs];
 
 	for (p = out, i = 1; len > hs; p += hs, len -= hs, ++i)
