@@ -15,14 +15,13 @@
 #include <crypto/types.h>
 #include <crypto/utils.h>
 
-#include <crypto/hash.h>
 #include <mac/hmac.h>
 
 struct state {
 	const struct crypto_core *core;
 	void *block;
 	size_t avail;
-	struct hash *hash;
+	struct crypto *hash;
 	u8 *pad;
 };
 
@@ -31,12 +30,12 @@ static void hmac_reset (struct state *o)
 	if (o->hash == NULL)
 		return;
 
-	const size_t bs = hash_get_block_size (o->hash);
+	const size_t bs = crypto_get_block_size (o->hash);
 
 	memset (o->pad, 0, bs);
 	barrier_data (o->pad);
 
-	hash_set (o->hash, CRYPTO_RESET);
+	crypto_reset (o->hash);
 }
 
 static void hmac_core_fini (struct state *o)
@@ -46,7 +45,7 @@ static void hmac_core_fini (struct state *o)
 
 	hmac_reset (o);
 
-	hash_free (o->hash);
+	crypto_free (o->hash);
 	free (o->pad);
 
 	o->hash = NULL;
@@ -54,7 +53,7 @@ static void hmac_core_fini (struct state *o)
 
 static int set_algo (struct state *o, va_list ap)
 {
-	struct hash *algo = va_arg (ap, struct hash *);
+	struct crypto *algo = va_arg (ap, struct crypto *);
 	int error;
 
 	if (algo == NULL)
@@ -63,8 +62,8 @@ static int set_algo (struct state *o, va_list ap)
 	hmac_core_fini (o);
 	o->hash = algo;
 
-	const size_t bs = hash_get_block_size (o->hash);
-	const size_t hs = hash_get_hash_size  (o->hash);
+	const size_t bs = crypto_get_block_size  (o->hash);
+	const size_t hs = crypto_get_output_size (o->hash);
 
 	if (hs > bs) {
 		error = -EINVAL;
@@ -79,7 +78,7 @@ static int set_algo (struct state *o, va_list ap)
 	return 0;
 no_pad:
 wrong_hash:
-	hash_free (o->hash);
+	crypto_free (o->hash);
 	o->hash = NULL;
 	return error;
 }
@@ -102,13 +101,15 @@ static int set_key (struct state *o, va_list ap)
 	if (o->hash == NULL || key == NULL)
 		return -EINVAL;
 
-	const size_t bs = hash_get_block_size (o->hash);
+	const size_t bs = crypto_get_block_size (o->hash);
 	size_t i;
 
 	memset (o->pad, 0, bs);
 
-	if (len > bs)
-		hash_data (o->hash, key, len, o->pad);
+	if (len > bs) {
+		crypto_update (o->hash, key, len);
+		crypto_fetch  (o->hash, o->pad, bs);
+	}
 	else
 		memcpy (o->pad, key, len);
 
@@ -138,7 +139,7 @@ static int hmac_core_get (const void *state, int type, va_list ap)
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_OUTPUT_SIZE:
 		return o->hash == NULL ? -EINVAL :
-					 hash_get (o->hash, type);
+					 o->core->get (o->hash, type, ap);
 	}
 
 	return -ENOSYS;
@@ -176,8 +177,8 @@ static void hmac_core_final (void *state, const void *in, size_t len,
 			     void *out)
 {
 	struct state *o = state;
-	const size_t bs = hash_get_block_size (o->hash);
-	const size_t hs = hash_get_hash_size  (o->hash);
+	const size_t bs = crypto_get_block_size  (o->hash);
+	const size_t hs = crypto_get_output_size (o->hash);
 
 	o->hash->core->final (o->hash, in, len, out);
 	init_hash (o, bs);
