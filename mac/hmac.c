@@ -57,11 +57,10 @@ static int set_algo (struct state *o, va_list ap)
 	struct hash *algo = va_arg (ap, struct hash *);
 	int error;
 
-	hmac_core_fini (o);
-
 	if (algo == NULL)
 		return -EINVAL;
 
+	hmac_core_fini (o);
 	o->hash = algo;
 
 	const size_t bs = hash_get_block_size (o->hash);
