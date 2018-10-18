@@ -38,7 +38,7 @@ static void hmac_reset (struct state *o)
 	crypto_reset (o->hash);
 }
 
-static void hmac_core_fini (struct state *o)
+static void hmac_fini (struct state *o)
 {
 	if (o->hash == NULL)
 		return;
@@ -59,7 +59,7 @@ static int set_algo (struct state *o, va_list ap)
 	if (algo == NULL)
 		return -EINVAL;
 
-	hmac_core_fini (o);
+	hmac_fini (o);
 	o->hash = algo;
 
 	const size_t bs = crypto_get_block_size  (o->hash);
@@ -120,7 +120,7 @@ static int set_key (struct state *o, va_list ap)
 	return 0;
 }
 
-static void *hmac_core_alloc (void)
+static void *hmac_alloc (void)
 {
 	struct state *o;
 
@@ -131,7 +131,7 @@ static void *hmac_core_alloc (void)
 	return o;
 }
 
-static int hmac_core_get (const void *state, int type, va_list ap)
+static int hmac_get (const void *state, int type, va_list ap)
 {
 	const struct state *o = state;
 
@@ -145,7 +145,7 @@ static int hmac_core_get (const void *state, int type, va_list ap)
 	return -ENOSYS;
 }
 
-static int hmac_core_set (void *state, int type, va_list ap)
+static int hmac_set (void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_RESET:
@@ -160,21 +160,20 @@ static int hmac_core_set (void *state, int type, va_list ap)
 	return -ENOSYS;
 }
 
-static void hmac_core_free (void *state)
+static void hmac_free (void *state)
 {
-	hmac_core_fini (state);
+	hmac_fini (state);
 	free (state);
 }
 
-static void hmac_core_transform (void *state, const void *block)
+static void hmac_transform (void *state, const void *block)
 {
 	struct state *o = state;
 
 	o->hash->core->transform (o->hash, block);
 }
 
-static void hmac_core_final (void *state, const void *in, size_t len,
-			     void *out)
+static void hmac_final (void *state, const void *in, size_t len, void *out)
 {
 	struct state *o = state;
 	const size_t bs = crypto_get_block_size  (o->hash);
@@ -187,12 +186,12 @@ static void hmac_core_final (void *state, const void *in, size_t len,
 }
 
 const struct crypto_core hmac_core = {
-	.alloc		= hmac_core_alloc,
-	.free		= hmac_core_free,
+	.alloc		= hmac_alloc,
+	.free		= hmac_free,
 
-	.get		= hmac_core_get,
-	.set		= hmac_core_set,
+	.get		= hmac_get,
+	.set		= hmac_set,
 
-	.transform	= hmac_core_transform,
-	.final		= hmac_core_final,
+	.transform	= hmac_transform,
+	.final		= hmac_final,
 };
