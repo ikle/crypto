@@ -75,6 +75,8 @@ def group (name):
 		q = 0x4531ACD1FE0023C7550D267B6B2FEE80922B14B2FFB90F04D4EB7C09B5D2D15DA82F2D7ECB1DBAC719905C5EECC423F1D86E25EDBE23C595D644AAF187E6E6DF
 		return Group (a, b, p, x, y, q)
 
+	raise KeyError ('group not found')
+
 def test ():
 	o = group ('ecgost-test-a')
 	P = Point (o.curve, o.x, o.y)
