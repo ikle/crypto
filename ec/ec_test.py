@@ -103,29 +103,7 @@ if test_egost:
 	print ('R =', R)
 	print ()
 
-	o = ecgost.group ('ecgost-test-a')
-	P = ec.Point (o.curve, o.x, o.y)
-	d = 0x7A929ADE789BB9BE10ED359DD39A72C11B60961F49397EEE1D19CE9891EC3B28
-	Q = d * P
-	e = 0x2DFBC1B372D89A1188C09C52E0EEC61FCE52032AB1022E8E67ECE6672B043EE5
-	(r, s) = ecgost.sign (e, P, o.q, d)
-	print ('Q =', Q)
-	print ('r =', r)
-	print ('s =', s)
-	print ('ecgost.verify =', ecgost.verify (e, P, o.q, Q, r, s))
-	print ()
-
-	o = ecgost.group ('ecgost-test-b')
-	P = ec.Point (o.curve, o.x, o.y)
-	d = 0xBA6048AADAE241BA40936D47756D7C93091A0E8514669700EE7508E508B102072E8123B2200A0563322DAD2827E2714A2636B7BFD18AADFC62967821FA18DD4
-	Q = d * P
-	e = 0x3754F3CFACC9E0615C4F4A7C4D8DAB531B09B6F9C170C533A71D147035B0C5917184EE536593F4414339976C647C5D5A407ADEDB1D560C4FC6777D2972075B8C
-	(r, s) = ecgost.sign (e, P, o.q, d)
-	print ('Q =', Q)
-	print ('r =', r)
-	print ('s =', s)
-	print ('ecgost.verify =', ecgost.verify (e, P, o.q, Q, r, s))
-	print ()
+	ecgost.test ()
 
 if test_swj:
 	P = ec_swj.SecurePoint (curve, Px, Py)

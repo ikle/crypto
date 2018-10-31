@@ -75,3 +75,27 @@ def group (name):
 		q = 0x4531ACD1FE0023C7550D267B6B2FEE80922B14B2FFB90F04D4EB7C09B5D2D15DA82F2D7ECB1DBAC719905C5EECC423F1D86E25EDBE23C595D644AAF187E6E6DF
 		return Group (a, b, p, x, y, q)
 
+def test ():
+	o = group ('ecgost-test-a')
+	P = Point (o.curve, o.x, o.y)
+	d = 0x7A929ADE789BB9BE10ED359DD39A72C11B60961F49397EEE1D19CE9891EC3B28
+	Q = d * P
+	e = 0x2DFBC1B372D89A1188C09C52E0EEC61FCE52032AB1022E8E67ECE6672B043EE5
+	(r, s) = sign (e, P, o.q, d)
+	print ('Q =', Q)
+	print ('r =', r)
+	print ('s =', s)
+	print ('verify =', verify (e, P, o.q, Q, r, s))
+	print ()
+
+	o = group ('ecgost-test-b')
+	P = Point (o.curve, o.x, o.y)
+	d = 0xBA6048AADAE241BA40936D47756D7C93091A0E8514669700EE7508E508B102072E8123B2200A0563322DAD2827E2714A2636B7BFD18AADFC62967821FA18DD4
+	Q = d * P
+	e = 0x3754F3CFACC9E0615C4F4A7C4D8DAB531B09B6F9C170C533A71D147035B0C5917184EE536593F4414339976C647C5D5A407ADEDB1D560C4FC6777D2972075B8C
+	(r, s) = sign (e, P, o.q, d)
+	print ('Q =', Q)
+	print ('r =', r)
+	print ('s =', s)
+	print ('verify =', verify (e, P, o.q, Q, r, s))
+	print ()
