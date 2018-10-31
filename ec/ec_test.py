@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+#
+# Elliptic Curve test code
+#
+# Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
 
 import time
 import ec, ec_swj, ecgost

@@ -1,15 +1,11 @@
 #!/usr/bin/python3
 #
-# An elliptic curve in short Weierstrass form:
+# Elliptic Curve in short Weierstrass form in Jacobian coordinates.
+# Op3 form for doubling and addition
 #
-#   y^2 = x^3 + a * x + b
+# Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
 #
-# Jacobian coordinates (X, Y, Z):
-#
-#   x = X / Z^2
-#   y = Y / Z^3
-#
-# If Z = 0 then point at infinity (zero point)
+# SPDX-License-Identifier: BSD-2-Clause
 #
 
 def mp_sqr (a):		return a ** 2

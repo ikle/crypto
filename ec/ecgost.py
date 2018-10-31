@@ -1,4 +1,12 @@
 #!/usr/bin/python3
+#
+# GOST Elliptic Curve Digital Signature
+#
+# Copyright (c) 2016-2018 Alexei A. Smekalkine <ikle@ikle.ru>
+#
+# Standard: GOST R 34.10-2012
+# SPDX-License-Identifier: BSD-2-Clause
+#
 
 from random import randrange
 from field  import Fp

@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+#
+# Fp field module (modular arithmitic)
+#
+# Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
 
 class Fp:
 	def __init__ (o, x, p):

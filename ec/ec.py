@@ -1,4 +1,11 @@
 #!/usr/bin/python3
+#
+# Elliptic Curve in short Weierstrass form in Affine coordinates
+#
+# Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
 
 from field import Fp
 
