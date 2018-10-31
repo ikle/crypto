@@ -8,13 +8,14 @@
 #
 
 import time
-import ec, ec_swj, ecgost
+import ec, ec_swj, ecdsa, ecgost
 
 from field import Fp
 
 count = 100
 rounds = 0
 
+test_ecdsa  = True
 test_ecgost = True
 test_swj    = True
 
@@ -49,6 +50,9 @@ for i in range (rounds):
 	test ('swj-sec', d, P)
 
 	print ()
+
+if test_ecdsa:
+	ecdsa.test ()
 
 # GOST R 34.10-2012
 
