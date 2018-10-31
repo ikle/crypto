@@ -19,11 +19,20 @@ def calc_r (P, q, k):
 def calc_s (q, d, e, k, r):
 	return int ((Fp(k, q) ** -1) * (e + d * r))
 
+def bound (x, q):
+	xn = x.bit_length ()
+	qn = q.bit_length ()
+
+	if xn <= qn:
+		return x
+
+	return x >> (xn - qn)
+
 def sign (md, P, q, d):
 	if not isinstance (P, Point):
 		raise ValueError ('P is not an EC point')
 
-	e = md % q  # oops, should be `get higher n bits of md'
+	e = bound (md, q)
 	if e == 0:
 		e = 1
 
@@ -43,7 +52,7 @@ def verify (md, P, q, Q, r, s):
 	if not (isinstance (P, Point) and isinstance (Q, Point)):
 		raise ValueError ('P or Q is not an EC point')
 
-	e = md % q  # oops, should be `get higher n bits of md'
+	e = bound (md, q)
 	if e == 0:
 		e = 1
 
