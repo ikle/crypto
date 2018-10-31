@@ -164,3 +164,10 @@ def swa_add (a, x1, y1, x2, y2):
 	y = l * (x1 - x) - y1
 
 	return (x, y)
+
+class Group (object):
+	def __init__ (o, a, b, p, x, y, q):
+		o.curve = Curve (a, b, p)
+		o.x = x
+		o.y = y
+		o.q = q
