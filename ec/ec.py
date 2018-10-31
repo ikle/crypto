@@ -29,6 +29,18 @@ class Zero (object):
 	def __repr__ (o):
 		return 'O'
 
+	def __lshift__ (o, n):
+		return Zero ()
+
+	def __add__ (o, other):
+		if isinstance (other, Zero):
+			return o
+
+		if isinstance (other, Point):
+			return other
+
+		return NotImplemented
+
 #
 # Curve Point
 #
