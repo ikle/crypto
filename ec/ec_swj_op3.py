@@ -64,7 +64,7 @@ def add_2007_bl (x1, y1, z1, x2, y2, z2):
 	z3 = mp_mul (z3, t3)	# z3 = ((z1 + z2)^2 - z1z1 - z2z2) h
 
 	y3 = mp_sal (t3, 1)	# y3 = 2h
-	y3 = mp_sqr (y3)	# y3 = (2h)^2
+	y3 = mp_sqr (y3)	# y3 = (2h)^2 = i
 	t3 = mp_mul (t3, y3)	# t3 = hi = j
 	t5 = mp_sub (t5, t4)	# t5 = s2 - s1
 	t5 = mp_sal (t5, 1)	# t5 = 2 (s2 - s1) = r
