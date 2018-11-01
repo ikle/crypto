@@ -90,7 +90,13 @@ class Point (object):
 		return a
 
 	def _add (a, b):
-		(x, y) = swa_add (a.curve.a, a.x, a.y, b.x, b.y)
+		if a.x == b.x:
+			if a.y == b.y:
+				(x, y) = swa_dbl (o.curve.a, o.x, o.y)
+			else:
+				return Zero ()
+		else:
+			(x, y) = swa_add (a.curve.a, a.x, a.y, b.x, b.y)
 
 		return Point (a.curve, x, y)
 
@@ -103,12 +109,6 @@ class Point (object):
 
 		if o.curve != other.curve:
 			raise ValueError ('cannot add points from different curves')
-
-		if o.x == other.x:
-			if o.y == other.y:
-				return o._dbl ()
-			else:
-				return Zero ()
 
 		return o._add (other)
 
