@@ -70,7 +70,9 @@ def group (name):
 
 	if name == 'ecgost-cpro-a' or \
 	   name == 'id-GostR3410-2001-CryptoPro-A-ParamSet' or \
-	   name == '1.2.643.2.2.35.1':
+	   name == '1.2.643.2.2.35.1' or \
+	   name == 'id-GostR3410-2001-CryptoPro-XchA-ParamSet' or \
+	   name == '1.2.643.2.2.36.0':
 		a = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD94
 		b = 0xA6
 		p = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD97
@@ -92,7 +94,9 @@ def group (name):
 
 	if name == 'ecgost-cpro-c' or \
 	   name == 'id-GostR3410-2001-CryptoPro-C-ParamSet' or \
-	   name == '1.2.643.2.2.35.3':
+	   name == '1.2.643.2.2.35.3' or \
+	   name == 'id-GostR3410-2001-CryptoPro-XchB-ParamSet' or \
+	   name == '1.2.643.2.2.36.1':
 		a = 0x9B9F605F5A858107AB1EC85E6B41C8AACF846E86789051D37998F7B9022D7598
 		b = 0x805a
 		p = 0x9B9F605F5A858107AB1EC85E6B41C8AACF846E86789051D37998F7B9022D759B
