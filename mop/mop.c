@@ -74,8 +74,9 @@ static int set_algo (struct state *o, va_list ap)
 
 	const size_t bs = crypto_get_block_size (o->cipher);
 
-	if (bs < 8) {
-		error = -EINVAL;  /* we wont support too weak ciphers */
+	if (bs < 8 || bs % 8 != 0) {
+		/* we wont support too weak or strange ciphers */
+		error = -EINVAL;
 		goto no_bs;
 	}
 
