@@ -13,17 +13,28 @@
 
 #include "mop.h"
 
+/* count MUST be multiple of eight */
+static void inc_block_be (const u8 *in, u8 *out, size_t count)
+{
+	u64 n, m, c;
+
+	for (c = 0; count > 0; count -= 8) {
+		n = read_be64 (in + count - 8);
+		m = n + c + 1;
+		c = m < n;
+		write_be64 (m, out + count - 8);
+	}
+}
+
 static void ctr_crypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
 	const size_t bs = crypto_get_block_size (o->cipher);
-	u8 *n;
 
 	crypto_encrypt (o->cipher, o->iv, out);
 	xor_block (in, out, out, bs);
 
-	n = o->iv + bs - 8;  /* bs >= 8 */
-	write_be64 (read_be64 (n) + 1, n);
+	inc_block_be (o->iv, o->iv, bs);
 }
 
 const struct crypto_core ctr_core = {
