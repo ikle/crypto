@@ -30,9 +30,10 @@ static void ctr_crypt (void *state, const void *in, void *out)
 {
 	struct state *o = state;
 	const size_t bs = crypto_get_block_size (o->cipher);
+	u8 pat[bs];
 
-	crypto_encrypt (o->cipher, o->iv, out);
-	xor_block (in, out, out, bs);
+	crypto_encrypt (o->cipher, o->iv, pat);
+	xor_block (in, pat, out, bs);
 
 	inc_block_be (o->iv, o->iv, bs);
 }
