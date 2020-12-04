@@ -32,9 +32,9 @@ static void cfb_decrypt (void *state, const void *in, void *out)
 
 	crypto_encrypt (o->cipher, o->iv, o->iv);
 
-	xor_block (in, o->iv, out, bs);
-
 	memcpy (o->iv, in, bs);
+
+	xor_block (in, o->iv, out, bs);
 }
 
 const struct crypto_core cfb_core = {
