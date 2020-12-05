@@ -305,3 +305,55 @@ const struct crypto_core stribog_core = {
 	.transform	= stribog_core_transform,
 	.final		= stribog_core_final,
 };
+
+static void *stribog_256_core_alloc (void)
+{
+	struct state *o;
+
+	if ((o = stribog_core_alloc ()) == NULL)
+		return NULL;
+
+	memset (&o->h, 1, sizeof (o->h));  /* reset IV */
+	return o;
+}
+
+static int stribog_256_core_get (const void *state, int type, va_list ap)
+{
+	if (type == CRYPTO_OUTPUT_SIZE)
+		return 32;
+
+	return stribog_core_get (state, type, ap);
+}
+
+static int stribog_256_core_set (void *state, int type, va_list ap)
+{
+	struct state *o = state;
+	int ret = stribog_core_get (state, type, ap);
+
+	if (type == CRYPTO_RESET)
+		memset (&o->h, 1, sizeof (o->h));  /* reset IV */
+
+	return ret;
+}
+
+static void stribog_256_core_final (void *state, const void *in, size_t len,
+				    void *out)
+{
+	struct state *o = state;
+	u8 hash[64];
+
+	stribog_core_final (state, in, len, hash);
+	memset (&o->h, 1, sizeof (o->h));  /* reset IV */
+	memcpy (out, hash + 32, 32);
+}
+
+const struct crypto_core stribog_256_core = {
+	.alloc		= stribog_256_core_alloc,
+	.free		= free,
+
+	.get		= stribog_256_core_get,
+	.set		= stribog_256_core_set,
+
+	.transform	= stribog_core_transform,
+	.final		= stribog_256_core_final,
+};

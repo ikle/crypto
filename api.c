@@ -40,6 +40,7 @@ static const struct core_map map[] = {
 	{"md5",		&md5_core	},
 	{"sha1",	&sha1_core	},
 	{"stribog",	&stribog_core	},
+	{"stribog-256",	&stribog_256_core	},
 
 	{"kuznechik",	&kuznechik_core	},
 	{"magma",	&magma_core	},

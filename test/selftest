@@ -51,14 +51,22 @@ expect_hash a9993e364706816aba3e25717850c26c9cd0d89d
 spawn ./crypto algo sha1 update :abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq fetch 20
 expect_hash 84983e441c3bd26ebaae4aa1f95129e5e54670f1
 
-# R 34.11-2012 A.1
+# R 34.11-2012 A.1.1
 spawn ./crypto algo stribog update :012345678901234567890123456789012345678901234567890123456789012 fetch 64
 expect_hash 1b54d01a4af5b9d5cc3d86d68d285462b19abc2475222f35c085122be4ba1ffa00ad30f8767b3a82384c6574f024c311e2a481332b08ef7f41797891c1646f48
 
-# R 34.11-2012 A.2
+# R 34.11-2012 A.1.2
+spawn ./crypto algo stribog-256 update :012345678901234567890123456789012345678901234567890123456789012 fetch 32
+expect_hash 9d151eefd8590b89daa6ba6cb74af9275dd051026bb149a452fd84e5e57b5500
+
+# R 34.11-2012 A.2.1
 # M = LE (CP-1251 ("Се ветри, Стрибожи внуци, веютъ с моря стрелами на храбрыя плъкы Игоревы"))
 spawn ./crypto algo stribog update xd1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb fetch 64
 expect_hash 1e88e62226bfca6f9994f1f2d51569e0daf8475a3b0fe61a5300eee46d961376035fe83549ada2b8620fcd7c496ce5b33f0cb9dddc2b6460143b03dabac9fb28
+
+# R 34.11-2012 A.2.2
+spawn ./crypto algo stribog-256 update xd1e520e2e5f2f0e82c20d1f2f0e8e1eee6e820e2edf3f6e82c20e2e5fef2fa20f120eceef0ff20f1f2f0e5ebe0ece820ede020f5f0e0e1f0fbff20efebfaeafb20c8e3eef0e5e2fb fetch 32
+expect_hash 9dd2fe4e90409e5da87f53976d7405b0c0cac628fc669a741d50063c557e8f50
 
 spawn ./crypto algo md5 algo hmac key : update : fetch 16
 expect_hash 74e6f7298a9c2d168935f58c001bad88

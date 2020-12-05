@@ -13,5 +13,6 @@
 #include <crypto/core.h>
 
 extern const struct crypto_core stribog_core;
+extern const struct crypto_core stribog_256_core;
 
 #endif  /* CRYPTO_STRIBOG_CORE_H */
