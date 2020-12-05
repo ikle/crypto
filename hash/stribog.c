@@ -248,7 +248,7 @@ static void transform (void *state, const void *block, const u512 *count)
 
 static void stribog_core_transform (void *state, const void *block)
 {
-	static const u512 N512 = { 512 };
+	static const u512 N512 = {{{ 512 }}};
 
 	transform (state, block, &N512);
 }
