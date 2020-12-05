@@ -100,6 +100,16 @@ void crypto_free (struct crypto *o)
 	o->core->free (o);
 }
 
+int crypto_getv (const struct crypto *o, int type, va_list ap)
+{
+	return o->core->get (o, type, ap);
+}
+
+int crypto_setv (struct crypto *o, int type, va_list ap)
+{
+	return o->core->set (o, type, ap);
+}
+
 static int crypto_get (const struct crypto *o, int type, ...)
 {
 	va_list ap;

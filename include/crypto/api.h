@@ -9,10 +9,14 @@
 #ifndef CRYPTO_API_H
 #define CRYPTO_API_H  1
 
+#include <stdarg.h>
 #include <stddef.h>
 
 struct crypto *crypto_alloc (const char *algo);
 void crypto_free (struct crypto *o);
+
+int crypto_getv (const struct crypto *o, int type, va_list ap);
+int crypto_setv (struct crypto *o, int type, va_list ap);
 
 void crypto_reset (struct crypto *o);
 
