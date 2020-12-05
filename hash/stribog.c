@@ -219,8 +219,7 @@ static int stribog_core_set (void *state, int type, va_list ap)
 		stribog_reset (state);
 		return 0;
 	case CRYPTO_IV:
-		set_iv (state, ap);
-		return 0;
+		return set_iv (state, ap);
 	}
 
 	return -ENOSYS;
