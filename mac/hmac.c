@@ -102,13 +102,14 @@ static int set_key (struct state *o, va_list ap)
 		return -EINVAL;
 
 	const size_t bs = crypto_get_block_size (o->hash);
+	const size_t hs = crypto_get_output_size (o->hash);
 	size_t i;
 
 	memset (o->pad, 0, bs);
 
 	if (len > bs) {
 		crypto_update (o->hash, key, len);
-		crypto_fetch  (o->hash, o->pad, bs);
+		crypto_fetch  (o->hash, o->pad, hs);
 	}
 	else
 		memcpy (o->pad, key, len);
