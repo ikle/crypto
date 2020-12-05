@@ -274,6 +274,7 @@ static int crypto_hash_fetch (struct crypto *o, void *out, size_t len)
 	memcpy (out, hash, len);
 	return 0;
 }
+
 /* update object with data, and fetch result */
 
 int crypto_update (struct crypto *o, const void *in, size_t len)
