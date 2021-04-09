@@ -1,7 +1,7 @@
 /*
  * Crypto API
  *
- * Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2018-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -216,7 +216,7 @@ int crypto_set_count (struct crypto *o, size_t count)
 void crypto_encrypt (struct crypto *o, const void *in, void *out)
 {
 	if (o->core->encrypt != NULL)
-		o->core->encrypt (o, in ,out);
+		o->core->encrypt (o, in, out);
 
 	errno = -ENOSYS;
 }
@@ -224,7 +224,7 @@ void crypto_encrypt (struct crypto *o, const void *in, void *out)
 void crypto_decrypt (struct crypto *o, const void *in, void *out)
 {
 	if (o->core->decrypt != NULL)
-		o->core->decrypt (o, in ,out);
+		o->core->decrypt (o, in, out);
 
 	errno = -ENOSYS;
 }
