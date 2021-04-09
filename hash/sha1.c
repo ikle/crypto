@@ -1,7 +1,7 @@
 /*
  * Secure Hash Standard Algorithm
  *
- * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2017-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: FIPS-180-1, FIPS-180-4
  * SPDX-License-Identifier: BSD-2-Clause
@@ -81,9 +81,7 @@ static void mix_word (u32 *W, int i)
 	} while (0)							\
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	u32 hash[SHA1_ORDER];
 	u64 count;
 };

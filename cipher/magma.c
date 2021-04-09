@@ -1,7 +1,7 @@
 /*
  * Magma Cipher
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST 28147-89, GOST R 34.12-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -18,9 +18,7 @@
 #include <cipher/magma-sb.h>
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	const struct gost89_sb *sb;
 	u32 k[8];
 	u32 k87[256], k65[256], k43[256], k21[256];

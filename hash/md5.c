@@ -1,7 +1,7 @@
 /*
  * The MD5 Message-Digest Algorithm
  *
- * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2017-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 1321
  * SPDX-License-Identifier: BSD-2-Clause
@@ -110,9 +110,7 @@ static const u32 T[64] = {
 	} while (0)
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	u32 hash[MD5_ORDER];
 	u64 count;
 };

@@ -1,7 +1,7 @@
 /*
  * Kuznechik Cipher Algorithm
  *
- * Copyright (c) 2016-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2016-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST R 34.12-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -17,9 +17,7 @@
 #include "kuznechik-defs.h"
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	u128 k[10];	/* round keys */
 	u128 kd[10];	/* decryption keys */
 };

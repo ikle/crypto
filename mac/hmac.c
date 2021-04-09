@@ -18,9 +18,7 @@
 #include <mac/hmac.h>
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	struct crypto *hash;
 	u8 *pad;
 };

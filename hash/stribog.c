@@ -1,7 +1,7 @@
 /*
  * Stribog Hash Algorithm
  *
- * Copyright (c) 2013-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2013-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST R 34.11-2012
  * SPDX-License-Identifier: BSD-2-Clause
@@ -162,9 +162,7 @@ static void add512 (const u512 *a, const u512 *b, u512 *result)
 }
 
 struct state {
-	const struct crypto_core *core;
-	void *block;
-	size_t avail;
+	struct crypto crypto;
 	u512 h, N, Sum;
 };
 
