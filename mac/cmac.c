@@ -1,7 +1,7 @@
 /*
  * CMAC: One-key MAC 1
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * NIST SP 800-38B, GOST R 34.13-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -24,12 +24,15 @@ static void cmac_update (void *state, const void *block)
 
 static void mangle_key (const u8 *k0, u8 *k1, size_t len)
 {
-	int i;  /* must be signed! */
+	size_t i;
 	int ci, co;
 
-	for (ci = 0, i = len - 1; i >= 0; ci = co, --i) {
-		co = (k0[i] & 0x80) != 0;
-		k1[i] = (k0[i] << 1) | ci;
+	if (len == 0)
+		return;  /* broken cipher, nothing to do anyway */
+
+	for (ci = 0, i = len; i > 0; ci = co, --i) {
+		co = (k0[i - 1] & 0x80) != 0;
+		k1[i - 1] = (k0[i - 1] << 1) | ci;
 	}
 
 	if (!co)
