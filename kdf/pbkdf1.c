@@ -1,7 +1,7 @@
 /*
  * PBKDF1: The Password-Based Key Deriavation Function #1
  *
- * Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2018-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: PKCS #5 v1.5
  * Standard: RFC 2898 (PKCS #5 v2.0), RFC 8018 (PKCS #5 v2.1)
@@ -112,7 +112,7 @@ static int pbkdf1_get (const void *state, int type, va_list ap)
 
 	switch (type) {
 	case CRYPTO_OUTPUT_SIZE:
-		return o->prf->core->get (o->prf, type, ap);
+		return crypto_getv (o->prf, type, ap);
 	}
 
 	return -ENOSYS;
@@ -125,7 +125,7 @@ static int pbkdf1_set (void *state, int type, va_list ap)
 	switch (type) {
 	case CRYPTO_RESET:
 		return o->prf == NULL ? 0 :
-					o->prf->core->set (o->prf, type, ap);
+					crypto_setv (o->prf, type, ap);
 	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
