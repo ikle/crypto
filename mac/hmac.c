@@ -1,7 +1,7 @@
 /*
  * HMAC: The Keyed-Hash Message Authentication Code
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 2104, FIPS 198-1
  * SPDX-License-Identifier: BSD-2-Clause
@@ -140,7 +140,7 @@ static int hmac_get (const void *state, int type, va_list ap)
 	case CRYPTO_BLOCK_SIZE:
 	case CRYPTO_OUTPUT_SIZE:
 		return o->hash == NULL ? -EINVAL :
-					 o->core->get (o->hash, type, ap);
+					 crypto_getv (o->hash, type, ap);
 	}
 
 	return -ENOSYS;
