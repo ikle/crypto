@@ -124,12 +124,12 @@ static int pbkdf2_set (void *state, int type, va_list ap)
 	switch (type) {
 	case CRYPTO_RESET:
 		return o->prf == NULL ? 0 :
-					o->prf->core->set (o->prf, type, ap);
+					crypto_setv (o->prf, type, ap);
 	case CRYPTO_ALGO:
 		return set_prf (o, ap);
 	case CRYPTO_KEY:
 		return o->prf == NULL ? -EINVAL :
-					o->prf->core->set (o->prf, type, ap);
+					crypto_setv (o->prf, type, ap);
 	case CRYPTO_SALT:
 		return set_salt (o, ap);
 	case CRYPTO_COUNT:
