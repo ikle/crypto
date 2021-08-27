@@ -1,7 +1,7 @@
 /*
  * PBKDF2: The Password-Based Key Deriavation Function #2
  *
- * Copyright (c) 2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2017-2021 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 2898 (PKCS #5 v2.0), RFC 8018 (PKCS #5 v2.1)
  * Standard: GOST R 50.1.111-2016
@@ -151,13 +151,13 @@ static int pbkdf2_fetch (void *state, void *out, size_t len)
 	u8 *p;
 	size_t i;
 	const size_t hs = crypto_get_output_size (o->prf);
-	u8 hash[hs];
+	u8 last[hs];
 
 	for (p = out, i = 1; len > hs; p += hs, len -= hs, ++i)
 		F (o->prf, o->salt, o->salt_len, count, i, p);
 
-	F (o->prf, o->salt, o->salt_len, count, i, hash);
-	memcpy (p, hash, len);
+	F (o->prf, o->salt, o->salt_len, count, i, last);
+	memcpy (p, last, len);
 
 	return 0;
 }
