@@ -35,7 +35,7 @@ struct crypto_core {
 	void (*encrypt) (void *state, const void *in, void *out);
 	void (*decrypt) (void *state, const void *in, void *out);
 
-	/* transform one block of data, and finatize processing */
+	/* transform one block of data, and finalize processing */
 	void (*transform) (void *state, const void *block);
 	void (*final) (void *state, const void *in, size_t len, void *out);
 
