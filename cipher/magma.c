@@ -24,7 +24,7 @@ struct state {
 	u32 k87[256], k65[256], k43[256], k21[256];
 };
 
-static void magma_reset (struct state *o)
+static int magma_reset (struct state *o)
 {
 	memset_secure (o->k, 0, sizeof (o->k));
 
@@ -32,6 +32,7 @@ static void magma_reset (struct state *o)
 	memset_secure (o->k65, 0, sizeof (o->k65));
 	memset_secure (o->k43, 0, sizeof (o->k43));
 	memset_secure (o->k21, 0, sizeof (o->k21));
+	return 0;
 }
 
 static void table_init (struct state *o, int le)
@@ -231,13 +232,9 @@ static int get (const void *state, int type, va_list ap)
 static int set (void *state, int le, int type, va_list ap)
 {
 	switch (type) {
-	case CRYPTO_RESET:
-		magma_reset (state);
-		return 0;
-	case CRYPTO_PARAMSET:
-		return set_sb (state, le, ap);
-	case CRYPTO_KEY:
-		return set_key (state, le, ap);
+	case CRYPTO_RESET:	return magma_reset (state);
+	case CRYPTO_PARAMSET:	return set_sb  (state, le, ap);
+	case CRYPTO_KEY:	return set_key (state, le, ap);
 	}
 
 	return -ENOSYS;
