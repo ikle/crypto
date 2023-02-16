@@ -23,15 +23,16 @@ struct state {
 	u8 *pad;
 };
 
-static void hmac_reset (struct state *o)
+static int hmac_reset (struct state *o)
 {
 	if (o->hash == NULL)
-		return;
+		return 0;
 
 	const size_t bs = crypto_get_block_size (o->hash);
 
 	memset_secure (o->pad, 0, bs);
 	crypto_reset (o->hash);
+	return 0;
 }
 
 static void hmac_fini (struct state *o)
@@ -145,13 +146,9 @@ static int hmac_get (const void *state, int type, va_list ap)
 static int hmac_set (void *state, int type, va_list ap)
 {
 	switch (type) {
-	case CRYPTO_RESET:
-		hmac_reset (state);
-		return 0;
-	case CRYPTO_ALGO:
-		return set_algo (state, ap);
-	case CRYPTO_KEY:
-		return set_key (state, ap);
+	case CRYPTO_RESET:	return hmac_reset (state);
+	case CRYPTO_ALGO:	return set_algo (state, ap);
+	case CRYPTO_KEY:	return set_key  (state, ap);
 	}
 
 	return -ENOSYS;
