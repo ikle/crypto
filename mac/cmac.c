@@ -1,13 +1,14 @@
 /*
  * CMAC: One-key MAC 1
  *
- * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * NIST SP 800-38B, GOST R 34.13-2015
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
 #include <string.h>
+
 #include <crypto/utils.h>
 #include <mac/cmac.h>
 
@@ -66,6 +67,8 @@ static void cmac_final (void *state, const void *in, size_t len, void *out)
 	xor_block (W, o->iv, W, bs);
 	xor_block (W, K,     W, bs);
 	crypto_encrypt (o->cipher, W, out);
+	memset_secure (K, 0, bs);
+	memset_secure (W, 0, bs);
 }
 
 const struct crypto_core cmac_core = {
