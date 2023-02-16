@@ -1,7 +1,7 @@
 /*
  * HMAC: The Keyed-Hash Message Authentication Code
  *
- * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 2104, FIPS 198-1
  * SPDX-License-Identifier: BSD-2-Clause
@@ -30,9 +30,7 @@ static void hmac_reset (struct state *o)
 
 	const size_t bs = crypto_get_block_size (o->hash);
 
-	memset (o->pad, 0, bs);
-	barrier_data (o->pad);
-
+	memset_secure (o->pad, 0, bs);
 	crypto_reset (o->hash);
 }
 

@@ -1,7 +1,7 @@
 /*
  * Magma Cipher
  *
- * Copyright (c) 2011-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST 28147-89, GOST R 34.12-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -26,12 +26,12 @@ struct state {
 
 static void magma_reset (struct state *o)
 {
-	memset (o->k, 0, sizeof (o->k));	barrier_data (o->k);
+	memset_secure (o->k, 0, sizeof (o->k));
 
-	memset (o->k87, 0, sizeof (o->k87));	barrier_data (o->k87);
-	memset (o->k65, 0, sizeof (o->k65));	barrier_data (o->k65);
-	memset (o->k43, 0, sizeof (o->k43));	barrier_data (o->k43);
-	memset (o->k21, 0, sizeof (o->k21));	barrier_data (o->k21);
+	memset_secure (o->k87, 0, sizeof (o->k87));
+	memset_secure (o->k65, 0, sizeof (o->k65));
+	memset_secure (o->k43, 0, sizeof (o->k43));
+	memset_secure (o->k21, 0, sizeof (o->k21));
 }
 
 static void table_init (struct state *o, int le)

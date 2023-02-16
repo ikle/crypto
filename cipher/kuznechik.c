@@ -1,7 +1,7 @@
 /*
  * Kuznechik Cipher Algorithm
  *
- * Copyright (c) 2016-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2016-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST R 34.12-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -24,8 +24,8 @@ struct state {
 
 static void kuznechik_reset (struct state *o)
 {
-	memset (o->k, 0,  sizeof (o->k));	barrier_data (o->k);
-	memset (o->kd, 0, sizeof (o->k));	barrier_data (o->kd);
+	memset_secure (o->k,  0, sizeof (o->k));
+	memset_secure (o->kd, 0, sizeof (o->k));
 }
 
 static void S (u128 *x)

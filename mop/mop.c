@@ -1,7 +1,7 @@
 /*
  * Block cipher mode of operation, common code
  *
- * Copyright (c) 2011-2017 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: NIST FIPS 81, NIST SP 800-38A, GOST R 34.13-2015
  * SPDX-License-Identifier: BSD-2-Clause
@@ -33,9 +33,7 @@ static void mop_reset (struct state *o)
 
 	const size_t bs = crypto_get_block_size (o->cipher);
 
-	memset (o->iv, 0, bs);
-	barrier_data (o->iv);
-
+	memset_secure (o->iv, 0, bs);
 	crypto_reset (o->cipher);
 }
 

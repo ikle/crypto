@@ -1,7 +1,7 @@
 /*
  * Stribog Hash Algorithm
  *
- * Copyright (c) 2013-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2013-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: GOST R 34.11-2012
  * SPDX-License-Identifier: BSD-2-Clause
@@ -183,10 +183,10 @@ static int set_iv (struct state *o, va_list ap)
 static void stribog_reset (struct state *o)
 {
 	/* IV for stribog-512, fill with 0x01 x 64 for stribog-256 */
-	memset (&o->h, 0, sizeof (o->h));	barrier_data (&o->h);
+	memset_secure (&o->h,   0, sizeof (o->h));
 
-	memset (&o->N, 0, sizeof (o->N));	barrier_data (&o->N);
-	memset (&o->Sum, 0, sizeof (o->Sum));	barrier_data (&o->Sum);
+	memset_secure (&o->N,   0, sizeof (o->N));
+	memset_secure (&o->Sum, 0, sizeof (o->Sum));
 }
 
 static void *stribog_core_alloc (void)
