@@ -1,7 +1,7 @@
 /*
  * Secure Hash Standard Algorithm
  *
- * Copyright (c) 2017-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2017-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: FIPS-180-1, FIPS-180-4
  * SPDX-License-Identifier: BSD-2-Clause
@@ -224,6 +224,7 @@ static void sha1_core_final (void *state, const void *in, size_t len,
 
 	write_be64 ((o->count + len) * 8, num);
 	transform (state, block, 0);
+	memset_secure (block, 0, sizeof (block));
 	sha1_core_result (state, out);
 	sha1_reset (state);
 }
