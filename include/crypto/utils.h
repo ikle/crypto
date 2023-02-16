@@ -1,7 +1,7 @@
 /*
  * Crypto API Internal Helpers
  *
- * Copyright (c) 2011-2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2011-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -29,6 +29,12 @@ static inline void xor_block (const u8 *a, const u8 *b, u8 *out, size_t count)
 
 	for (i = 0; i < count; ++i)
 		out[i] = a[i] ^ b[i];
+}
+
+static inline void memset_secure (void *s, int c, size_t n)
+{
+	memset (s, c, n);
+	barrier_data (s);
 }
 
 #endif  /* CRYPTO_UTILS_H */

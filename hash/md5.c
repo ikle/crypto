@@ -248,6 +248,7 @@ static void md5_core_final (void *state, const void *in, size_t len, void *out)
 
 	write_le64 ((o->count + len) * 8, num);
 	transform (state, block, 0);
+	memset_secure (block, 0, sizeof (block));
 	md5_core_result (state, out);
 	md5_reset (state);
 }
