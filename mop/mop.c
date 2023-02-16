@@ -26,15 +26,16 @@ void *mop_alloc (void)
 	return o;
 }
 
-static void mop_reset (struct state *o)
+static int mop_reset (struct state *o)
 {
 	if (o->cipher == NULL)
-		return;
+		return 0;
 
 	const size_t bs = crypto_get_block_size (o->cipher);
 
 	memset_secure (o->iv, 0, bs);
 	crypto_reset (o->cipher);
+	return 0;
 }
 
 static void mop_fini (struct state *o)
@@ -111,7 +112,7 @@ int mop_get (const void *state, int type, va_list ap)
 	if (type == CRYPTO_OUTPUT_SIZE)
 		type = CRYPTO_BLOCK_SIZE;
 
-	return o->cipher->core->get (o->cipher, type, ap);
+	return crypto_getv (o->cipher, type, ap);
 }
 
 int mop_set (void *state, int type, va_list ap)
@@ -119,15 +120,10 @@ int mop_set (void *state, int type, va_list ap)
 	struct state *o = state;
 
 	switch (type) {
-	case CRYPTO_RESET:
-		mop_reset (state);
-		return 0;
-	case CRYPTO_ALGO:
-		return set_algo (state, ap);
-	case CRYPTO_KEY:
-		return o->cipher->core->set (o->cipher, type, ap);
-	case CRYPTO_IV:
-		return set_iv (state, ap);
+	case CRYPTO_RESET:	return mop_reset (state);
+	case CRYPTO_ALGO:	return set_algo (state, ap);
+	case CRYPTO_KEY:	return crypto_setv (o->cipher, type, ap);
+	case CRYPTO_IV:		return set_iv (state, ap);
 	}
 
 	return -ENOSYS;
