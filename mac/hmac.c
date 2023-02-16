@@ -98,7 +98,7 @@ static int set_key (struct state *o, va_list ap)
 	if (o->hash == NULL || key == NULL)
 		return -EINVAL;
 
-	const size_t bs = crypto_get_block_size (o->hash);
+	const size_t bs = crypto_get_block_size  (o->hash);
 	const size_t hs = crypto_get_output_size (o->hash);
 	size_t i;
 
