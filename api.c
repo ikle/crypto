@@ -247,8 +247,7 @@ static int crypto_hash_update (struct crypto *o, const void *in, size_t len)
 	if (bs == 0 || o->avail > bs)
 		return -EINVAL;
 
-	if (o->block == NULL &&
-	    (o->block = malloc (bs)) == NULL)
+	if (o->block == NULL && (o->block = malloc (bs)) == NULL)
 		return -ENOMEM;
 
 	if (o->avail == bs && len == 0)
