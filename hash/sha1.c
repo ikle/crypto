@@ -100,11 +100,12 @@ static int set_iv (struct state *o, va_list ap)
 	return 0;
 }
 
-static void sha1_reset (struct state *o)
+static int sha1_reset (struct state *o)
 {
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
 	o->count = 0;
+	return 0;
 }
 
 static void *sha1_core_alloc (void)
@@ -131,9 +132,7 @@ static int sha1_core_get (const void *state, int type, va_list ap)
 static int sha1_core_set (void *state, int type, va_list ap)
 {
 	switch (type) {
-	case CRYPTO_RESET:
-		sha1_reset (state);
-		return 0;
+	case CRYPTO_RESET:		return sha1_reset (state);
 	case CRYPTO_IV:
 		set_iv (state, ap);
 		return 0;
