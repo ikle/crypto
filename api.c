@@ -12,6 +12,7 @@
 
 #include <crypto/api.h>
 #include <crypto/core.h>
+#include <crypto/utils.h>
 
 #include <hash/md5.h>
 #include <hash/sha1.h>
@@ -94,6 +95,9 @@ void crypto_free (struct crypto *o)
 {
 	if (o == NULL)
 		return;
+
+	if (o->block != NULL)
+		memset_secure (o->block, 0, o->avail);
 
 	free (o->block);
 	o->core->free (o);
@@ -262,6 +266,7 @@ static int crypto_hash_update (struct crypto *o, const void *in, size_t len)
 		memcpy (o->block + o->avail, data, tail);
 		data += tail, len -= tail;
 		o->core->transform (o, o->block);
+		memset_secure (o->block, 0, bs);
 		o->avail = 0;
 	}
 
@@ -284,6 +289,7 @@ static int crypto_hash_fetch (struct crypto *o, void *out, size_t len)
 	u8 hash[hs];
 
 	o->core->final (o, o->block, o->avail, hash);
+	memset_secure (o->block, 0, o->avail);
 	o->avail = 0;
 
 	memcpy (out, hash, len);
