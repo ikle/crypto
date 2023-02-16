@@ -180,13 +180,14 @@ static int set_iv (struct state *o, va_list ap)
 	return 0;
 }
 
-static void stribog_reset (struct state *o)
+static int stribog_reset (struct state *o)
 {
 	/* IV for stribog-512, fill with 0x01 x 64 for stribog-256 */
 	memset_secure (&o->h,   0, sizeof (o->h));
 
 	memset_secure (&o->N,   0, sizeof (o->N));
 	memset_secure (&o->Sum, 0, sizeof (o->Sum));
+	return 0;
 }
 
 static void *stribog_core_alloc (void)
@@ -213,11 +214,8 @@ static int stribog_core_get (const void *state, int type, va_list ap)
 static int stribog_core_set (void *state, int type, va_list ap)
 {
 	switch (type) {
-	case CRYPTO_RESET:
-		stribog_reset (state);
-		return 0;
-	case CRYPTO_IV:
-		return set_iv (state, ap);
+	case CRYPTO_RESET:		return stribog_reset (state);
+	case CRYPTO_IV:			return set_iv (state, ap);
 	}
 
 	return -ENOSYS;
