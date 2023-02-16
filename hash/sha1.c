@@ -133,9 +133,7 @@ static int sha1_core_set (void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_RESET:		return sha1_reset (state);
-	case CRYPTO_IV:
-		set_iv (state, ap);
-		return 0;
+	case CRYPTO_IV:			return set_iv (state, ap);
 	}
 
 	return -ENOSYS;
