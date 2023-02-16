@@ -1,7 +1,7 @@
 /*
  * Crypto API
  *
- * Copyright (c) 2018 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2018-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -33,8 +33,8 @@ int crypto_set_salt	(struct crypto *o, const void *salt, size_t len);
 int crypto_set_count	(struct crypto *o, size_t count);
 
 /* process one block of data */
-void crypto_encrypt (struct crypto *o, const void *in, void *out);
-void crypto_decrypt (struct crypto *o, const void *in, void *out);
+int crypto_encrypt (struct crypto *o, const void *in, void *out);
+int crypto_decrypt (struct crypto *o, const void *in, void *out);
 
 /* update object with data, and fetch result */
 int crypto_update (struct crypto *o, const void *in, size_t len);

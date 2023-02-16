@@ -212,20 +212,26 @@ int crypto_set_count (struct crypto *o, size_t count)
 
 /* process one block of data */
 
-void crypto_encrypt (struct crypto *o, const void *in, void *out)
+int crypto_encrypt (struct crypto *o, const void *in, void *out)
 {
-	if (o->core->encrypt != NULL)
+	if (o->core->encrypt != NULL) {
 		o->core->encrypt (o, in, out);
+		return 1;
+	}
 
 	errno = -ENOSYS;
+	return 0;
 }
 
-void crypto_decrypt (struct crypto *o, const void *in, void *out)
+int crypto_decrypt (struct crypto *o, const void *in, void *out)
 {
-	if (o->core->decrypt != NULL)
+	if (o->core->decrypt != NULL) {
 		o->core->decrypt (o, in, out);
+		return 1;
+	}
 
 	errno = -ENOSYS;
+	return 0;
 }
 
 /* update/fetch helpers */
