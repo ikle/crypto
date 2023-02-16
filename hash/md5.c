@@ -1,7 +1,7 @@
 /*
  * The MD5 Message-Digest Algorithm
  *
- * Copyright (c) 2017-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2017-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * Standard: RFC 1321
  * SPDX-License-Identifier: BSD-2-Clause
@@ -130,11 +130,12 @@ static int set_iv (struct state *o, va_list ap)
 }
 
 
-static void md5_reset (struct state *o)
+static int md5_reset (struct state *o)
 {
 	memcpy (o->hash, H0, sizeof (o->hash));
 	barrier_data (o->hash);
 	o->count = 0;
+	return 0;
 }
 
 static void *md5_core_alloc (void)
@@ -161,9 +162,7 @@ static int md5_core_get (const void *state, int type, va_list ap)
 static int md5_core_set (void *state, int type, va_list ap)
 {
 	switch (type) {
-	case CRYPTO_RESET:
-		md5_reset (state);
-		return 0;
+	case CRYPTO_RESET:		return md5_reset (state);
 	case CRYPTO_IV:
 		set_iv (state, ap);
 		return 0;
