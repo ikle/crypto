@@ -1,7 +1,7 @@
 /*
  * Crypto API
  *
- * Copyright (c) 2018-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+ * Copyright (c) 2018-2023 Alexei A. Smekalkine <ikle@ikle.ru>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -81,8 +81,7 @@ struct crypto *crypto_alloc (const char *algo)
 		return NULL;
 	}
 
-	if ((core = find (algo)) == NULL ||
-	    (o = core->alloc ()) == NULL)
+	if ((core = find (algo)) == NULL || (o = core->alloc ()) == NULL)
 		return NULL;
 
 	o->core  = core;
