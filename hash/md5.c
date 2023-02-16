@@ -163,9 +163,7 @@ static int md5_core_set (void *state, int type, va_list ap)
 {
 	switch (type) {
 	case CRYPTO_RESET:		return md5_reset (state);
-	case CRYPTO_IV:
-		set_iv (state, ap);
-		return 0;
+	case CRYPTO_IV:			return set_iv (state, ap);
 	}
 
 	return -ENOSYS;
